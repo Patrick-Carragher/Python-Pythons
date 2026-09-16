@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h2>
+    Previous answer
+</h2>
+
+
+{% if previous_game %}
+
+    <div class="previous-answer">
+
+        <p>
+            <strong>Name:</strong>
+            {{ previous_game.name }}
+        </p>
+
+        <p>
+            <strong>Quest:</strong>
+            {{ previous_game.quest }}
+        </p>
+
+
+        <p>
+            <strong>Guesses:</strong>
+        </p>
+
+
+        {% if previous_game.guesses %}
+
+            <ol class="guess-list">
+
+                {% for guess in previous_game.guesses %}
+
+                    <li>
+                        {{ guess }}
+                    </li>
+
+                {% endfor %}
+
+            </ol>
+
+        {% else %}
+
+            <p>
+                No guesses saved.
+            </p>
+
+        {% endif %}
+
+
+        <p>
+            <strong>Avenge:</strong>
+
+            {% if previous_game.avenge %}
+
+                {{ previous_game.avenge }}
+
+            {% else %}
+
+                Not answered
+
+            {% endif %}
+        </p>
+
+
+        <p>
+            <strong>Holy Hand Grenade answer:</strong>
+
+            {% if previous_game.throw %}
+
+                {{ previous_game.throw }}
+
+            {% else %}
+
+                Not answered
+
+            {% endif %}
+        </p>
+
+
+        <hr>
+
+
+        <p>
+            <strong>Started:</strong>
+            {{ previous_game.started_at_formatted }}
+        </p>
+
+        <p>
+            <strong>Completed:</strong>
+            {{ previous_game.completed_at_formatted }}
+        </p>
+
+    </div>
+
+
+    <!-- COOKIE DEBUG -->
+
+    <details class="cookie-debug">
+
+        <summary>
+            Check cookie
+        </summary>
+
+
+        <div class="cookie-debug-content">
+
+            <h3>
+                Raw cookie
+            </h3>
+
+            <pre>{{ raw_cookie }}</pre>
+
+
+            <h3>
+                Decoded cookie
+            </h3>
+
+            <div class="code-editor">
+                <div class="code-editor-topbar">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+
+                    <span class="code-editor-title">
+                        decoded_cookie.json
+                    </span>
+                </div>
+
+                <pre
+                    id="decoded-cookie-code"
+                    class="code-editor-body"
+                >{{ decoded_cookie }}</pre>
+            </div>
+
+        </div>
+
+    </details>
+
+
+{% else %}
+
+    <p>
+        No previous answer has been saved.
+    </p>
+
+{% endif %}
+
+
+<a
+    href="/"
+    class="button-link back-button"
+>
+    Back
+</a>
+<script>
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    function highlightJson(json) {
+        json = escapeHtml(json);
+
+        return json.replace(
+            /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\btrue\b|\bfalse\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?|[{}[\]])/g,
+            function (match) {
+                let cls = "json-number";
+
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = "json-key";
+                    } else {
+                        cls = "json-string";
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = "json-boolean";
+                } else if (/null/.test(match)) {
+                    cls = "json-null";
+                } else if (/^[\{\}\[\]]$/.test(match)) {
+                    cls = "json-brace";
+                }
+
+                return '<span class="' + cls + '">' + match + '</span>';
+            }
+        );
+    }
+
+    const decodedCookieElement = document.getElementById("decoded-cookie-code");
+
+    if (decodedCookieElement) {
+        decodedCookieElement.innerHTML = highlightJson(
+            decodedCookieElement.textContent
+        );
+    }
+</script>
+
+{% endblock %}

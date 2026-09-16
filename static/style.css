@@ -1,0 +1,1156 @@
+:root {
+    --gold: #ffd700;
+    --gold-soft: rgba(255, 215, 0, 0.10);
+    --gold-glow: rgba(255, 215, 0, 0.16);
+
+    --background: #1e1e1e;
+    --surface: #252525;
+    --surface-light: #2c2c2c;
+    --surface-hover: #323232;
+
+    --text: #ffffff;
+    --text-muted: #b8b8b8;
+
+    --border: #414141;
+
+    --radius-small: 10px;
+    --radius-medium: 16px;
+    --radius-large: 24px;
+}
+
+
+/* --------------------------------------------------
+   RESET
+-------------------------------------------------- */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    min-height: 100%;
+}
+
+
+/* --------------------------------------------------
+   PAGE
+-------------------------------------------------- */
+
+body {
+    margin: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(255, 215, 0, 0.04),
+            transparent 40%
+        ),
+        var(--background);
+
+    color: var(--text);
+}
+
+
+/* --------------------------------------------------
+   MAIN CARD
+-------------------------------------------------- */
+
+.container {
+    width: 100%;
+    max-width: 560px;
+
+    padding: 48px;
+
+    background-color: var(--surface);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-large);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.35),
+        0 0 40px rgba(255, 215, 0, 0.015);
+
+    text-align: center;
+}
+
+
+/* --------------------------------------------------
+   HEADINGS
+-------------------------------------------------- */
+
+h1 {
+    margin: 0 0 38px;
+
+    color: var(--gold);
+
+    font-size: 42px;
+    font-weight: 750;
+
+    line-height: 1.1;
+
+    letter-spacing: -1.5px;
+}
+
+
+h2 {
+    margin: 0 0 28px;
+
+    color: var(--gold);
+
+    font-size: 28px;
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+}
+
+
+/* --------------------------------------------------
+   TEXT
+-------------------------------------------------- */
+
+p {
+    margin-top: 0;
+    margin-bottom: 14px;
+
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+
+.message {
+    margin: 24px 0;
+
+    padding: 14px 18px;
+
+    background-color: var(--gold-soft);
+
+    color: var(--gold);
+
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: var(--radius-small);
+
+    font-weight: 700;
+}
+
+
+/* --------------------------------------------------
+   FORM
+-------------------------------------------------- */
+
+form {
+    width: 100%;
+}
+
+
+form p {
+    margin-top: 26px;
+    margin-bottom: 9px;
+
+    font-weight: 600;
+}
+
+
+/* --------------------------------------------------
+   INPUTS
+-------------------------------------------------- */
+
+input {
+    width: 100%;
+
+    padding: 15px 16px;
+
+    margin: 0;
+
+    background-color: var(--surface-light);
+
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 16px;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+input:hover {
+    background-color: var(--surface-hover);
+}
+
+
+input:focus {
+    background-color: var(--surface-hover);
+
+    border-color: var(--gold);
+
+    box-shadow:
+        0 0 0 4px var(--gold-soft);
+}
+
+
+input[type="number"] {
+    appearance: textfield;
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   BUTTON CONTAINER
+-------------------------------------------------- */
+
+.buttons {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-top: 32px;
+}
+
+
+/* --------------------------------------------------
+   BUTTONS
+-------------------------------------------------- */
+
+button,
+.button-link {
+    width: 100%;
+    min-height: 52px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 13px 22px;
+
+    background-color: transparent;
+
+    color: var(--gold);
+
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-small);
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.18s ease,
+        color 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+button:hover,
+.button-link:hover {
+    background-color: var(--gold);
+
+    color: var(--background);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 28px var(--gold-glow);
+}
+
+
+button:active,
+.button-link:active {
+    transform: translateY(0);
+}
+
+
+/* Standalone form buttons */
+
+form > button {
+    margin-top: 28px;
+}
+
+
+/* --------------------------------------------------
+   PREVIOUS ANSWERS
+-------------------------------------------------- */
+
+.previous-answer {
+    width: 100%;
+
+    margin-top: 10px;
+    margin-bottom: 24px;
+
+    padding: 24px;
+
+    background-color: var(--surface-light);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-medium);
+
+    text-align: left;
+}
+
+
+.previous-answer p {
+    margin-bottom: 12px;
+}
+
+
+.previous-answer strong {
+    color: var(--gold);
+}
+
+
+.previous-answer hr {
+    margin: 24px 0;
+
+    border: 0;
+    border-top: 1px solid var(--border);
+}
+
+
+/* --------------------------------------------------
+   GUESS LIST
+-------------------------------------------------- */
+
+.guess-list {
+    margin-top: 8px;
+    margin-bottom: 20px;
+
+    padding-left: 25px;
+
+    line-height: 1.8;
+}
+
+
+/* --------------------------------------------------
+   COOKIE DEBUG
+-------------------------------------------------- */
+
+.cookie-debug {
+    width: 100%;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    background-color: var(--surface-light);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-medium);
+
+    text-align: left;
+
+    overflow: hidden;
+}
+
+
+.cookie-debug summary {
+    padding: 17px 20px;
+
+    color: var(--gold);
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition: background-color 0.2s ease;
+}
+
+
+.cookie-debug summary:hover {
+    background-color: var(--gold-soft);
+}
+
+
+.cookie-debug-content {
+    padding: 0 20px 20px;
+}
+
+
+.cookie-debug-content h3 {
+    margin-top: 22px;
+    margin-bottom: 10px;
+
+    color: var(--gold);
+
+    font-size: 15px;
+}
+
+
+.cookie-debug pre {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 15px;
+
+    background-color: #181818;
+
+    color: #e5e5e5;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+
+/* --------------------------------------------------
+   LINKS
+-------------------------------------------------- */
+
+a {
+    color: var(--gold);
+}
+
+
+/* --------------------------------------------------
+   MOBILE
+-------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 16px;
+
+        align-items: flex-start;
+    }
+
+
+    .container {
+        margin-top: 20px;
+
+        padding: 32px 22px;
+
+        border-radius: 18px;
+    }
+
+
+    h1 {
+        font-size: 34px;
+
+        margin-bottom: 30px;
+    }
+
+
+    h2 {
+        font-size: 24px;
+    }
+
+}
+/* --------------------------------------------------
+   GAME START SCREEN
+-------------------------------------------------- */
+
+.game-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 28px;
+}
+
+
+.game-meta-item {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    padding: 16px 18px;
+
+    background-color: var(--surface-light);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+
+    text-align: left;
+}
+
+
+.game-meta-label {
+    color: var(--text-muted);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.8px;
+}
+
+
+.game-meta-value {
+    color: var(--text);
+
+    font-size: 17px;
+    font-weight: 600;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* --------------------------------------------------
+   GAME PROMPT
+-------------------------------------------------- */
+
+.game-prompt {
+    margin-bottom: 24px;
+
+    padding: 16px 20px;
+
+    background-color: var(--gold-soft);
+
+    color: var(--gold);
+
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: var(--radius-small);
+
+    font-size: 17px;
+    font-weight: 650;
+
+    line-height: 1.5;
+}
+
+
+/* --------------------------------------------------
+   GUESS FORM
+-------------------------------------------------- */
+
+.guess-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+.guess-input {
+    height: 58px;
+
+    text-align: center;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+.guess-button {
+    margin-top: 0;
+
+    min-height: 56px;
+}
+
+
+/* --------------------------------------------------
+   MOBILE GAME SCREEN
+-------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .game-meta {
+        grid-template-columns: 1fr;
+    }
+
+
+    .game-meta-item {
+        text-align: center;
+    }
+
+}
+/* --------------------------------------------------
+   GAME STATUS
+-------------------------------------------------- */
+
+.game-status {
+    margin-bottom: 24px;
+}
+
+
+.attempt-text {
+    margin-bottom: 18px;
+
+    color: var(--text-muted);
+
+    font-size: 15px;
+    font-weight: 500;
+}
+
+
+/* --------------------------------------------------
+   STORY / NARRATIVE PANEL
+-------------------------------------------------- */
+
+.story-panel {
+    margin: 24px 0 30px;
+
+    padding: 24px 26px;
+
+    background-color: rgba(0, 0, 0, 0.12);
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-medium);
+
+    text-align: left;
+}
+
+
+.story-panel p {
+    margin: 0 0 20px;
+
+    color: #eeeeee;
+
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+.story-panel p:last-child {
+    margin-bottom: 0;
+}
+
+
+.story-panel strong {
+    color: var(--gold);
+}
+
+
+/* --------------------------------------------------
+   YES / NO CHOICES
+-------------------------------------------------- */
+
+.choice-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+.choice-form button {
+    margin-top: 0;
+}
+/* --------------------------------------------------
+   AVENGE SCREEN
+-------------------------------------------------- */
+
+.avenge-intro {
+    margin-bottom: 24px;
+
+    padding: 16px 20px;
+
+    background-color: var(--gold-soft);
+
+    color: var(--gold);
+
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: var(--radius-small);
+
+    font-size: 16px;
+    font-weight: 650;
+
+    line-height: 1.5;
+}
+
+
+/* --------------------------------------------------
+   AVENGE PANEL
+-------------------------------------------------- */
+
+.avenge-panel {
+    margin-bottom: 26px;
+
+    padding: 24px;
+
+    background-color: rgba(0, 0, 0, 0.12);
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-medium);
+}
+
+
+.avenge-question {
+    margin-bottom: 22px;
+
+    font-size: 17px;
+    font-weight: 600;
+
+    line-height: 1.6;
+}
+
+
+/* --------------------------------------------------
+   COUNTING TEXT
+-------------------------------------------------- */
+
+.counting-text {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+.counting-text span {
+    color: var(--text-muted);
+
+    font-size: 16px;
+
+    line-height: 1.4;
+}
+
+
+.counting-text .count-highlight {
+    color: var(--gold);
+
+    font-weight: 800;
+
+    font-size: 18px;
+}
+
+
+/* --------------------------------------------------
+   AVENGE FORM
+-------------------------------------------------- */
+
+.avenge-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+.avenge-input {
+    height: 58px;
+
+    text-align: center;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.avenge-button {
+    margin-top: 0;
+
+    min-height: 56px;
+}
+/* --------------------------------------------------
+   RESULT SCREENS
+-------------------------------------------------- */
+
+.result-screen {
+    margin-bottom: 28px;
+
+    padding: 30px 26px;
+
+    background-color: rgba(0, 0, 0, 0.12);
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-medium);
+
+    text-align: center;
+}
+
+
+/* --------------------------------------------------
+   RESULT ICON
+-------------------------------------------------- */
+
+.result-icon {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0 auto 20px;
+
+    border-radius: 50%;
+
+    font-size: 30px;
+    font-weight: 800;
+}
+
+
+/* --------------------------------------------------
+   RESULT TITLE
+-------------------------------------------------- */
+
+.result-title {
+    margin-bottom: 14px;
+
+    font-size: 25px;
+}
+
+
+/* --------------------------------------------------
+   RESULT TEXT
+-------------------------------------------------- */
+
+.result-text {
+    max-width: 430px;
+
+    margin: 0 auto;
+
+    color: var(--text);
+
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* --------------------------------------------------
+   SUCCESS
+-------------------------------------------------- */
+
+.result-success {
+    background-color: rgba(255, 215, 0, 0.05);
+
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+
+.result-success .result-icon {
+    color: var(--gold);
+
+    background-color: var(--gold-soft);
+
+    border: 1px solid rgba(255, 215, 0, 0.35);
+}
+
+
+.result-success .result-title {
+    color: var(--gold);
+}
+
+
+/* --------------------------------------------------
+   FAILURE
+-------------------------------------------------- */
+
+.result-failure {
+    background-color: rgba(255, 255, 255, 0.025);
+}
+
+
+.result-failure .result-icon {
+    color: var(--gold);
+
+    background-color: var(--gold-soft);
+
+    border: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+
+.result-failure .result-title {
+    color: var(--gold);
+}
+
+
+/* --------------------------------------------------
+   GAME NOT FOUND
+-------------------------------------------------- */
+
+.result-missing {
+    background-color: rgba(255, 255, 255, 0.025);
+}
+
+
+.result-missing .result-icon {
+    color: var(--text-muted);
+
+    background-color: var(--surface-light);
+
+    border: 1px solid var(--border);
+}
+
+
+.result-missing .result-title {
+    color: var(--text);
+}
+
+/* --------------------------------------------------
+   NARRATIVE INTERLUDE
+-------------------------------------------------- */
+
+.interlude-screen {
+    width: 100%;
+}
+
+
+.interlude-heading {
+    margin-bottom: 24px;
+}
+
+
+.interlude-kicker {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: var(--gold);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+
+.interlude-heading h2 {
+    margin-bottom: 0;
+
+    color: var(--text);
+
+    font-size: 26px;
+}
+
+
+/* --------------------------------------------------
+   STORY PANEL
+-------------------------------------------------- */
+
+.interlude-story {
+    margin-bottom: 28px;
+
+    padding: 28px 30px;
+
+    background-color: rgba(0, 0, 0, 0.14);
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-medium);
+
+    text-align: left;
+}
+
+
+.interlude-story p {
+    margin: 0 0 20px;
+
+    color: #eeeeee;
+
+    font-size: 16px;
+    line-height: 1.75;
+}
+
+
+.interlude-story p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Any existing <strong> text such as speakers */
+.interlude-story strong {
+    color: var(--gold);
+
+    font-weight: 750;
+}
+
+
+/* --------------------------------------------------
+   CROWD / EMPHASIS
+-------------------------------------------------- */
+
+.interlude-story p:has(strong) {
+    padding-left: 14px;
+
+    border-left: 2px solid var(--gold);
+}
+
+
+/* --------------------------------------------------
+   INTERLUDE BUTTON
+-------------------------------------------------- */
+
+.interlude-button {
+    margin-top: 0;
+}
+
+
+/* --------------------------------------------------
+   MOBILE
+-------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .interlude-story {
+        padding: 22px 20px;
+    }
+
+
+    .interlude-story p {
+        font-size: 15px;
+    }
+
+}
+
+/* --------------------------------------------------
+   CODE EDITOR / JSON VIEW
+-------------------------------------------------- */
+
+.code-editor {
+    margin-top: 10px;
+
+    background-color: #1e1e1e;
+
+    border: 1px solid #2f2f2f;
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+.code-editor-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 14px;
+
+    background-color: #252526;
+
+    border-bottom: 1px solid #333333;
+}
+
+
+.code-dot {
+    width: 12px;
+    height: 12px;
+
+    border-radius: 50%;
+
+    display: inline-block;
+}
+
+
+.code-dot.red {
+    background-color: #ff5f56;
+}
+
+
+.code-dot.yellow {
+    background-color: #ffbd2e;
+}
+
+
+.code-dot.green {
+    background-color: #27c93f;
+}
+
+
+.code-editor-title {
+    margin-left: 8px;
+
+    color: #c5c5c5;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.code-editor-body {
+    margin: 0;
+    padding: 18px 20px;
+
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+
+    font-family:
+        Consolas,
+        "Courier New",
+        monospace;
+
+    font-size: 14px;
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+
+/* JSON syntax colours */
+
+.json-key {
+    color: #9cdcfe;
+}
+
+
+.json-string {
+    color: #ce9178;
+}
+
+
+.json-number {
+    color: #b5cea8;
+}
+
+
+.json-boolean {
+    color: #569cd6;
+}
+
+
+.json-null {
+    color: #569cd6;
+}
+
+
+.json-brace {
+    color: #d4d4d4;
+}

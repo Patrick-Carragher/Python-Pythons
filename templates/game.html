@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+{% if view == "start" %}
+
+    <div class="game-meta">
+
+        <div class="game-meta-item">
+            <span class="game-meta-label">
+                Name
+            </span>
+
+            <span class="game-meta-value">
+                {{ name }}
+            </span>
+        </div>
+
+
+        <div class="game-meta-item">
+            <span class="game-meta-label">
+                Quest
+            </span>
+
+            <span class="game-meta-value">
+                {{ quest }}
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="game-prompt">
+        Guess a number between 1 and 20, thou silly English kniggit!
+    </div>
+
+
+    <form
+        action="/guess"
+        method="post"
+        class="guess-form"
+    >
+
+        <input
+            type="hidden"
+            name="game_id"
+            value="{{ game_id }}"
+        >
+
+        <input
+            type="number"
+            name="guess"
+            min="1"
+            max="20"
+            required
+            autofocus
+            class="guess-input"
+        >
+
+        <button
+            type="submit"
+            class="guess-button"
+        >
+            Guess, thou silly English type!
+        </button>
+
+    </form>
+
+{% elif view == "guess_again" %}
+
+    <p>
+        Attempt {{ attempts }} of 3
+    </p>
+
+    <div class="message">
+        {{ result }}
+    </div>
+
+    <form
+        action="/guess"
+        method="post"
+    >
+
+        <input
+            type="hidden"
+            name="game_id"
+            value="{{ game_id }}"
+        >
+
+        <input
+            type="number"
+            name="guess"
+            min="1"
+            max="20"
+            required
+            autofocus
+        >
+
+        <br>
+
+        <button type="submit">
+            Guess, or i shall taunt you a second time!
+        </button>
+
+    </form>
+
+
+{% elif view == "correct" %}
+
+    <p>
+        Attempt {{ attempts }} of 3. Do try not to cock it up.
+    </p>
+
+    <div class="message">
+        Right then. Off you go!
+    </div>
+
+    <a
+        href="/"
+        class="button-link"
+    >
+        Have another go!
+    </a>
+
+
+{% elif view == "lost" %}
+
+    <div class="game-status">
+
+        <p class="attempt-text">
+            Attempt {{ attempts }} of three. Do try not to cock it up.
+        </p>
+
+        <div class="message">
+            {{ result }}
+        </div>
+
+    </div>
+
+
+    <div class="story-panel">
+
+        <p>
+            The Beast of Caerbannog hath devoured thee, {{ name }}.
+            Bit of a nuisance, really.
+        </p>
+
+        <p>
+            The correct number was <strong>{{ secret_number }}</strong>!
+            Alas, the animator remains in perfectly good health.
+            Thou art doomed!
+        </p>
+
+        <p>
+            But perhaps thy friends might avenge thee.
+            Or perish in a similarly embarrassing fashion.
+            Care to try?
+        </p>
+
+    </div>
+
+
+    <form
+        action="/avenge"
+        method="post"
+        class="choice-form"
+    >
+
+        <input
+            type="hidden"
+            name="game_id"
+            value="{{ game_id }}"
+        >
+
+        <button
+            type="submit"
+            name="answer"
+            value="yes"
+        >
+            Yes
+        </button>
+
+        <button
+            type="submit"
+            name="answer"
+            value="no"
+        >
+            No
+        </button>
+
+    </form>
+
+
+{% elif view == "avenge" %}
+
+    <div class="avenge-intro">
+        You have chosen the path of the Holy Hand Grenade of Antioch!
+    </div>
+
+
+    <div class="avenge-panel">
+
+        <p class="avenge-question">
+            To what number shalt thou count before thou throwest the grenade?
+        </p>
+
+
+        <div class="counting-text">
+            <span>One...</span>
+            <span>Two...</span>
+            <span class="count-highlight">Three!</span>
+            <span>Four—no, not four.</span>
+            <span>And five is right out!</span>
+        </div>
+
+    </div>
+
+
+    <form
+        action="/throw"
+        method="post"
+        class="avenge-form"
+    >
+
+        <input
+            type="hidden"
+            name="game_id"
+            value="{{ game_id }}"
+        >
+
+
+        <input
+            type="text"
+            name="throw"
+            placeholder="Your answer"
+            required
+            autofocus
+            class="avenge-input"
+        >
+
+
+        <button
+            type="submit"
+            class="avenge-button"
+        >
+            Answer
+        </button>
+
+    </form>
+
+{% elif view == "throw_correct" %}
+
+    <div class="result-screen result-success">
+
+        <div class="result-icon">
+            ✓
+        </div>
+
+        <h2 class="result-title">
+            Victory!
+        </h2>
+
+        <p class="result-text">
+            Correct! The Killer Rabbit of Caerbannog is vanquished!
+        </p>
+
+    </div>
+
+
+    <a
+        href="/"
+        class="button-link"
+    >
+        Play again
+    </a>
+
+
+{% elif view == "throw_incorrect" %}
+
+    <div class="result-screen result-failure">
+
+        <div class="result-icon">
+            ×
+        </div>
+
+        <h2 class="result-title">
+            Disaster!
+        </h2>
+
+        <p class="result-text">
+            Incorrect! Your friends perish horribly, and the beast's already considerable reputation becomes even more considerable!
+        </p>
+
+    </div>
+
+
+    <a
+        href="/"
+        class="button-link"
+    >
+        Play again
+    </a>
+
+
+{% elif view == "not_found" %}
+
+    <div class="result-screen result-missing">
+
+        <div class="result-icon">
+            ?
+        </div>
+
+        <h2 class="result-title">
+            Something went wrong
+        </h2>
+
+        <p class="result-text">
+            Game not found! Perhaps it was eaten by a rabbit.
+        </p>
+
+    </div>
+
+
+    <a
+        href="/"
+        class="button-link"
+    >
+        Have another go, then!
+    </a>
+
+
+{% endif %}
+
+
+{% endblock %}

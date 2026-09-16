@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<form
+    action="/start"
+    method="post"
+>
+
+    <p>
+        What, is your name?
+    </p>
+
+    <input
+        type="text"
+        name="name"
+        required
+    >
+
+
+    <p>
+        What, is your quest?
+    </p>
+
+    <input
+        type="text"
+        name="quest"
+        required
+    >
+
+
+    <div class="buttons">
+
+        <button type="submit">
+            Continue
+        </button>
+
+
+        {% if has_previous_game %}
+
+            <a
+                href="/previous"
+                class="button-link"
+            >
+                What... was thy previous answer?
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</form>
+
+{% endblock %}
