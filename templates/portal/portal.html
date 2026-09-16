@@ -2,6 +2,7 @@
 <html lang="sv">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -20,10 +21,12 @@
         src="{{ url_for('static', path='/portal/portal.js') }}"
         defer
     ></script>
+
 </head>
 
 
 <body>
+
 
 <header class="portal-header">
 
@@ -64,6 +67,7 @@
 
     <section class="apps-section">
 
+
         <div class="section-heading">
 
             <div>
@@ -84,9 +88,13 @@
                 {{ apps | length }}
 
                 {% if apps | length == 1 %}
+
                     app
+
                 {% else %}
+
                     appar
+
                 {% endif %}
 
             </span>
@@ -98,18 +106,23 @@
 
             {% for app in apps %}
 
+
                 <div class="app-card-wrapper">
+
 
                     <a
                         href="{{ app.url }}"
                         class="app-card"
                     >
 
+
                         <div
                             class="app-thumbnail {{ app.theme }}-thumbnail"
                         >
 
+
                             {% if app.image %}
+
 
                                 <img
                                     src="{{ app.image }}"
@@ -117,43 +130,57 @@
                                     class="app-thumbnail-image"
                                 >
 
+
                             {% elif app.theme == "numbers" %}
+
 
                                 <div class="thumbnail-number">
                                     ?
                                 </div>
 
+
                             {% elif app.theme == "pdf" %}
 
+
                                 <div class="document-icon">
+
                                     <span></span>
                                     <span></span>
                                     <span></span>
+
                                 </div>
 
+
                             {% else %}
+
 
                                 <div class="generic-icon">
                                     APP
                                 </div>
+
 
                             {% endif %}
 
 
                             {% if app.thumbnail_label %}
 
+
                                 <span class="thumbnail-label">
                                     {{ app.thumbnail_label }}
                                 </span>
 
+
                             {% endif %}
+
 
                         </div>
 
 
                         <div class="app-content">
 
+
                             <div class="app-title-row">
+
 
                                 <h3>
                                     {{ app.title }}
@@ -162,17 +189,22 @@
 
                                 {% if app.badge %}
 
+
                                     <span class="coming-soon-badge">
                                         {{ app.badge }}
                                     </span>
 
+
                                 {% else %}
+
 
                                     <span class="app-arrow">
                                         →
                                     </span>
 
+
                                 {% endif %}
+
 
                             </div>
 
@@ -184,17 +216,23 @@
 
                             <div class="tags">
 
+
                                 {% for tag in app.tags %}
+
 
                                     <span>
                                         {{ tag }}
                                     </span>
 
+
                                 {% endfor %}
+
 
                             </div>
 
+
                         </div>
+
 
                     </a>
 
@@ -207,7 +245,9 @@
                         ✎ Redigera
                     </button>
 
+
                 </div>
+
 
             {% endfor %}
 
@@ -227,7 +267,12 @@
 </footer>
 
 
+<!-- ------------------------------------------------ -->
+<!-- FLOATING ADMIN BUTTONS                           -->
+<!-- ------------------------------------------------ -->
+
 <div class="portal-admin-actions">
+
 
     <button
         type="button"
@@ -246,10 +291,13 @@
         ✎ Redigera
     </button>
 
+
 </div>
 
 
-<!-- Modal -->
+<!-- ------------------------------------------------ -->
+<!-- CREATE / EDIT MODAL                              -->
+<!-- ------------------------------------------------ -->
 
 <div
     id="card-modal"
@@ -257,9 +305,12 @@
     hidden
 >
 
+
     <div class="modal-panel">
 
+
         <div class="modal-header">
+
 
             <h2 id="modal-title">
                 Redigera kort
@@ -270,9 +321,11 @@
                 type="button"
                 id="modal-close"
                 class="modal-close"
+                aria-label="Stäng"
             >
                 ×
             </button>
+
 
         </div>
 
@@ -285,6 +338,7 @@
             class="card-form"
         >
 
+
             <input
                 type="hidden"
                 id="app-id"
@@ -292,7 +346,10 @@
             >
 
 
+            <!-- TITLE -->
+
             <label>
+
                 Titel
 
                 <input
@@ -301,10 +358,35 @@
                     name="title"
                     required
                 >
+
             </label>
 
 
+            <!-- SLUG -->
+
+            <label id="slug-wrapper">
+
+                App-ID / slug
+
+                <input
+                    type="text"
+                    id="card-slug"
+                    name="slug"
+                    placeholder="Lämna tomt för att skapa automatiskt"
+                >
+
+                <small>
+                    Används när en ny app skapas.
+                    Exempel: qr-generator.
+                </small>
+
+            </label>
+
+
+            <!-- DESCRIPTION -->
+
             <label>
+
                 Beskrivning
 
                 <textarea
@@ -312,51 +394,70 @@
                     name="description"
                     rows="4"
                 ></textarea>
+
             </label>
 
 
-            <label>
+            <!-- URL -->
+
+            <label id="url-wrapper">
+
                 Länk
 
                 <input
                     type="text"
                     id="card-url"
                     name="url"
-                    placeholder="/min-app"
-                    required
+                    placeholder="/pdf"
                 >
+
+                <small id="url-help">
+                    Nya appar får länken automatiskt.
+                </small>
+
             </label>
 
 
+            <!-- BADGE + THUMBNAIL LABEL -->
+
             <div class="form-row">
 
+
                 <label>
+
                     Badge
 
                     <input
                         type="text"
                         id="card-badge"
                         name="badge"
-                        placeholder="Ny"
+                        placeholder="Exempel: Ny"
                     >
+
                 </label>
 
 
                 <label>
+
                     Thumbnail-text
 
                     <input
                         type="text"
                         id="thumbnail-label"
                         name="thumbnail_label"
-                        placeholder="PDF"
+                        placeholder="Exempel: PDF"
                     >
+
                 </label>
+
 
             </div>
 
 
+            <!-- TAGS -->
+
             <label>
+
                 Tags
 
                 <input
@@ -367,20 +468,26 @@
                 >
 
                 <small>
-                    Separera med kommatecken.
+                    Separera tags med kommatecken.
                 </small>
+
             </label>
 
 
+            <!-- THEME + ORDER -->
+
             <div class="form-row">
 
+
                 <label>
+
                     Thumbnail-typ
 
                     <select
                         id="card-theme"
                         name="theme"
                     >
+
                         <option value="generic">
                             Standard
                         </option>
@@ -392,11 +499,14 @@
                         <option value="pdf">
                             PDF
                         </option>
+
                     </select>
+
                 </label>
 
 
                 <label>
+
                     Ordning
 
                     <input
@@ -405,12 +515,17 @@
                         name="order"
                         min="1"
                     >
+
                 </label>
+
 
             </div>
 
 
+            <!-- IMAGE -->
+
             <label>
+
                 Egen bild
 
                 <input
@@ -421,10 +536,13 @@
                 >
 
                 <small>
-                    Max 5 MB. Lämna tomt för att behålla befintlig bild.
+                    PNG, JPG, JPEG eller WEBP. Max 5 MB.
                 </small>
+
             </label>
 
+
+            <!-- IMAGE PREVIEW -->
 
             <div
                 id="image-preview-wrapper"
@@ -441,16 +559,23 @@
             </div>
 
 
+            <!-- IMAGE ALT -->
+
             <label>
+
                 Bildbeskrivning
 
                 <input
                     type="text"
                     id="image-alt"
                     name="image_alt"
+                    placeholder="Beskriv bilden"
                 >
+
             </label>
 
+
+            <!-- REMOVE IMAGE -->
 
             <label
                 id="remove-image-wrapper"
@@ -470,7 +595,10 @@
             </label>
 
 
+            <!-- BUTTONS -->
+
             <div class="modal-actions">
+
 
                 <button
                     type="button"
@@ -488,14 +616,22 @@
                     Spara
                 </button>
 
+
             </div>
+
 
         </form>
 
+
     </div>
+
 
 </div>
 
+
+<!-- ------------------------------------------------ -->
+<!-- APP DATA FOR JAVASCRIPT                          -->
+<!-- ------------------------------------------------ -->
 
 <script
     id="apps-data"
@@ -504,5 +640,7 @@
 {{ apps | tojson }}
 </script>
 
+
 </body>
+
 </html>

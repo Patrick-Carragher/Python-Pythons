@@ -15,7 +15,8 @@
         "theme": "numbers",
         "image": null,
         "image_alt": "",
-        "order": 1
+        "order": 1,
+        "generated": false
     },
     {
         "id": "pdf-generator",
@@ -32,6 +33,8 @@
         "theme": "pdf",
         "image": null,
         "image_alt": "",
-        "order": 2
+        "order": 2,
+        "generated": false
     }
+
 ]
