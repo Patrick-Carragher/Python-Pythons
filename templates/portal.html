@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Python Testbed</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/portal.css') }}"
+    >
+</head>
+
+<body>
+
+<header class="portal-header">
+    <div class="header-content">
+        <div>
+            <span class="eyebrow">Python Testbed</span>
+            <h1>Vad ska vi testa idag?</h1>
+
+            <p>
+                En samling små proof-of-concepts, experiment och demonstrationer
+                byggda för att testa vad vi kan göra med Python och webben.
+            </p>
+        </div>
+
+        <div class="status">
+            <span class="status-dot"></span>
+            Testmiljö
+        </div>
+    </div>
+</header>
+
+<main class="portal-main">
+
+    <section class="apps-section">
+
+        <div class="section-heading">
+            <div>
+                <span class="section-label">APPLIKATIONER</span>
+                <h2>Testa något</h2>
+            </div>
+
+            <span class="app-count">2 appar</span>
+        </div>
+
+
+        <div class="app-grid">
+
+            <!-- Numbers à la Python -->
+            <a href="{{ url_for('home') }}" class="app-card">
+
+                <div class="app-thumbnail numbers-thumbnail">
+
+                    <div class="thumbnail-number">
+                        ?
+                    </div>
+
+                    <span class="thumbnail-label">
+                        1—20
+                    </span>
+
+                </div>
+
+                <div class="app-content">
+
+                    <div class="app-title-row">
+                        <h3>Numbers, à la Python</h3>
+
+                        <span class="app-arrow">
+                            →
+                        </span>
+                    </div>
+
+                    <p>
+                        Ett litet nummerspel som demonstrerar FastAPI,
+                        formulär, sessionsdata och cookies.
+                    </p>
+
+                    <div class="tags">
+                        <span>Python</span>
+                        <span>FastAPI</span>
+                        <span>Cookies</span>
+                        <span>Jinja2</span>
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- PDF Generator -->
+            <div class="app-card coming-soon">
+
+                <div class="app-thumbnail pdf-thumbnail">
+
+                    <div class="document-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <span class="thumbnail-label">
+                        PDF
+                    </span>
+
+                </div>
+
+                <div class="app-content">
+
+                    <div class="app-title-row">
+                        <h3>PDF Generator</h3>
+
+                        <span class="coming-soon-badge">
+                            Nästa
+                        </span>
+                    </div>
+
+                    <p>
+                        Skapa ett dokument från ett webbformulär och generera
+                        en färdig PDF direkt från Python.
+                    </p>
+
+                    <div class="tags">
+                        <span>Python</span>
+                        <span>PDF</span>
+                        <span>FastAPI</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="portal-footer">
+    <p>Python Testbed</p>
+</footer>
+
+</body>
+</html>

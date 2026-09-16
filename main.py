@@ -78,26 +78,24 @@ def format_time(timestamp):
 # --------------------------------------------------
 
 @app.get("/")
-def home(
-        request: Request
-):
-
-    cookie_value = request.cookies.get(
-        COOKIE_NAME
+def portal(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="portal.html",
+        context={}
     )
 
-    previous_game = decode_cookie(
-        cookie_value
-    )
+
+@app.get("/numbers")
+def home(request: Request):
+    cookie_value = request.cookies.get(COOKIE_NAME)
+    previous_game = decode_cookie(cookie_value)
 
     return templates.TemplateResponse(
         request=request,
         name="home.html",
-        context={
-            "has_previous_game": previous_game is not None
-        }
+        context={"has_previous_game": previous_game is not None}
     )
-
 
 # --------------------------------------------------
 # PREVIOUS ANSWER PAGE
