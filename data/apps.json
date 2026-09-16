@@ -23,7 +23,7 @@
         "title": "PDF Generator",
         "description": "Skapa ett dokument från ett webbformulär och generera en färdig PDF direkt från Python.",
         "url": "/pdf",
-        "badge": "Nästa",
+        "badge": "Pågående",
         "tags": [
             "Python",
             "FastAPI",
@@ -41,7 +41,7 @@
         "title": "Session & Secure Cookie Demo",
         "description": "Test av server-side sessions, HttpOnly, SameSite och Secure cookies.",
         "url": "/apps/session-cookie-demo",
-        "badge": "Ny",
+        "badge": "",
         "tags": [
             "Python",
             "FastAPI",
