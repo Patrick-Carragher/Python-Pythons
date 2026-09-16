@@ -1,4 +1,5 @@
 import json
+import socket
 
 from datetime import datetime
 
@@ -125,6 +126,28 @@ def portal(
         }
     )
 
+
+
+@app.on_event("startup")
+def show_urls():
+
+    hostname = socket.gethostname()
+
+    local_ip = socket.gethostbyname(hostname)
+
+    print()
+    print("========================================")
+    print("Python Testbed")
+    print("========================================")
+    print()
+    print("Öppna lokalt:")
+    print("http://127.0.0.1:8000")
+    print()
+    print("Öppna från annan enhet på samma nätverk:")
+    print(f"http://{local_ip}:8000")
+    print()
+    print("========================================")
+    print()
 
 # --------------------------------------------------
 # GENERATED APP ROUTE
