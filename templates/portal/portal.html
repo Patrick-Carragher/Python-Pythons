@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Python Testbed</title>
 
@@ -10,14 +16,24 @@
         rel="stylesheet"
         href="{{ url_for('static', path='/portal/portal.css') }}"
     >
+
+    <script
+        src="{{ url_for('static', path='/portal/portal.js') }}"
+        defer
+    ></script>
+
 </head>
+
 
 <body>
 
+
 <header class="portal-header">
+
     <div class="header-content">
 
         <div>
+
             <span class="eyebrow">
                 Python Testbed
             </span>
@@ -30,14 +46,20 @@
                 En samling små proof-of-concepts, experiment och demonstrationer
                 byggda för att testa vad vi kan göra med Python och webben.
             </p>
+
         </div>
 
+
         <div class="status">
+
             <span class="status-dot"></span>
+
             Testmiljö
+
         </div>
 
     </div>
+
 </header>
 
 
@@ -45,9 +67,11 @@
 
     <section class="apps-section">
 
+
         <div class="section-heading">
 
             <div>
+
                 <span class="section-label">
                     APPLIKATIONER
                 </span>
@@ -55,10 +79,24 @@
                 <h2>
                     Testa något
                 </h2>
+
             </div>
 
+
             <span class="app-count">
-                2 appar
+
+                {{ apps | length }}
+
+                {% if apps | length == 1 %}
+
+                    app
+
+                {% else %}
+
+                    appar
+
+                {% endif %}
+
             </span>
 
         </div>
@@ -66,109 +104,152 @@
 
         <div class="app-grid">
 
-            <!-- Numbers à la Python -->
-            <a
-                href="{{ url_for('home') }}"
-                class="app-card"
-            >
+            {% for app in apps %}
 
-                <div class="app-thumbnail numbers-thumbnail">
 
-                    <div class="thumbnail-number">
-                        ?
-                    </div>
+                <div class="app-card-wrapper">
 
-                    <span class="thumbnail-label">
-                        1—20
-                    </span>
+
+                    <a
+                        href="{{ app.url }}"
+                        class="app-card"
+                    >
+
+
+                        <div
+                            class="app-thumbnail {{ app.theme }}-thumbnail"
+                        >
+
+
+                            {% if app.image %}
+
+
+                                <img
+                                    src="{{ app.image }}"
+                                    alt="{{ app.image_alt or app.title }}"
+                                    class="app-thumbnail-image"
+                                >
+
+
+                            {% elif app.theme == "numbers" %}
+
+
+                                <div class="thumbnail-number">
+                                    ?
+                                </div>
+
+
+                            {% elif app.theme == "pdf" %}
+
+
+                                <div class="document-icon">
+
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+
+                                </div>
+
+
+                            {% else %}
+
+
+                                <div class="generic-icon">
+                                    APP
+                                </div>
+
+
+                            {% endif %}
+
+
+                            {% if app.thumbnail_label %}
+
+
+                                <span class="thumbnail-label">
+                                    {{ app.thumbnail_label }}
+                                </span>
+
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <div class="app-content">
+
+
+                            <div class="app-title-row">
+
+
+                                <h3>
+                                    {{ app.title }}
+                                </h3>
+
+
+                                {% if app.badge %}
+
+
+                                    <span class="coming-soon-badge">
+                                        {{ app.badge }}
+                                    </span>
+
+
+                                {% else %}
+
+
+                                    <span class="app-arrow">
+                                        →
+                                    </span>
+
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                            <p>
+                                {{ app.description }}
+                            </p>
+
+
+                            <div class="tags">
+
+
+                                {% for tag in app.tags %}
+
+
+                                    <span>
+                                        {{ tag }}
+                                    </span>
+
+
+                                {% endfor %}
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </a>
+
+
+                    <button
+                        type="button"
+                        class="card-edit-button"
+                        data-app-id="{{ app.id }}"
+                    >
+                        ✎ Redigera
+                    </button>
+
 
                 </div>
 
 
-                <div class="app-content">
-
-                    <div class="app-title-row">
-
-                        <h3>
-                            Numbers, à la Python
-                        </h3>
-
-                        <span class="app-arrow">
-                            →
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        Ett litet nummerspel som demonstrerar FastAPI,
-                        formulär, sessionsdata och cookies.
-                    </p>
-
-
-                    <div class="tags">
-                        <span>Python</span>
-                        <span>FastAPI</span>
-                        <span>Cookies</span>
-                        <span>Jinja2</span>
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <!-- PDF Generator -->
-            <a
-                href="/pdf"
-                class="app-card"
-            >
-
-                <div class="app-thumbnail pdf-thumbnail">
-
-                    <div class="document-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-
-                    <span class="thumbnail-label">
-                        PDF
-                    </span>
-
-                </div>
-
-
-                <div class="app-content">
-
-                    <div class="app-title-row">
-
-                        <h3>
-                            PDF Generator
-                        </h3>
-
-                        <span class="coming-soon-badge">
-                            Nästa
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        Skapa ett dokument från ett webbformulär och generera
-                        en färdig PDF direkt från Python.
-                    </p>
-
-                    <!-- Vilka tekniker som används Uppdatera vid behov -->
-                    <div class="tags">
-                        <span>Python</span>
-                        <span>FastAPI</span>
-                        <span>Lägg till fler vid behov.</span>
-                    </div>
-
-                </div>
-
-            </a>
+            {% endfor %}
 
         </div>
 
@@ -178,10 +259,388 @@
 
 
 <footer class="portal-footer">
+
     <p>
         Python Testbed
     </p>
+
 </footer>
 
+
+<!-- ------------------------------------------------ -->
+<!-- FLOATING ADMIN BUTTONS                           -->
+<!-- ------------------------------------------------ -->
+
+<div class="portal-admin-actions">
+
+
+    <button
+        type="button"
+        id="new-card-button"
+        class="admin-create-button"
+    >
+        + Nytt kort
+    </button>
+
+
+    <button
+        type="button"
+        id="admin-toggle"
+        class="admin-toggle"
+    >
+        ✎ Redigera
+    </button>
+
+
+</div>
+
+
+<!-- ------------------------------------------------ -->
+<!-- CREATE / EDIT MODAL                              -->
+<!-- ------------------------------------------------ -->
+
+<div
+    id="card-modal"
+    class="modal-backdrop"
+    hidden
+>
+
+
+    <div class="modal-panel">
+
+
+        <div class="modal-header">
+
+
+            <h2 id="modal-title">
+                Redigera kort
+            </h2>
+
+
+            <button
+                type="button"
+                id="modal-close"
+                class="modal-close"
+                aria-label="Stäng"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+
+        <form
+            id="card-form"
+            action="/portal/cards/save"
+            method="post"
+            enctype="multipart/form-data"
+            class="card-form"
+        >
+
+
+            <input
+                type="hidden"
+                id="app-id"
+                name="app_id"
+            >
+
+
+            <!-- TITLE -->
+
+            <label>
+
+                Titel
+
+                <input
+                    type="text"
+                    id="card-title"
+                    name="title"
+                    required
+                >
+
+            </label>
+
+
+            <!-- SLUG -->
+
+            <label id="slug-wrapper">
+
+                App-ID / slug
+
+                <input
+                    type="text"
+                    id="card-slug"
+                    name="slug"
+                    placeholder="Lämna tomt för att skapa automatiskt"
+                >
+
+                <small>
+                    Används när en ny app skapas.
+                    Exempel: qr-generator.
+                </small>
+
+            </label>
+
+
+            <!-- DESCRIPTION -->
+
+            <label>
+
+                Beskrivning
+
+                <textarea
+                    id="card-description"
+                    name="description"
+                    rows="4"
+                ></textarea>
+
+            </label>
+
+
+            <!-- URL -->
+
+            <label id="url-wrapper">
+
+                Länk
+
+                <input
+                    type="text"
+                    id="card-url"
+                    name="url"
+                    placeholder="/pdf"
+                >
+
+                <small id="url-help">
+                    Nya appar får länken automatiskt.
+                </small>
+
+            </label>
+
+
+            <!-- BADGE + THUMBNAIL LABEL -->
+
+            <div class="form-row">
+
+
+                <label>
+
+                    Badge
+
+                    <input
+                        type="text"
+                        id="card-badge"
+                        name="badge"
+                        placeholder="Exempel: Ny"
+                    >
+
+                </label>
+
+
+                <label>
+
+                    Thumbnail-text
+
+                    <input
+                        type="text"
+                        id="thumbnail-label"
+                        name="thumbnail_label"
+                        placeholder="Exempel: PDF"
+                    >
+
+                </label>
+
+
+            </div>
+
+
+            <!-- TAGS -->
+
+            <label>
+
+                Tags
+
+                <input
+                    type="text"
+                    id="card-tags"
+                    name="tags"
+                    placeholder="Python, FastAPI, PDF"
+                >
+
+                <small>
+                    Separera tags med kommatecken.
+                </small>
+
+            </label>
+
+
+            <!-- THEME + ORDER -->
+
+            <div class="form-row">
+
+
+                <label>
+
+                    Thumbnail-typ
+
+                    <select
+                        id="card-theme"
+                        name="theme"
+                    >
+
+                        <option value="generic">
+                            Standard
+                        </option>
+
+                        <option value="numbers">
+                            Numbers
+                        </option>
+
+                        <option value="pdf">
+                            PDF
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <label>
+
+                    Ordning
+
+                    <input
+                        type="number"
+                        id="card-order"
+                        name="order"
+                        min="1"
+                    >
+
+                </label>
+
+
+            </div>
+
+
+            <!-- IMAGE -->
+
+            <label>
+
+                Egen bild
+
+                <input
+                    type="file"
+                    id="card-image"
+                    name="image"
+                    accept="image/png,image/jpeg,image/webp"
+                >
+
+                <small>
+                    PNG, JPG, JPEG eller WEBP. Max 5 MB.
+                </small>
+
+            </label>
+
+
+            <!-- IMAGE PREVIEW -->
+
+            <div
+                id="image-preview-wrapper"
+                class="image-preview-wrapper"
+                hidden
+            >
+
+                <img
+                    id="image-preview"
+                    class="image-preview"
+                    alt="Förhandsvisning"
+                >
+
+            </div>
+
+
+            <!-- IMAGE ALT -->
+
+            <label>
+
+                Bildbeskrivning
+
+                <input
+                    type="text"
+                    id="image-alt"
+                    name="image_alt"
+                    placeholder="Beskriv bilden"
+                >
+
+            </label>
+
+
+            <!-- REMOVE IMAGE -->
+
+            <label
+                id="remove-image-wrapper"
+                class="checkbox-label"
+                hidden
+            >
+
+                <input
+                    type="checkbox"
+                    id="remove-image"
+                    name="remove_image"
+                    value="true"
+                >
+
+                Ta bort nuvarande bild
+
+            </label>
+
+
+            <!-- BUTTONS -->
+
+            <div class="modal-actions">
+
+
+                <button
+                    type="button"
+                    id="modal-cancel"
+                    class="secondary-button"
+                >
+                    Avbryt
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Spara
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- ------------------------------------------------ -->
+<!-- APP DATA FOR JAVASCRIPT                          -->
+<!-- ------------------------------------------------ -->
+
+<script
+    id="apps-data"
+    type="application/json"
+>
+{{ apps | tojson }}
+</script>
+
+
 </body>
+
 </html>

@@ -25,6 +25,10 @@
 }
 
 
+/* ------------------------------------------------ */
+/* BODY                                             */
+/* ------------------------------------------------ */
+
 body {
     min-height: 100vh;
 
@@ -48,7 +52,7 @@ body {
 
 
 /* ------------------------------------------------ */
-/* Header                                           */
+/* HEADER                                           */
 /* ------------------------------------------------ */
 
 .portal-header {
@@ -81,6 +85,7 @@ body {
     font-weight: 750;
 
     letter-spacing: 1.5px;
+
     text-transform: uppercase;
 }
 
@@ -90,7 +95,12 @@ body {
 
     margin-bottom: 18px;
 
-    font-size: clamp(38px, 6vw, 64px);
+    font-size: clamp(
+        38px,
+        6vw,
+        64px
+    );
+
     line-height: 1.05;
 
     letter-spacing: -2px;
@@ -106,6 +116,10 @@ body {
     line-height: 1.7;
 }
 
+
+/* ------------------------------------------------ */
+/* STATUS                                           */
+/* ------------------------------------------------ */
 
 .status {
     display: flex;
@@ -127,7 +141,8 @@ body {
     font-size: 13px;
     font-weight: 650;
 
-    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+    box-shadow:
+        0 2px 8px rgba(16, 24, 40, 0.04);
 }
 
 
@@ -139,12 +154,13 @@ body {
 
     border-radius: 50%;
 
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+    box-shadow:
+        0 0 0 4px rgba(34, 197, 94, 0.12);
 }
 
 
 /* ------------------------------------------------ */
-/* Main                                             */
+/* MAIN                                             */
 /* ------------------------------------------------ */
 
 .portal-main {
@@ -153,7 +169,10 @@ body {
 
     margin: 0 auto;
 
-    padding: 0 28px 80px;
+    padding:
+        0
+        28px
+        80px;
 }
 
 
@@ -161,6 +180,10 @@ body {
     width: 100%;
 }
 
+
+/* ------------------------------------------------ */
+/* SECTION HEADER                                   */
+/* ------------------------------------------------ */
 
 .section-heading {
     display: flex;
@@ -189,6 +212,7 @@ body {
 
 .section-heading h2 {
     font-size: 26px;
+
     letter-spacing: -0.6px;
 }
 
@@ -201,25 +225,43 @@ body {
 
 
 /* ------------------------------------------------ */
-/* App grid                                         */
+/* GRID                                             */
 /* ------------------------------------------------ */
 
 .app-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(auto-fit, minmax(320px, 1fr));
+        repeat(
+            auto-fit,
+            minmax(320px, 1fr)
+        );
 
     gap: 24px;
 }
 
 
 /* ------------------------------------------------ */
-/* Cards                                            */
+/* CARD WRAPPER                                     */
+/* ------------------------------------------------ */
+
+.app-card-wrapper {
+    position: relative;
+
+    min-width: 0;
+
+    height: 100%;
+}
+
+
+/* ------------------------------------------------ */
+/* CARD                                             */
 /* ------------------------------------------------ */
 
 .app-card {
     display: block;
+
+    height: 100%;
 
     overflow: hidden;
 
@@ -229,6 +271,7 @@ body {
     border-radius: var(--radius);
 
     color: inherit;
+
     text-decoration: none;
 
     box-shadow: var(--shadow);
@@ -251,6 +294,10 @@ a.app-card:hover {
 }
 
 
+/* ------------------------------------------------ */
+/* THUMBNAIL                                        */
+/* ------------------------------------------------ */
+
 .app-thumbnail {
     position: relative;
 
@@ -265,7 +312,7 @@ a.app-card:hover {
 
 
 /* ------------------------------------------------ */
-/* Numbers thumbnail                                */
+/* NUMBERS THUMBNAIL                                */
 /* ------------------------------------------------ */
 
 .numbers-thumbnail {
@@ -307,7 +354,7 @@ a.app-card:hover {
 
 
 /* ------------------------------------------------ */
-/* PDF thumbnail                                    */
+/* PDF THUMBNAIL                                    */
 /* ------------------------------------------------ */
 
 .pdf-thumbnail {
@@ -365,17 +412,82 @@ a.app-card:hover {
 }
 
 
+/* ------------------------------------------------ */
+/* GENERIC THUMBNAIL                                */
+/* ------------------------------------------------ */
+
+.generic-thumbnail {
+    background:
+        radial-gradient(
+            circle at 30% 30%,
+            rgba(37, 99, 235, 0.25),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #172554,
+            #1d4ed8
+        );
+}
+
+
+.generic-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 92px;
+    height: 92px;
+
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 22px;
+
+    color: white;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+/* ------------------------------------------------ */
+/* CUSTOM IMAGE                                     */
+/* ------------------------------------------------ */
+
+.app-thumbnail-image {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* ------------------------------------------------ */
+/* THUMBNAIL LABEL                                  */
+/* ------------------------------------------------ */
+
 .thumbnail-label {
     position: absolute;
 
     right: 17px;
     bottom: 14px;
 
+    z-index: 2;
+
     padding: 6px 10px;
 
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color:
+        rgba(0, 0, 0, 0.35);
 
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.15);
+
     border-radius: 999px;
 
     color: white;
@@ -390,7 +502,7 @@ a.app-card:hover {
 
 
 /* ------------------------------------------------ */
-/* Card content                                     */
+/* CARD CONTENT                                     */
 /* ------------------------------------------------ */
 
 .app-content {
@@ -411,6 +523,7 @@ a.app-card:hover {
 
 .app-title-row h3 {
     font-size: 20px;
+
     letter-spacing: -0.3px;
 }
 
@@ -420,12 +533,14 @@ a.app-card:hover {
 
     font-size: 24px;
 
-    transition: transform 0.2s ease;
+    transition:
+        transform 0.2s ease;
 }
 
 
 a.app-card:hover .app-arrow {
-    transform: translateX(4px);
+    transform:
+        translateX(4px);
 }
 
 
@@ -442,7 +557,7 @@ a.app-card:hover .app-arrow {
 
 
 /* ------------------------------------------------ */
-/* Tags                                             */
+/* TAGS                                             */
 /* ------------------------------------------------ */
 
 .tags {
@@ -456,7 +571,8 @@ a.app-card:hover .app-arrow {
 .tags span {
     padding: 6px 9px;
 
-    background-color: var(--primary-soft);
+    background-color:
+        var(--primary-soft);
 
     border-radius: 7px;
 
@@ -468,13 +584,8 @@ a.app-card:hover .app-arrow {
 
 
 /* ------------------------------------------------ */
-/* Coming soon                                      */
+/* BADGE                                            */
 /* ------------------------------------------------ */
-
-.coming-soon {
-    cursor: default;
-}
-
 
 .coming-soon-badge {
     padding: 6px 9px;
@@ -491,13 +602,14 @@ a.app-card:hover .app-arrow {
 
 
 /* ------------------------------------------------ */
-/* Footer                                           */
+/* FOOTER                                           */
 /* ------------------------------------------------ */
 
 .portal-footer {
     padding: 25px;
 
-    border-top: 1px solid var(--border);
+    border-top:
+        1px solid var(--border);
 
     color: var(--text-muted);
 
@@ -508,23 +620,484 @@ a.app-card:hover .app-arrow {
 
 
 /* ------------------------------------------------ */
-/* Mobile                                           */
+/* FLOATING ADMIN ACTIONS                           */
+/* ------------------------------------------------ */
+
+.portal-admin-actions {
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.admin-toggle,
+.admin-create-button {
+    min-height: 48px;
+
+    padding: 0 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 999px;
+
+    background-color:
+        var(--surface);
+
+    color: var(--text);
+
+    font-family: inherit;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 24px
+        rgba(16, 24, 40, 0.15);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.admin-toggle:hover,
+.admin-create-button:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        #c7d7fe;
+
+    box-shadow:
+        0 12px 30px
+        rgba(16, 24, 40, 0.18);
+}
+
+
+.admin-toggle {
+    background-color:
+        var(--primary);
+
+    border-color:
+        var(--primary);
+
+    color: white;
+}
+
+
+.admin-create-button {
+    display: none;
+}
+
+
+body.admin-mode
+.admin-create-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ------------------------------------------------ */
+/* EDIT BUTTON                                      */
+/* ------------------------------------------------ */
+
+.card-edit-button {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 20;
+
+    display: none;
+
+    padding: 9px 13px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.25);
+
+    border-radius: 999px;
+
+    background-color:
+        rgba(17, 24, 39, 0.85);
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 5px 18px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+body.admin-mode
+.card-edit-button {
+    display: block;
+}
+
+
+/* ------------------------------------------------ */
+/* MODAL                                            */
+/* ------------------------------------------------ */
+
+body.modal-open {
+    overflow: hidden;
+}
+
+
+.modal-backdrop {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px;
+
+    background-color:
+        rgba(15, 23, 42, 0.68);
+
+    backdrop-filter: blur(6px);
+}
+
+
+.modal-backdrop[hidden] {
+    display: none;
+}
+
+
+.modal-panel {
+    width: 100%;
+    max-width: 650px;
+
+    max-height:
+        calc(100vh - 48px);
+
+    overflow-y: auto;
+
+    background-color: white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.28);
+}
+
+
+/* ------------------------------------------------ */
+/* MODAL HEADER                                     */
+/* ------------------------------------------------ */
+
+.modal-header {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 2;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 22px 24px;
+
+    background-color: white;
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+
+.modal-header h2 {
+    font-size: 22px;
+}
+
+
+.modal-close {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 38px;
+    height: 38px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background-color:
+        var(--background);
+
+    color: var(--text);
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+
+/* ------------------------------------------------ */
+/* FORM                                             */
+/* ------------------------------------------------ */
+
+.card-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+
+    padding: 24px;
+}
+
+
+.card-form label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    color: var(--text);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.card-form input,
+.card-form textarea,
+.card-form select {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 10px;
+
+    background-color: white;
+
+    color: var(--text);
+
+    font: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.card-form input:focus,
+.card-form textarea:focus,
+.card-form select:focus {
+    border-color:
+        var(--primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+}
+
+
+.card-form input[readonly],
+.card-form input:disabled {
+    background-color:
+        #f2f4f7;
+
+    color:
+        var(--text-muted);
+
+    cursor: not-allowed;
+}
+
+
+.card-form textarea {
+    resize: vertical;
+}
+
+
+.card-form small {
+    color: var(--text-muted);
+
+    font-size: 11px;
+    font-weight: 500;
+}
+
+
+/* ------------------------------------------------ */
+/* FORM ROW                                         */
+/* ------------------------------------------------ */
+
+.form-row {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 16px;
+}
+
+
+/* ------------------------------------------------ */
+/* CHECKBOX                                         */
+/* ------------------------------------------------ */
+
+.checkbox-label {
+    flex-direction:
+        row !important;
+
+    align-items: center;
+
+    cursor: pointer;
+}
+
+
+.checkbox-label input {
+    width: auto;
+}
+
+
+/* ------------------------------------------------ */
+/* IMAGE PREVIEW                                    */
+/* ------------------------------------------------ */
+
+.image-preview-wrapper {
+    overflow: hidden;
+
+    width: 100%;
+    height: 220px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 12px;
+
+    background-color:
+        var(--background);
+}
+
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+
+/* ------------------------------------------------ */
+/* MODAL BUTTONS                                    */
+/* ------------------------------------------------ */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding-top: 5px;
+}
+
+
+.primary-button,
+.secondary-button {
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 10px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.primary-button {
+    border:
+        1px solid var(--primary);
+
+    background-color:
+        var(--primary);
+
+    color: white;
+}
+
+
+.secondary-button {
+    border:
+        1px solid var(--border);
+
+    background-color:
+        white;
+
+    color: var(--text);
+}
+
+
+/* ------------------------------------------------ */
+/* MOBILE                                           */
 /* ------------------------------------------------ */
 
 @media (max-width: 700px) {
 
     .portal-header {
-        padding: 45px 20px 40px;
+        padding:
+            45px
+            20px
+            40px;
     }
 
 
     .header-content {
-        flex-direction: column;
+        flex-direction:
+            column;
     }
 
 
     .portal-header h1 {
         font-size: 42px;
+
         letter-spacing: -1.5px;
     }
 
@@ -548,7 +1121,8 @@ a.app-card:hover .app-arrow {
 
 
     .app-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
 
@@ -560,4 +1134,28 @@ a.app-card:hover .app-arrow {
     .app-content p {
         min-height: auto;
     }
+
+
+    .portal-admin-actions {
+        right: 16px;
+        bottom: 16px;
+    }
+
+
+    .form-row {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .modal-backdrop {
+        padding: 12px;
+    }
+
+
+    .modal-panel {
+        max-height:
+            calc(100vh - 24px);
+    }
+
 }

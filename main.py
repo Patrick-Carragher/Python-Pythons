@@ -2,15 +2,34 @@ import json
 
 from datetime import datetime
 
-from fastapi import FastAPI, Form, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi import (
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    UploadFile
+)
+
+from fastapi.responses import (
+    RedirectResponse
+)
+
+from fastapi.staticfiles import (
+    StaticFiles
+)
+
+from fastapi.templating import (
+    Jinja2Templates
+)
+
 
 from cookies import (
     COOKIE_NAME,
     decode_cookie,
     save_completed_game
 )
+
 
 from game import (
     create_game,
@@ -19,6 +38,18 @@ from game import (
     record_guess,
     set_avenge_answer,
     set_throw_answer
+)
+
+
+from portal_cards import (
+    create_generated_app,
+    delete_image,
+    find_app,
+    load_apps,
+    parse_tags,
+    save_apps,
+    save_image,
+    update_app,
 )
 
 
@@ -35,7 +66,9 @@ app = FastAPI()
 
 app.mount(
     "/static",
-    StaticFiles(directory="static"),
+    StaticFiles(
+        directory="static"
+    ),
     name="static"
 )
 
@@ -74,43 +107,366 @@ def format_time(timestamp):
 
 
 # --------------------------------------------------
-# START PAGE
+# PORTAL
 # --------------------------------------------------
 
 @app.get("/")
-def portal(request: Request):
+def portal(
+    request: Request
+):
+
+    apps = load_apps()
+
     return templates.TemplateResponse(
         request=request,
         name="portal/portal.html",
-        context={}
+        context={
+            "apps": apps
+        }
     )
 
 
+# --------------------------------------------------
+# GENERATED APP ROUTE
+# --------------------------------------------------
+
+@app.get(
+    "/apps/{app_id}"
+)
+def generated_app(
+    request: Request,
+    app_id: str
+):
+
+    apps = load_apps()
+
+
+    app_data = find_app(
+        apps,
+        app_id
+    )
+
+
+    if app_data is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Appen kunde inte hittas."
+        )
+
+
+    if not app_data.get(
+        "generated",
+        False
+    ):
+
+        raise HTTPException(
+            status_code=404,
+            detail="Appen använder en egen route."
+        )
+
+
+    template_name = (
+        app_data.get(
+            "template"
+        )
+    )
+
+
+    if (
+        not template_name
+        or not template_name.startswith(
+            "apps/"
+        )
+        or ".." in template_name
+    ):
+
+        raise HTTPException(
+            status_code=500,
+            detail="Appens template är ogiltig."
+        )
+
+
+    return templates.TemplateResponse(
+        request=request,
+        name=template_name,
+        context={
+            "app": app_data
+        }
+    )
+
+
+# --------------------------------------------------
+# CREATE / EDIT PORTAL CARD
+# --------------------------------------------------
+
+@app.post(
+    "/portal/cards/save"
+)
+async def save_portal_card(
+
+    app_id: str = Form(""),
+
+    title: str = Form(...),
+
+    description: str = Form(""),
+
+    url: str = Form(""),
+
+    slug: str = Form(""),
+
+    badge: str = Form(""),
+
+    tags: str = Form(""),
+
+    thumbnail_label: str = Form(""),
+
+    theme: str = Form("generic"),
+
+    order: str = Form(""),
+
+    image_alt: str = Form(""),
+
+    remove_image: str | None = Form(
+        None
+    ),
+
+    image: UploadFile | None = File(
+        None
+    ),
+
+):
+
+    apps = load_apps()
+
+
+    # --------------------------------------------------
+    # ORDER
+    # --------------------------------------------------
+
+    order_value = None
+
+
+    if order.strip():
+
+        try:
+
+            order_value = int(
+                order
+            )
+
+        except ValueError:
+
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Ordning måste vara ett nummer."
+                )
+            )
+
+
+    # --------------------------------------------------
+    # TAGS
+    # --------------------------------------------------
+
+    parsed_tags = parse_tags(
+        tags
+    )
+
+
+    # --------------------------------------------------
+    # FIND EXISTING APP
+    # --------------------------------------------------
+
+    existing_app = None
+
+
+    if app_id:
+
+        existing_app = find_app(
+            apps,
+            app_id
+        )
+
+
+        if existing_app is None:
+
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    "Kortet kunde inte hittas."
+                )
+            )
+
+
+    # --------------------------------------------------
+    # CURRENT IMAGE
+    # --------------------------------------------------
+
+    current_image = (
+        existing_app.get(
+            "image"
+        )
+        if existing_app
+        else None
+    )
+
+
+    # --------------------------------------------------
+    # REMOVE IMAGE
+    # --------------------------------------------------
+
+    if remove_image == "true":
+
+        delete_image(
+            current_image
+        )
+
+        current_image = None
+
+
+    # --------------------------------------------------
+    # UPLOAD NEW IMAGE
+    # --------------------------------------------------
+
+    if (
+        image
+        and image.filename
+    ):
+
+        try:
+
+            new_image = (
+                await save_image(
+                    image
+                )
+            )
+
+        except ValueError as error:
+
+            raise HTTPException(
+                status_code=400,
+                detail=str(
+                    error
+                )
+            )
+
+
+        if current_image:
+
+            delete_image(
+                current_image
+            )
+
+
+        current_image = (
+            new_image
+        )
+
+
+    # --------------------------------------------------
+    # UPDATE EXISTING APP
+    # --------------------------------------------------
+
+    if existing_app:
+
+        update_app(
+            app=existing_app,
+            title=title,
+            description=description,
+            url=url,
+            badge=badge,
+            tags=parsed_tags,
+            thumbnail_label=thumbnail_label,
+            theme=theme,
+            image=current_image,
+            image_alt=image_alt,
+            order_value=order_value
+        )
+
+
+    # --------------------------------------------------
+    # CREATE NEW GENERATED APP
+    # --------------------------------------------------
+
+    else:
+
+        create_generated_app(
+            apps=apps,
+            title=title,
+            description=description,
+            requested_slug=slug,
+            badge=badge,
+            tags=parsed_tags,
+            thumbnail_label=thumbnail_label,
+            theme=theme,
+            image=current_image,
+            image_alt=image_alt,
+            order_value=order_value
+        )
+
+
+    # --------------------------------------------------
+    # SAVE JSON
+    # --------------------------------------------------
+
+    save_apps(
+        apps
+    )
+
+
+    return RedirectResponse(
+        url="/",
+        status_code=303
+    )
+
+
+# --------------------------------------------------
+# NUMBERS HOME
+# --------------------------------------------------
+
 @app.get("/numbers")
-def home(request: Request):
-    cookie_value = request.cookies.get(COOKIE_NAME)
-    previous_game = decode_cookie(cookie_value)
+def home(
+    request: Request
+):
+
+    cookie_value = (
+        request.cookies.get(
+            COOKIE_NAME
+        )
+    )
+
+
+    previous_game = decode_cookie(
+        cookie_value
+    )
+
 
     return templates.TemplateResponse(
         request=request,
         name="numbers/home.html",
         context={
-            "has_previous_game": previous_game is not None
+            "has_previous_game":
+                previous_game is not None
         }
     )
 
+
 # --------------------------------------------------
-# PREVIOUS ANSWER PAGE
+# PREVIOUS ANSWER
 # --------------------------------------------------
 
 @app.get("/previous")
 def previous_answer(
-        request: Request
+    request: Request
 ):
 
-    cookie_value = request.cookies.get(
-        COOKIE_NAME
+    cookie_value = (
+        request.cookies.get(
+            COOKIE_NAME
+        )
     )
+
 
     previous_game = decode_cookie(
         cookie_value
@@ -121,7 +477,7 @@ def previous_answer(
 
         return templates.TemplateResponse(
             request=request,
-            name="previous.html",
+            name="numbers/previous.html",
             context={
                 "previous_game": None,
                 "raw_cookie": None,
@@ -130,14 +486,18 @@ def previous_answer(
         )
 
 
-    previous_game["started_at_formatted"] = format_time(
+    previous_game[
+        "started_at_formatted"
+    ] = format_time(
         previous_game.get(
             "started_at"
         )
     )
 
 
-    previous_game["completed_at_formatted"] = format_time(
+    previous_game[
+        "completed_at_formatted"
+    ] = format_time(
         previous_game.get(
             "completed_at"
         )
@@ -153,11 +513,16 @@ def previous_answer(
 
     return templates.TemplateResponse(
         request=request,
-        name="previous.html",
+        name="numbers/previous.html",
         context={
-            "previous_game": previous_game,
-            "raw_cookie": cookie_value,
-            "decoded_cookie": decoded_cookie
+            "previous_game":
+                previous_game,
+
+            "raw_cookie":
+                cookie_value,
+
+            "decoded_cookie":
+                decoded_cookie
         }
     )
 
@@ -168,9 +533,13 @@ def previous_answer(
 
 @app.post("/start")
 def start_game(
-        request: Request,
-        name: str = Form(...),
-        quest: str = Form(...)
+
+    request: Request,
+
+    name: str = Form(...),
+
+    quest: str = Form(...)
+
 ):
 
     game_id = create_game(
@@ -178,14 +547,22 @@ def start_game(
         quest
     )
 
+
     return templates.TemplateResponse(
         request=request,
-        name="game.html",
+        name="numbers/game.html",
         context={
-            "view": "start",
-            "game_id": game_id,
-            "name": name,
-            "quest": quest
+            "view":
+                "start",
+
+            "game_id":
+                game_id,
+
+            "name":
+                name,
+
+            "quest":
+                quest
         }
     )
 
@@ -196,68 +573,89 @@ def start_game(
 
 @app.post("/guess")
 def guess_number(
-        request: Request,
-        game_id: str = Form(...),
-        guess: int = Form(...)
+
+    request: Request,
+
+    game_id: str = Form(...),
+
+    guess: int = Form(...)
+
 ):
 
     game = get_game(
         game_id
     )
 
+
     if game is None:
 
         return templates.TemplateResponse(
             request=request,
-            name="game.html",
+            name="numbers/game.html",
             context={
-                "view": "not_found"
+                "view":
+                    "not_found"
             }
         )
+
 
     record_guess(
         game,
         guess
     )
 
-    secret_number = game[
-        "secret_number"
-    ]
 
-    attempts = game[
-        "attempts"
-    ]
+    secret_number = (
+        game[
+            "secret_number"
+        ]
+    )
+
+
+    attempts = (
+        game[
+            "attempts"
+        ]
+    )
 
 
     # --------------------------------------------------
-    # CORRECT GUESS
+    # CORRECT
     # --------------------------------------------------
 
     if guess == secret_number:
 
-        response = templates.TemplateResponse(
-            request=request,
-            name="game.html",
-            context={
-                "view": "correct",
-                "attempts": attempts
-            }
+        response = (
+            templates.TemplateResponse(
+                request=request,
+                name="numbers/game.html",
+                context={
+                    "view":
+                        "correct",
+
+                    "attempts":
+                        attempts
+                }
+            )
         )
+
 
         save_completed_game(
             response,
             game
         )
 
+
         delete_game(
             game_id
         )
+
 
         return response
 
 
     # --------------------------------------------------
-    # TOO HIGH / TOO LOW
+    # HIGH / LOW
     # --------------------------------------------------
 
     if guess > secret_number:
@@ -270,37 +668,55 @@ def guess_number(
 
 
     # --------------------------------------------------
-    # STILL HAS ATTEMPTS
+    # MORE ATTEMPTS
     # --------------------------------------------------
 
     if attempts < 3:
 
         return templates.TemplateResponse(
             request=request,
-            name="game.html",
+            name="numbers/game.html",
             context={
-                "view": "guess_again",
-                "game_id": game_id,
-                "attempts": attempts,
-                "result": result
+                "view":
+                    "guess_again",
+
+                "game_id":
+                    game_id,
+
+                "attempts":
+                    attempts,
+
+                "result":
+                    result
             }
         )
 
 
     # --------------------------------------------------
-    # PLAYER LOST
+    # LOST
     # --------------------------------------------------
 
     return templates.TemplateResponse(
         request=request,
-        name="game.html",
+        name="numbers/game.html",
         context={
-            "view": "lost",
-            "game_id": game_id,
-            "attempts": attempts,
-            "result": result,
-            "name": game["name"],
-            "secret_number": secret_number
+            "view":
+                "lost",
+
+            "game_id":
+                game_id,
+
+            "attempts":
+                attempts,
+
+            "result":
+                result,
+
+            "name":
+                game["name"],
+
+            "secret_number":
+                secret_number
         }
     )
 
@@ -311,24 +727,31 @@ def guess_number(
 
 @app.post("/avenge")
 def avenge(
-        request: Request,
-        game_id: str = Form(...),
-        answer: str = Form(...)
+
+    request: Request,
+
+    game_id: str = Form(...),
+
+    answer: str = Form(...)
+
 ):
 
     game = get_game(
         game_id
     )
 
+
     if game is None:
 
         return templates.TemplateResponse(
             request=request,
-            name="game.html",
+            name="numbers/game.html",
             context={
-                "view": "not_found"
+                "view":
+                    "not_found"
             }
         )
+
 
     set_avenge_answer(
         game,
@@ -344,10 +767,13 @@ def avenge(
 
         return templates.TemplateResponse(
             request=request,
-            name="game.html",
+            name="numbers/game.html",
             context={
-                "view": "avenge",
-                "game_id": game_id
+                "view":
+                    "avenge",
+
+                "game_id":
+                    game_id
             }
         )
 
@@ -356,100 +782,126 @@ def avenge(
     # NO
     # --------------------------------------------------
 
-    response = templates.TemplateResponse(
-        request=request,
-        name="interlude.html",
-        context={}
+    response = (
+        templates.TemplateResponse(
+            request=request,
+            name="numbers/interlude.html",
+            context={}
+        )
     )
+
 
     save_completed_game(
         response,
         game
     )
 
+
     delete_game(
         game_id
     )
 
+
     return response
 
+
+# --------------------------------------------------
+# PDF APP
+# --------------------------------------------------
+
 @app.get("/pdf")
-def pdf_home(request: Request):
+def pdf_home(
+    request: Request
+):
+
     return templates.TemplateResponse(
         request=request,
         name="pdf/pdf.html",
         context={}
     )
 
+
 # --------------------------------------------------
-# HOLY HAND GRENADE ANSWER
+# HOLY HAND GRENADE
 # --------------------------------------------------
 
 @app.post("/throw")
 def throw_grenade(
-        request: Request,
-        game_id: str = Form(...),
-        throw: str = Form(...)
+
+    request: Request,
+
+    game_id: str = Form(...),
+
+    throw: str = Form(...)
+
 ):
 
     game = get_game(
         game_id
     )
 
+
     if game is None:
 
         return templates.TemplateResponse(
             request=request,
-            name="game.html",
+            name="numbers/game.html",
             context={
-                "view": "not_found"
+                "view":
+                    "not_found"
             }
         )
+
 
     set_throw_answer(
         game,
         throw
     )
 
+
     correct = (
-        throw.lower().strip() == "three"
-        or throw.strip() == "3"
+        throw.lower().strip()
+        == "three"
+        or
+        throw.strip()
+        == "3"
     )
 
-
-    # --------------------------------------------------
-    # CORRECT
-    # --------------------------------------------------
 
     if correct:
 
-        view = "throw_correct"
-
-
-    # --------------------------------------------------
-    # WRONG
-    # --------------------------------------------------
+        view = (
+            "throw_correct"
+        )
 
     else:
 
-        view = "throw_incorrect"
+        view = (
+            "throw_incorrect"
+        )
 
 
-    response = templates.TemplateResponse(
-        request=request,
-        name="game.html",
-        context={
-            "view": view
-        }
+    response = (
+        templates.TemplateResponse(
+            request=request,
+            name="numbers/game.html",
+            context={
+                "view":
+                    view
+            }
+        )
     )
+
 
     save_completed_game(
         response,
         game
     )
 
+
     delete_game(
         game_id
     )
+
 
     return response
