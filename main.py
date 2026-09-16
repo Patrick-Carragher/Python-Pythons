@@ -373,6 +373,13 @@ def avenge(
 
     return response
 
+@app.get("/pdf")
+def pdf_home(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="pdf/pdf.html",
+        context={}
+    )
 
 # --------------------------------------------------
 # HOLY HAND GRENADE ANSWER
