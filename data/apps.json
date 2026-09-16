@@ -1,0 +1,37 @@
+[
+    {
+        "id": "numbers",
+        "title": "Numbers, à la Python",
+        "description": "Ett litet nummerspel som demonstrerar FastAPI, formulär, sessionsdata och cookies.",
+        "url": "/numbers",
+        "badge": "",
+        "tags": [
+            "Python",
+            "FastAPI",
+            "Cookies",
+            "Jinja2"
+        ],
+        "thumbnail_label": "1—20",
+        "theme": "numbers",
+        "image": null,
+        "image_alt": "",
+        "order": 1
+    },
+    {
+        "id": "pdf-generator",
+        "title": "PDF Generator",
+        "description": "Skapa ett dokument från ett webbformulär och generera en färdig PDF direkt från Python.",
+        "url": "/pdf",
+        "badge": "Nästa",
+        "tags": [
+            "Python",
+            "FastAPI",
+            "PDF"
+        ],
+        "thumbnail_label": "PDF",
+        "theme": "pdf",
+        "image": null,
+        "image_alt": "",
+        "order": 2
+    }
+]
