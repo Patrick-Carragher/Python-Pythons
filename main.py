@@ -81,7 +81,7 @@ def format_time(timestamp):
 def portal(request: Request):
     return templates.TemplateResponse(
         request=request,
-        name="portal.html",
+        name="portal/portal.html",
         context={}
     )
 
@@ -93,8 +93,10 @@ def home(request: Request):
 
     return templates.TemplateResponse(
         request=request,
-        name="home.html",
-        context={"has_previous_game": previous_game is not None}
+        name="numbers/home.html",
+        context={
+            "has_previous_game": previous_game is not None
+        }
     )
 
 # --------------------------------------------------
