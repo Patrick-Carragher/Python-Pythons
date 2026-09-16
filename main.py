@@ -53,6 +53,10 @@ from portal_cards import (
     update_app,
 )
 
+from session_demo import (
+    router as session_demo_router
+)
+
 
 # --------------------------------------------------
 # FASTAPI APPLICATION
@@ -60,6 +64,9 @@ from portal_cards import (
 
 app = FastAPI()
 
+app.include_router(
+    session_demo_router
+)
 
 # --------------------------------------------------
 # STATIC FILES
@@ -72,6 +79,8 @@ app.mount(
     ),
     name="static"
 )
+
+
 
 
 # --------------------------------------------------

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ app.title }}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/apps/session-cookie-demo/session-cookie-demo.css') }}"
+    >
+
+    <script
+        src="{{ url_for('static', path='/apps/session-cookie-demo/session-cookie-demo.js') }}"
+        defer
+    ></script>
+
+</head>
+
+
+<body>
+
+
+<main class="page">
+
+
+    <!-- -------------------------------------------- -->
+    <!-- HEADER                                       -->
+    <!-- -------------------------------------------- -->
+
+    <header class="page-header">
+
+        <a
+            href="/"
+            class="back-link"
+        >
+            ← Till portalen
+        </a>
+
+
+        <span class="eyebrow">
+            Python Testbed
+        </span>
+
+
+        <h1>
+            Session & Secure Cookie Demo
+        </h1>
+
+
+        <p>
+            En liten demo av server-side sessions och hur
+            HttpOnly, SameSite och Secure påverkar sessionscookien.
+        </p>
+
+    </header>
+
+
+    <!-- -------------------------------------------- -->
+    <!-- STATUS                                       -->
+    <!-- -------------------------------------------- -->
+
+    <section class="panel">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="section-label">
+                    SESSION
+                </span>
+
+                <h2>
+                    Status
+                </h2>
+
+            </div>
+
+
+            <span
+                id="session-status"
+                class="status-badge inactive"
+            >
+                Ingen aktiv session
+            </span>
+
+        </div>
+
+
+        <div class="info-grid">
+
+
+            <div class="info-card">
+
+                <span class="info-label">
+                    Protokoll
+                </span>
+
+                <strong id="protocol-value">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span class="info-label">
+                    HttpOnly
+                </span>
+
+                <strong>
+                    True
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span class="info-label">
+                    SameSite
+                </span>
+
+                <strong>
+                    Lax
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span class="info-label">
+                    Secure
+                </span>
+
+                <strong id="secure-value">
+                    -
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- -------------------------------------------- -->
+    <!-- START SESSION                                -->
+    <!-- -------------------------------------------- -->
+
+    <section class="panel">
+
+        <span class="section-label">
+            STEG 1
+        </span>
+
+        <h2>
+            Skapa en session
+        </h2>
+
+
+        <p class="section-description">
+            Börja med en vanlig lokal sessionscookie eller testa
+            samma cookie med Secure-flaggan aktiverad.
+        </p>
+
+
+        <div class="button-grid">
+
+
+            <button
+                type="button"
+                id="start-local"
+                class="primary-button"
+            >
+                Starta lokal session
+            </button>
+
+
+            <button
+                type="button"
+                id="start-secure"
+                class="secondary-button"
+            >
+                Starta med Secure=True
+            </button>
+
+
+        </div>
+
+
+        <div class="warning-box">
+
+            <strong>
+                Secure=True
+            </strong>
+
+            <p>
+                Secure är avsett för HTTPS. Vid lokal körning över HTTP
+                kan webbläsaren därför vägra skicka tillbaka cookien.
+                Det är en del av det vi vill demonstrera.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- -------------------------------------------- -->
+    <!-- DOOR CHOICE                                  -->
+    <!-- -------------------------------------------- -->
+
+    <section class="panel">
+
+        <span class="section-label">
+            STEG 2
+        </span>
+
+        <h2>
+            Gör ett val
+        </h2>
+
+
+        <p class="section-description">
+            Välj en dörr. Valet sparas endast i sessionens data på servern.
+        </p>
+
+
+        <div class="door-grid">
+
+
+            <button
+                type="button"
+                class="door-button"
+                data-choice="A"
+            >
+
+                <span class="door-letter">
+                    A
+                </span>
+
+                Dörr A
+
+            </button>
+
+
+            <button
+                type="button"
+                class="door-button"
+                data-choice="B"
+            >
+
+                <span class="door-letter">
+                    B
+                </span>
+
+                Dörr B
+
+            </button>
+
+
+        </div>
+
+
+        <p
+            id="choice-result"
+            class="result-text"
+        ></p>
+
+    </section>
+
+
+    <!-- -------------------------------------------- -->
+    <!-- QUESTION                                     -->
+    <!-- -------------------------------------------- -->
+
+    <section class="panel">
+
+        <span class="section-label">
+            STEG 3
+        </span>
+
+        <h2>
+            Vad valde du?
+        </h2>
+
+
+        <p class="section-description">
+            Detta är en ny request till servern.
+            Svaret jämförs med vad sessionen redan kommer ihåg.
+        </p>
+
+
+        <div class="button-grid">
+
+
+            <button
+                type="button"
+                class="answer-button"
+                data-answer="A"
+            >
+                Jag valde A
+            </button>
+
+
+            <button
+                type="button"
+                class="answer-button"
+                data-answer="B"
+            >
+                Jag valde B
+            </button>
+
+
+        </div>
+
+
+        <div
+            id="answer-result"
+            class="answer-result"
+            hidden
+        ></div>
+
+    </section>
+
+
+    <!-- -------------------------------------------- -->
+    <!-- DEBUG                                        -->
+    <!-- -------------------------------------------- -->
+
+    <section class="panel debug-panel">
+
+        <div class="panel-heading">
+
+            <div>
+
+                <span class="section-label">
+                    DEBUG
+                </span>
+
+                <h2>
+                    Vad händer egentligen?
+                </h2>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="refresh-state"
+                class="small-button"
+            >
+                Uppdatera
+            </button>
+
+        </div>
+
+
+        <div class="debug-grid">
+
+
+            <div>
+
+                <span class="debug-label">
+                    Session-ID
+                </span>
+
+                <code id="session-id">
+                    Ingen
+                </code>
+
+            </div>
+
+
+            <div>
+
+                <span class="debug-label">
+                    document.cookie
+                </span>
+
+                <code id="document-cookie">
+                    -
+                </code>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="explanation">
+
+            <p>
+                Sessionscookien sätts med
+                <strong>HttpOnly</strong>.
+                Därför ska JavaScript inte kunna läsa sessions-ID:t via
+                <code>document.cookie</code>.
+            </p>
+
+            <p>
+                Servern får däremot cookien automatiskt på nästa request
+                och använder ID:t för att hitta rätt session i minnet.
+            </p>
+
+        </div>
+
+            <div class="code-editor">
+
+                <div class="code-editor-topbar">
+
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+
+                    <span class="code-editor-title">
+                        session_state.json
+                    </span>
+
+                </div>
+
+                <pre
+                    id="state-output"
+                    class="code-editor-body"
+                >Ingen aktiv session.</pre>
+
+            </div>
+
+        <button
+            type="button"
+            id="reset-session"
+            class="reset-button"
+        >
+            Nollställ session
+        </button>
+
+    </section>
+
+
+</main>
+
+
+</body>
+
+</html>

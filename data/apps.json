@@ -35,6 +35,26 @@
         "image_alt": "",
         "order": 2,
         "generated": false
+    },
+    {
+        "id": "session-cookie-demo",
+        "title": "Session & Secure Cookie Demo",
+        "description": "Test av server-side sessions, HttpOnly, SameSite och Secure cookies.",
+        "url": "/apps/session-cookie-demo",
+        "badge": "Ny",
+        "tags": [
+            "Python",
+            "FastAPI",
+            "Sessions",
+            "Cookies"
+        ],
+        "thumbnail_label": "SESSION",
+        "theme": "generic",
+        "image": null,
+        "image_alt": "",
+        "order": 3,
+        "generated": true,
+        "template": "apps/session-cookie-demo/session-cookie-demo.html",
+        "stylesheet": "/static/apps/session-cookie-demo/session-cookie-demo.css"
     }
-
 ]
