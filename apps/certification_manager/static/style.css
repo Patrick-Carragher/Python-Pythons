@@ -3,6 +3,7 @@
 }
 
 
+
 :root {
     --background: #f5f7fa;
     --surface: #ffffff;
@@ -40,6 +41,7 @@
 
 html {
     background: var(--background);
+    scrollbar-gutter: stable;
 }
 
 

@@ -883,19 +883,57 @@
 
         {% for document in required_documents %}
 
+        {% set evidence_item =
+            evidence.get(
+                document,
+                {}
+            )
+        %}
+
         <div class="evidence-row">
 
             <label class="evidence-main">
 
-                <input
-                    type="checkbox"
-                    class="evidence-checkbox"
-                >
+                {% if evidence_item.get("present", false) %}
+
+                        <input
+                            form="application-edit-form"
+                            type="checkbox"
+                            class="evidence-checkbox"
+                            checked
+                        >
+
+                    {% else %}
+
+                        <input
+                            form="application-edit-form"
+                            type="checkbox"
+                            class="evidence-checkbox"
+                        >
+
+                    {% endif %}
 
 
                 <span class="evidence-checkbox-ui">
                     ✓
                 </span>
+
+
+                <input
+                    form="application-edit-form"
+                    type="hidden"
+                    name="evidence_document"
+                    value="{{ document }}"
+                >
+
+
+                <input
+                    form="application-edit-form"
+                    type="hidden"
+                    name="evidence_present"
+                    class="evidence-present-input"
+                    value="{% if evidence_item.get('present', false) %}1{% else %}0{% endif %}"
+                >
 
 
                 <span class="evidence-document">
@@ -920,8 +958,11 @@
 
 
                     <input
+                        form="application-edit-form"
                         type="text"
+                        name="evidence_note"
                         class="evidence-note"
+                        value="{{ evidence_item.get('note', '') }}"
                         placeholder="Exempel: Inväntar komplettering från kund..."
                     >
 
@@ -1677,7 +1718,7 @@
 
     const editableFields =
         document.querySelectorAll(
-            '[form="application-edit-form"]'
+            '[form="application-edit-form"]:not(button)'
         );
 
 
@@ -1780,7 +1821,10 @@
                         field.name,
 
                     value:
-                        field.value,
+                        field.type
+                        === "checkbox"
+                            ? field.checked
+                            : field.value,
                 });
 
             }
@@ -1957,6 +2001,9 @@
 
         }
 
+
+        updateCompletionButton();
+
     }
 
 
@@ -2054,7 +2101,9 @@
 
 
         completeApplicationButton.disabled =
-            !allEvidenceComplete();
+            !allEvidenceComplete()
+            ||
+            hasUnsavedChanges();
 
     }
 
@@ -2082,6 +2131,18 @@
                     row.querySelector(
                         ".evidence-state"
                     );
+
+
+                const presentInput =
+                    row.querySelector(
+                        ".evidence-present-input"
+                    );
+
+
+                presentInput.value =
+                    checkbox.checked
+                        ? "1"
+                        : "0";
 
 
                 if (
@@ -2182,7 +2243,13 @@
 
             checkbox.addEventListener(
                 "change",
-                updateEvidenceOverview
+                () => {
+
+                    updateEvidenceOverview();
+
+                    updateSaveState();
+
+                }
             );
 
         }

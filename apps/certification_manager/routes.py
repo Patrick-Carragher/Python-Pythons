@@ -21,10 +21,12 @@ from apps.certification_manager.excel_repository import (
     delete_application_by_id,
     get_all_applications,
     get_application_by_id,
+    get_application_evidence,
     get_completed_applications,
     is_application_completed,
     move_application_to_completed,
     restore_application_to_active,
+    save_application_evidence,
     update_application_status_by_id,
 )
 from apps.certification_manager.folder_repository import (
@@ -272,6 +274,12 @@ def application_page(
         )
     )
 
+    evidence = (
+        get_application_evidence(
+            application_id
+        )
+    )
+
     saved = (
         request.query_params.get(
             "saved"
@@ -297,6 +305,9 @@ def application_page(
 
             "application_completed":
                 application_completed,
+
+            "evidence":
+                evidence,
 
             "handling_status_options":
                 HANDLING_STATUS_OPTIONS,
@@ -345,6 +356,15 @@ def update_application_details(
     ovrigt: str = Form(""),
 
     resultat: str = Form(""),
+
+    evidence_document:
+        list[str] | None = Form(None),
+
+    evidence_present:
+        list[str] | None = Form(None),
+
+    evidence_note:
+        list[str] | None = Form(None),
 ):
     existing_application = (
         get_application_by_id(
@@ -410,6 +430,71 @@ def update_application_details(
         update_application(
             application_id,
             updated_application,
+        )
+
+        documents = (
+            evidence_document
+            or []
+        )
+
+        present_values = (
+            evidence_present
+            or []
+        )
+
+        notes = (
+            evidence_note
+            or []
+        )
+
+        evidence_items = []
+
+        for index, document in enumerate(
+            documents
+        ):
+            present_value = (
+                present_values[index]
+                if index
+                < len(
+                    present_values
+                )
+                else "0"
+            )
+
+            note = (
+                notes[index]
+                if index
+                < len(
+                    notes
+                )
+                else ""
+            )
+
+            evidence_items.append(
+                {
+                    "document":
+                        document,
+
+                    "present":
+                        str(
+                            present_value
+                        ).strip().lower()
+                        in {
+                            "1",
+                            "true",
+                            "yes",
+                            "ja",
+                            "on",
+                        },
+
+                    "note":
+                        note,
+                }
+            )
+
+        save_application_evidence(
+            application_id,
+            evidence_items,
         )
 
     except ValueError as error:

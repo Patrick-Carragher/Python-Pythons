@@ -326,10 +326,26 @@
 
 .dashboard-filter.active {
     background: #101828;
-
     color: #ffffff;
-
     border-color: #101828;
+}
+
+
+/* SSF selected */
+
+.dashboard-filter-ssf.active {
+    background: var(--ssf);
+    color: #ffffff;
+    border-color: var(--ssf);
+}
+
+
+/* SBF selected */
+
+.dashboard-filter-sbf.active {
+    background: var(--sbf);
+    color: #ffffff;
+    border-color: var(--sbf);
 }
 
 

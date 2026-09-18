@@ -29,6 +29,7 @@ EXCEL_FILE = (
 
 APPLICATIONS_SHEET = "Applications"
 COMPLETED_SHEET = "Completed"
+EVIDENCE_SHEET = "Evidence"
 
 HEADERS = [
     "Ankom",
@@ -54,6 +55,13 @@ COMPLETED_HEADERS = [
     *HEADERS,
     "Completed Date",
     "Previous Status",
+]
+
+EVIDENCE_HEADERS = [
+    "Application ID",
+    "Document",
+    "Present",
+    "Note",
 ]
 
 
@@ -91,6 +99,28 @@ def get_completed_sheet(
 
     sheet.append(
         COMPLETED_HEADERS
+    )
+
+    return sheet
+
+
+def get_evidence_sheet(
+    workbook,
+):
+    if (
+        EVIDENCE_SHEET
+        in workbook.sheetnames
+    ):
+        return workbook[
+            EVIDENCE_SHEET
+        ]
+
+    sheet = workbook.create_sheet(
+        EVIDENCE_SHEET
+    )
+
+    sheet.append(
+        EVIDENCE_HEADERS
     )
 
     return sheet
@@ -245,8 +275,19 @@ def ensure_application_ids(
         in workbook.sheetnames
     )
 
+    evidence_sheet_existed = (
+        EVIDENCE_SHEET
+        in workbook.sheetnames
+    )
+
     completed_sheet = (
         get_completed_sheet(
+            workbook
+        )
+    )
+
+    evidence_sheet = (
+        get_evidence_sheet(
             workbook
         )
     )
@@ -257,6 +298,8 @@ def ensure_application_ids(
 
     changed = (
         not completed_sheet_existed
+        or
+        not evidence_sheet_existed
     )
 
     if (
@@ -300,6 +343,24 @@ def ensure_application_ids(
         ).value = "Previous Status"
 
         changed = True
+
+    for column, header in enumerate(
+        EVIDENCE_HEADERS,
+        start=1,
+    ):
+        if (
+            evidence_sheet.cell(
+                row=1,
+                column=column,
+            ).value
+            != header
+        ):
+            evidence_sheet.cell(
+                row=1,
+                column=column,
+            ).value = header
+
+            changed = True
 
     used_ids: set[str] = set()
 
@@ -553,6 +614,10 @@ def save_application(
         )
 
         get_completed_sheet(
+            workbook
+        )
+
+        get_evidence_sheet(
             workbook
         )
 
@@ -821,6 +886,193 @@ def get_completed_applications(
     )
 
     return completed_applications
+
+
+def get_application_evidence(
+    application_id: str,
+) -> dict[
+    str,
+    dict[str, object],
+]:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        return {}
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
+        workbook
+    )
+
+    evidence_sheet = (
+        get_evidence_sheet(
+            workbook
+        )
+    )
+
+    evidence: dict[
+        str,
+        dict[str, object],
+    ] = {}
+
+    for row in evidence_sheet.iter_rows(
+        min_row=2,
+        values_only=True,
+    ):
+        if not any(row):
+            continue
+
+        row_application_id = (
+            str(
+                row[0]
+                or ""
+            ).strip()
+        )
+
+        if (
+            row_application_id
+            != application_id
+        ):
+            continue
+
+        document = (
+            str(
+                row[1]
+                or ""
+            ).strip()
+        )
+
+        if not document:
+            continue
+
+        present_value = row[2]
+
+        if isinstance(
+            present_value,
+            str,
+        ):
+            present = (
+                present_value.strip().lower()
+                in {
+                    "1",
+                    "true",
+                    "yes",
+                    "ja",
+                    "x",
+                }
+            )
+
+        else:
+            present = bool(
+                present_value
+            )
+
+        evidence[
+            document
+        ] = {
+            "present":
+                present,
+
+            "note":
+                str(
+                    row[3]
+                    or ""
+                ),
+        }
+
+    return evidence
+
+
+def save_application_evidence(
+    application_id: str,
+    evidence_items: list[
+        dict[str, object]
+    ],
+) -> None:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        raise ValueError(
+            "Excel-filen kunde inte hittas."
+        )
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
+        workbook
+    )
+
+    evidence_sheet = (
+        get_evidence_sheet(
+            workbook
+        )
+    )
+
+    for row_number in range(
+        evidence_sheet.max_row,
+        1,
+        -1,
+    ):
+        row_application_id = (
+            evidence_sheet.cell(
+                row=row_number,
+                column=1,
+            ).value
+        )
+
+        if (
+            row_application_id
+            == application_id
+        ):
+            evidence_sheet.delete_rows(
+                row_number,
+                1,
+            )
+
+    for item in evidence_items:
+        document = (
+            str(
+                item.get(
+                    "document",
+                    "",
+                )
+            ).strip()
+        )
+
+        if not document:
+            continue
+
+        evidence_sheet.append(
+            [
+                application_id,
+                document,
+                bool(
+                    item.get(
+                        "present",
+                        False,
+                    )
+                ),
+                str(
+                    item.get(
+                        "note",
+                        "",
+                    )
+                ).strip(),
+            ]
+        )
+
+    workbook.save(
+        EXCEL_FILE
+    )
 
 
 def is_application_completed(
@@ -1235,6 +1487,29 @@ def delete_application_by_id(
             row_number,
             1,
         )
+
+        evidence_sheet = (
+            get_evidence_sheet(
+                workbook
+            )
+        )
+
+        for evidence_row in range(
+            evidence_sheet.max_row,
+            1,
+            -1,
+        ):
+            if (
+                evidence_sheet.cell(
+                    row=evidence_row,
+                    column=1,
+                ).value
+                == application_id
+            ):
+                evidence_sheet.delete_rows(
+                    evidence_row,
+                    1,
+                )
 
         workbook.save(
             EXCEL_FILE
