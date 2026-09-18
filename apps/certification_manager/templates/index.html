@@ -1,0 +1,1702 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Översikt | Certification Manager
+{% endblock %}
+
+
+{% block extra_head %}
+
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/dashboard.css"
+>
+
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/status.css"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- ==================================================
+     STATISTICS
+================================================== -->
+
+{% set stats = namespace(
+    examination=0,
+    waiting_result=0,
+    no_status=0
+) %}
+
+
+{% for application in applications %}
+
+    {% if application.examinationsdatum %}
+
+        {% set stats.examination =
+            stats.examination + 1
+        %}
+
+    {% endif %}
+
+
+    {% if not application.resultat %}
+
+        {% set stats.waiting_result =
+            stats.waiting_result + 1
+        %}
+
+    {% endif %}
+
+
+    {% if not application.status %}
+
+        {% set stats.no_status =
+            stats.no_status + 1
+        %}
+
+    {% endif %}
+
+{% endfor %}
+
+
+
+<!-- ==================================================
+     OVERVIEW HEADER
+================================================== -->
+
+<section class="dashboard-hero">
+
+
+    <!-- TITLE -->
+
+    <div class="dashboard-heading">
+
+        <span class="eyebrow">
+            Certifieringsärenden
+        </span>
+
+
+        <h1>
+            Översikt
+        </h1>
+
+
+        <p>
+            Hantera pågående ansökningar, examinationer och certifieringsärenden.
+        </p>
+
+    </div>
+
+
+
+    <!-- SYSTEM STATUS -->
+
+    <div
+        class="system-status-strip"
+        aria-label="Systemstatus"
+    >
+
+
+        <!-- ONEDRIVE -->
+
+        <div
+            class="system-status-item"
+            title="OneDrive – ansluten"
+        >
+
+            <span
+                class="connection-dot connection-offline"
+                aria-hidden="true"
+            ></span>
+
+            <span>
+                OneDrive
+            </span>
+
+        </div>
+
+
+
+        <!-- KUNSKAPSTEST -->
+
+        <div
+            class="system-status-item"
+            title="Kunskapstest – ansluten"
+        >
+
+            <span
+                class="connection-dot connection-offline"
+                aria-hidden="true"
+            ></span>
+
+            <span>
+                Kunskapstest
+            </span>
+
+        </div>
+
+
+
+        <!-- E-LEDEN -->
+
+        <div
+            class="system-status-item"
+            title="E-leden – anslutningen bröts nyligen"
+        >
+
+            <span
+                class="connection-dot connection-reconnecting"
+                aria-hidden="true"
+            ></span>
+
+            <span>
+                E-leden
+            </span>
+
+        </div>
+
+
+
+        <!-- EXCEL: PÅGÅENDE ANSÖKNINGAR -->
+
+        <div
+            class="system-status-item"
+            title="Pågående ansökningar – ansluten"
+        >
+
+            <span
+                class="connection-dot connection-online"
+                aria-hidden="true"
+            ></span>
+
+            <span>
+                Pågående ansökningar
+            </span>
+
+        </div>
+
+
+
+        <!-- EXCEL: CERTIFIERADE PERSONER -->
+
+        <div
+            class="system-status-item"
+            title="Certifierade personer – ansluten"
+        >
+
+            <span
+                class="connection-dot connection-online"
+                aria-hidden="true"
+            ></span>
+
+            <span>
+                Certifierade personer
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- NEW APPLICATION -->
+
+    <a
+        href="/certification/new"
+        class="button button-primary dashboard-new-button"
+    >
+        + Ny ansökan
+    </a>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     DASHBOARD STATS
+================================================== -->
+
+<section class="stats-grid">
+
+
+    <div class="stat-card">
+
+        <span class="stat-label">
+            Pågående ärenden
+        </span>
+
+        <strong class="stat-value">
+            {{ applications | length }}
+        </strong>
+
+        <span class="stat-description">
+            Registrerade i Excel
+        </span>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <span class="stat-label">
+            Examination bokad
+        </span>
+
+        <strong class="stat-value">
+            {{ stats.examination }}
+        </strong>
+
+        <span class="stat-description">
+            Har examinationsdatum
+        </span>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <span class="stat-label">
+            Väntar på resultat
+        </span>
+
+        <strong class="stat-value">
+            {{ stats.waiting_result }}
+        </strong>
+
+        <span class="stat-description">
+            Resultat ej registrerat
+        </span>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <span class="stat-label">
+            Status ej satt
+        </span>
+
+        <strong class="stat-value">
+            {{ stats.no_status }}
+        </strong>
+
+        <span class="stat-description">
+            Behöver senare hantering
+        </span>
+
+    </div>
+
+
+</section>
+
+<!-- ==================================================
+     DASHBOARD OVERVIEW CARDS
+================================================== -->
+
+<section class="planning-grid">
+
+
+    <!-- ==================================================
+         UPCOMING EXAMINATIONS
+    ================================================== -->
+
+    <div class="planning-card">
+
+        <div class="planning-card-header">
+
+            <div>
+
+                <h2>
+                    Kommande examinationer
+                </h2>
+
+                <p>
+                    Närmaste bokade examinationstillfällen.
+                </p>
+
+            </div>
+
+
+            <span class="planning-count">
+                3
+            </span>
+
+        </div>
+
+
+        <div class="planning-list">
+
+
+            <!-- EXAMINATION 1 -->
+
+            <div class="planning-row">
+
+                <div class="planning-date">
+
+                    <strong>
+                        01
+                    </strong>
+
+                    <span>
+                        OKT
+                    </span>
+
+                </div>
+
+
+                <div class="planning-row-main">
+
+                    <strong>
+                        Göteborg
+                    </strong>
+
+                    <span>
+                        2026-10-01
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXAMINATION 2 -->
+
+            <div class="planning-row">
+
+                <div class="planning-date">
+
+                    <strong>
+                        09
+                    </strong>
+
+                    <span>
+                        OKT
+                    </span>
+
+                </div>
+
+
+                <div class="planning-row-main">
+
+                    <strong>
+                        Stockholm
+                    </strong>
+
+                    <span>
+                        2026-10-09
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXAMINATION 3 -->
+
+            <div class="planning-row">
+
+                <div class="planning-date">
+
+                    <strong>
+                        16
+                    </strong>
+
+                    <span>
+                        OKT
+                    </span>
+
+                </div>
+
+
+                <div class="planning-row-main">
+
+                    <strong>
+                        Stockholm
+                    </strong>
+
+                    <span>
+                        2026-10-16
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="planning-card-footer">
+
+            <span>
+                Source: Pågående Ansökningar Excel
+            </span>
+
+
+            <button
+                type="button"
+                class="planning-link"
+                disabled
+            >
+                Visa alla →
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         EXPIRING CERTIFICATES
+    ================================================== -->
+
+    <div class="planning-card">
+
+        <div class="planning-card-header">
+
+            <div>
+
+                <h2>
+                    Certifikat som snart går ut
+                </h2>
+
+                <p>
+                    Närmaste kommande utgångsdatum.
+                </p>
+
+            </div>
+
+
+            <span class="planning-count planning-count-warning">
+                3
+            </span>
+
+        </div>
+
+
+        <div class="planning-list">
+
+
+            <!-- CERTIFICATE 1 -->
+
+            <div class="planning-row">
+
+                <div class="expiry-date">
+
+                    <strong>
+                        31 DEC
+                    </strong>
+
+                    <span>
+                        2026
+                    </span>
+
+                </div>
+
+
+                <div class="planning-row-main">
+
+                    <strong>
+                        Patrick Carragher
+                    </strong>
+
+                    <span>
+                        SSF 1016:1
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CERTIFICATE 2 -->
+
+            <div class="planning-row">
+
+                <div class="expiry-date">
+
+                    <strong>
+                        15 JAN
+                    </strong>
+
+                    <span>
+                        2027
+                    </span>
+
+                </div>
+
+
+                <div class="planning-row-main">
+
+                    <strong>
+                        Exempelperson
+                    </strong>
+
+                    <span>
+                        SBF 1007:5
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CERTIFICATE 3 -->
+
+            <div class="planning-row">
+
+                <div class="expiry-date">
+
+                    <strong>
+                        28 JAN
+                    </strong>
+
+                    <span>
+                        2027
+                    </span>
+
+                </div>
+
+
+                <div class="planning-row-main">
+
+                    <strong>
+                        Exempelperson
+                    </strong>
+
+                    <span>
+                        SSF 1062:3
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="planning-card-footer">
+
+            <span>
+                E-leden + Excellista Certifierade Personer
+            </span>
+
+
+            <button
+                type="button"
+                class="planning-link"
+                disabled
+            >
+                Visa alla →
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         REQUIRES ATTENTION
+    ================================================== -->
+
+    <div class="planning-card">
+
+        <div class="planning-card-header">
+
+            <div>
+
+                <h2>
+                    Behöver åtgärd
+                </h2>
+
+                <p>
+                    Ärenden som behöver uppmärksamhet.
+                </p>
+
+            </div>
+
+
+            <span class="planning-count planning-count-danger">
+                6
+            </span>
+
+        </div>
+
+
+        <div class="attention-list">
+
+
+            <!-- MISSING DOCUMENTS -->
+
+            <div class="attention-row">
+
+                <span class="attention-dot attention-warning"></span>
+
+
+                <div>
+
+                    <strong>
+                        2 saknar underlag
+                    </strong>
+
+                    <span>
+                        Väntar på komplettering
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- WAITING FOR RESULT -->
+
+            <div class="attention-row">
+
+                <span class="attention-dot attention-blue"></span>
+
+
+                <div>
+
+                    <strong>
+                        1 väntar på provresultat
+                    </strong>
+
+                    <span>
+                        Examination genomförd
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS NOT SET -->
+
+            <div class="attention-row">
+
+                <span class="attention-dot attention-neutral"></span>
+
+
+                <div>
+
+                    <strong>
+                        3 saknar status
+                    </strong>
+
+                    <span>
+                        Handläggningsstatus ej satt
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="planning-card-footer">
+
+            <span>
+                Exempeldata - Nya Certifieringsplattform
+            </span>
+
+
+            <button
+                type="button"
+                class="planning-link"
+                disabled
+            >
+                Visa alla →
+            </button>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+<!-- ==================================================
+     ONGOING APPLICATIONS
+================================================== -->
+
+<section class="panel applications-panel">
+
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2 id="applications-panel-title">
+                Pågående ansökningar
+            </h2>
+
+            <p id="applications-panel-description">
+                Informationen hämtas från bladet Applications i applications.xlsx.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SEARCH + FILTER -->
+
+    <div class="dashboard-toolbar">
+
+
+        <div class="dashboard-search">
+
+            <span
+                class="dashboard-search-icon"
+                aria-hidden="true"
+            >
+                🔍
+            </span>
+
+
+            <input
+                type="search"
+                id="application-search"
+                placeholder="Sök namn, företag, personnummer eller norm"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+
+        <div
+            class="dashboard-filter-group"
+            aria-label="Filtrera certifieringar"
+        >
+
+
+            <button
+                type="button"
+                class="dashboard-filter active"
+                data-filter="all"
+            >
+                Alla
+            </button>
+
+
+            <button
+                type="button"
+                class="dashboard-filter dashboard-filter-ssf"
+                data-filter="ssf"
+            >
+                SSF
+            </button>
+
+
+            <button
+                type="button"
+                class="dashboard-filter dashboard-filter-sbf"
+                data-filter="sbf"
+            >
+                SBF
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div
+        class="application-table-wrapper application-sheet-view"
+        data-sheet-view="ongoing"
+    >
+
+        <table class="application-table">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Ankom
+                    </th>
+
+                    <th>
+                        Namn
+                    </th>
+
+                    <th>
+                        Företag
+                    </th>
+
+                    <th>
+                        Typ
+                    </th>
+
+                    <th>
+                        Norm
+                    </th>
+
+                    <th>
+                        Examination
+                    </th>
+
+                    <th>
+                        Plats
+                    </th>
+
+                    <th>
+                        Resultat
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <tbody id="application-table-body">
+
+
+                {% for application in applications %}
+
+
+                    {% if application.norm.startswith("SSF") %}
+
+                        {% set family = "ssf" %}
+                        {% set norm_class = "norm-ssf" %}
+
+                    {% elif application.norm.startswith("SBF") %}
+
+                        {% set family = "sbf" %}
+                        {% set norm_class = "norm-sbf" %}
+
+                    {% else %}
+
+                        {% set family = "other" %}
+                        {% set norm_class = "norm-neutral" %}
+
+                    {% endif %}
+
+
+                    <tr
+                        class="application-row"
+                        data-list="ongoing"
+                        data-family="{{ family }}"
+                        data-search="{{ application.namn }} {{ application.foretag }} {{ application.personnummer }} {{ application.norm }} {{ application.plats }}"
+                    >
+
+
+                        <td class="date-cell">
+
+                            {{ application.ankom }}
+
+                        </td>
+
+
+
+                        <td>
+
+                            <a
+                                href="/certification/application/{{ application.application_id }}"
+                                class="application-name"
+                            >
+                                {{ application.namn }}
+                            </a>
+
+                        </td>
+
+
+
+                        <td>
+
+                            {{ application.foretag }}
+
+                        </td>
+
+
+
+                        <td>
+
+                            <span class="type-badge">
+
+                                {{ application.ny_eller_omcertifiering }}
+
+                            </span>
+
+                        </td>
+
+
+
+                        <td>
+
+                            <span class="norm-badge {{ norm_class }}">
+
+                                {{ application.norm }}
+
+                            </span>
+
+                        </td>
+
+
+
+                        <td>
+
+                            {% if application.examinationsdatum %}
+
+                                {{ application.examinationsdatum }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <td>
+
+                            {% if application.plats %}
+
+                                {{ application.plats }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <td>
+
+                            {% if application.resultat %}
+
+                                {{ application.resultat }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <td>
+
+                            {% set handling_status_class =
+                                status_css_classes.get(
+                                    application.status,
+                                    "handling-status-empty"
+                                )
+                            %}
+
+
+                            {% if application.status %}
+
+                                <span
+                                    class="handling-status-badge {{ handling_status_class }}"
+                                    title="{{ application.status }}"
+                                >
+
+                                    {{
+                                        status_index_labels.get(
+                                            application.status,
+                                            application.status
+                                        )
+                                    }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="handling-status-badge handling-status-empty"
+                                >
+                                    Ej satt
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                    </tr>
+
+
+                {% else %}
+
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="table-empty"
+                        >
+                            Inga pågående ansökningar finns ännu.
+                        </td>
+
+                    </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         COMPLETED APPLICATIONS
+    ================================================== -->
+
+    <div
+        class="application-table-wrapper application-sheet-view"
+        data-sheet-view="completed"
+        hidden
+    >
+
+        <table class="application-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Avslutad
+                    </th>
+
+                    <th>
+                        Namn
+                    </th>
+
+                    <th>
+                        Företag
+                    </th>
+
+                    <th>
+                        Typ
+                    </th>
+
+                    <th>
+                        Norm
+                    </th>
+
+                    <th>
+                        Examination
+                    </th>
+
+                    <th>
+                        Plats
+                    </th>
+
+                    <th>
+                        Resultat
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for application, completed_date in completed_applications %}
+
+                    {% if application.norm.startswith("SSF") %}
+
+                        {% set family = "ssf" %}
+                        {% set norm_class = "norm-ssf" %}
+
+                    {% elif application.norm.startswith("SBF") %}
+
+                        {% set family = "sbf" %}
+                        {% set norm_class = "norm-sbf" %}
+
+                    {% else %}
+
+                        {% set family = "other" %}
+                        {% set norm_class = "norm-neutral" %}
+
+                    {% endif %}
+
+
+                    <tr
+                        class="application-row"
+                        data-list="completed"
+                        data-family="{{ family }}"
+                        data-search="{{ application.namn }} {{ application.foretag }} {{ application.personnummer }} {{ application.norm }} {{ application.plats }} {{ completed_date }}"
+                    >
+
+                        <td class="date-cell">
+                            {{ completed_date }}
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="/certification/application/{{ application.application_id }}"
+                                class="application-name"
+                            >
+                                {{ application.namn }}
+                            </a>
+
+                        </td>
+
+
+                        <td>
+                            {{ application.foretag }}
+                        </td>
+
+
+                        <td>
+
+                            <span class="type-badge">
+                                {{ application.ny_eller_omcertifiering }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="norm-badge {{ norm_class }}">
+                                {{ application.norm }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if application.examinationsdatum %}
+
+                                {{ application.examinationsdatum }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if application.plats %}
+
+                                {{ application.plats }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if application.resultat %}
+
+                                {{ application.resultat }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% set handling_status_class =
+                                status_css_classes.get(
+                                    application.status,
+                                    "handling-status-empty"
+                                )
+                            %}
+
+                            {% if application.status %}
+
+                                <span
+                                    class="handling-status-badge {{ handling_status_class }}"
+                                    title="{{ application.status }}"
+                                >
+                                    {{
+                                        status_index_labels.get(
+                                            application.status,
+                                            application.status
+                                        )
+                                    }}
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="handling-status-badge handling-status-empty"
+                                >
+                                    Ej satt
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="table-empty"
+                        >
+                            Inga avslutade ansökningar finns för {{ completed_year }}.
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- NOTHING MATCHED SEARCH/FILTER -->
+
+    <div
+        id="no-search-results"
+        class="dashboard-no-results"
+        hidden
+    >
+        Inga ärenden matchar sökningen eller valt filter.
+    </div>
+
+
+    <!-- EXCEL-STYLE SHEET TABS -->
+
+    <div
+        class="excel-sheet-tabs"
+        role="tablist"
+        aria-label="Ansökningslistor"
+    >
+
+        <button
+            type="button"
+            class="excel-sheet-tab active"
+            data-sheet-tab="ongoing"
+            role="tab"
+            aria-selected="true"
+        >
+            Pågående
+        </button>
+
+
+        <button
+            type="button"
+            class="excel-sheet-tab"
+            data-sheet-tab="completed"
+            role="tab"
+            aria-selected="false"
+        >
+            Avslutade {{ completed_year }}
+        </button>
+
+    </div>
+
+
+</section>
+
+
+
+
+<!-- ==================================================
+     BACK TO PORTAL
+================================================== -->
+
+<a
+    href="/"
+    class="portal-back-link"
+>
+    ← Tillbaka till Portal
+</a>
+
+<footer class="portal-footer">
+
+    <p>
+        Nästan Copyright Brand & Säkerhet - Svensk Certifiering Norden - September 2026 - Version 0.1.2
+    </p>
+
+</footer>
+
+
+
+<!-- ==================================================
+     SEARCH + FILTER + SHEET TABS
+================================================== -->
+
+<script>
+
+    const searchInput =
+        document.getElementById(
+            "application-search"
+        );
+
+
+    const filterButtons =
+        document.querySelectorAll(
+            ".dashboard-filter"
+        );
+
+
+    const applicationRows =
+        document.querySelectorAll(
+            ".application-row"
+        );
+
+
+    const noSearchResults =
+        document.getElementById(
+            "no-search-results"
+        );
+
+
+    const sheetTabs =
+        document.querySelectorAll(
+            ".excel-sheet-tab"
+        );
+
+
+    const sheetViews =
+        document.querySelectorAll(
+            ".application-sheet-view"
+        );
+
+
+    const applicationsPanelTitle =
+        document.getElementById(
+            "applications-panel-title"
+        );
+
+
+    const applicationsPanelDescription =
+        document.getElementById(
+            "applications-panel-description"
+        );
+
+
+    let activeFilter =
+        "all";
+
+
+    let activeSheet =
+        window.location.hash
+        === "#completed"
+            ? "completed"
+            : "ongoing";
+
+
+    function updateApplications() {
+
+        const query =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        let activeRowCount =
+            0;
+
+
+        let visibleCount =
+            0;
+
+
+        applicationRows.forEach(
+            row => {
+
+                if (
+                    row.dataset.list
+                    !== activeSheet
+                ) {
+                    return;
+                }
+
+
+                activeRowCount += 1;
+
+
+                const family =
+                    row.dataset.family;
+
+
+                const searchableText =
+                    row.dataset.search
+                        .toLowerCase();
+
+
+                const matchesSearch =
+                    query === ""
+                    || searchableText.includes(
+                        query
+                    );
+
+
+                const matchesFamily =
+                    activeFilter === "all"
+                    || family === activeFilter;
+
+
+                const shouldShow =
+                    matchesSearch
+                    && matchesFamily;
+
+
+                row.hidden =
+                    !shouldShow;
+
+
+                if (shouldShow) {
+                    visibleCount += 1;
+                }
+
+            }
+        );
+
+
+        if (activeRowCount === 0) {
+
+            noSearchResults.hidden =
+                true;
+
+        }
+
+        else {
+
+            noSearchResults.hidden =
+                visibleCount > 0;
+
+        }
+
+    }
+
+
+    function showSheet(
+        sheetName,
+    ) {
+
+        activeSheet =
+            sheetName;
+
+
+        sheetViews.forEach(
+            view => {
+
+                view.hidden =
+                    view.dataset.sheetView
+                    !== activeSheet;
+
+            }
+        );
+
+
+        sheetTabs.forEach(
+            tab => {
+
+                const selected =
+                    tab.dataset.sheetTab
+                    === activeSheet;
+
+
+                tab.classList.toggle(
+                    "active",
+                    selected
+                );
+
+
+                tab.setAttribute(
+                    "aria-selected",
+                    selected
+                        ? "true"
+                        : "false"
+                );
+
+            }
+        );
+
+
+        if (
+            activeSheet
+            === "completed"
+        ) {
+
+            applicationsPanelTitle.textContent =
+                "Avslutade ansökningar";
+
+
+            applicationsPanelDescription.textContent =
+                "Informationen hämtas från bladet Completed i applications.xlsx.";
+
+
+            history.replaceState(
+                null,
+                "",
+                "#completed"
+            );
+
+        }
+
+        else {
+
+            applicationsPanelTitle.textContent =
+                "Pågående ansökningar";
+
+
+            applicationsPanelDescription.textContent =
+                "Informationen hämtas från bladet Applications i applications.xlsx.";
+
+
+            history.replaceState(
+                null,
+                "",
+                "#ongoing"
+            );
+
+        }
+
+
+        updateApplications();
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        updateApplications
+    );
+
+
+    filterButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    activeFilter =
+                        button.dataset.filter;
+
+
+                    filterButtons.forEach(
+                        otherButton => {
+
+                            otherButton.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    updateApplications();
+
+                }
+            );
+
+        }
+    );
+
+
+    sheetTabs.forEach(
+        tab => {
+
+            tab.addEventListener(
+                "click",
+                () => {
+
+                    showSheet(
+                        tab.dataset.sheetTab
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    showSheet(
+        activeSheet
+    );
+
+</script>
+
+
+{% endblock %}

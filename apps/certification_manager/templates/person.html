@@ -1,0 +1,2391 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ application.namn }} | Certification Manager
+{% endblock %}
+
+
+{% block extra_head %}
+
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/person.css"
+>
+
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/status.css"
+>
+
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/editable.css?v=20260918-edit1"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+{% if application.norm.startswith("SSF") %}
+
+    {% set norm_class = "norm-ssf" %}
+    {% set accent_class = "certification-accent-ssf" %}
+
+{% elif application.norm.startswith("SBF") %}
+
+    {% set norm_class = "norm-sbf" %}
+    {% set accent_class = "certification-accent-sbf" %}
+
+{% else %}
+
+    {% set norm_class = "norm-neutral" %}
+    {% set accent_class = "certification-accent-neutral" %}
+
+{% endif %}
+
+
+<!-- ==================================================
+     PAGE HEADER
+================================================== -->
+
+<section class="person-heading">
+
+    <a
+        href="/certification/"
+        class="back-link"
+    >
+        ← Till översikten
+    </a>
+
+
+    <div class="person-title-row">
+
+        <div>
+
+            <span class="eyebrow {{ accent_class }}">
+                Pågående ansökan Behörig ingenjör
+            </span>
+
+
+            <h1>
+                {{ application.namn }}
+            </h1>
+
+
+            <p class="person-company">
+                {{ application.foretag }}
+            </p>
+
+        </div>
+
+
+        <div class="person-heading-badges">
+
+            <span class="norm-badge {{ norm_class }}">
+                {{ application.norm }}
+            </span>
+
+
+            <span
+                id="application-status-badge"
+                class="case-status {% if application_completed %}case-status-complete{% else %}case-status-active{% endif %}"
+            >
+                {% if application_completed %}
+                    Ansökan komplett
+                {% else %}
+                    Pågående
+                {% endif %}
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% if created %}
+
+<div class="alert alert-success">
+
+    <strong>
+        Ansökan har skapats
+    </strong>
+
+    <span>
+        Personen har sparats i Excel och kundmappen har skapats.
+    </span>
+
+</div>
+
+{% endif %}
+
+
+<form
+    id="application-edit-form"
+    method="post"
+    action="/certification/application/{{ application.application_id }}/update"
+    data-saved="{{ 'true' if saved else 'false' }}"
+    data-application-completed="{{ 'true' if application_completed else 'false' }}"
+></form>
+
+
+<!-- ==================================================
+     PERSON + CERTIFICATION
+================================================== -->
+
+<div class="details-grid certification-accent {{ accent_class }}">
+
+
+    <!-- PERSON -->
+
+    <section class="detail-card">
+
+        <div class="detail-card-header">
+
+            <h2>
+                Personuppgifter
+            </h2>
+
+        </div>
+
+
+        <dl class="detail-list">
+
+            <div>
+
+                <dt>
+                    Namn
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="namn"
+                        class="detail-edit-input"
+                        value="{{ application.namn }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Företag
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="foretag"
+                        class="detail-edit-input"
+                        value="{{ application.foretag }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Personnummer
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="personnummer"
+                        class="detail-edit-input"
+                        value="{{ application.personnummer }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Mail
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="email"
+                        name="mail"
+                        class="detail-edit-input"
+                        value="{{ application.mail }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Mail privat
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="email"
+                        name="mail_privat"
+                        class="detail-edit-input"
+                        value="{{ application.mail_privat }}"
+                        placeholder="Ej angivet"
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Telefon
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="telefon"
+                        class="detail-edit-input"
+                        value="{{ application.telefon }}"
+                        placeholder="Ej angivet"
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Adress
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="adress"
+                        class="detail-edit-input"
+                        value="{{ application.adress }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+        </dl>
+
+    </section>
+
+
+    <!-- CERTIFICATION -->
+
+    <section class="detail-card">
+
+        <div class="detail-card-header">
+
+            <h2>
+                Certifiering
+            </h2>
+
+        </div>
+
+
+        <dl class="detail-list">
+
+    <div>
+
+        <dt>
+            Typ
+        </dt>
+
+        <dd>
+
+            <select
+                form="application-edit-form"
+                name="ny_eller_omcertifiering"
+                class="detail-edit-select"
+                required
+            >
+
+                {% if application.ny_eller_omcertifiering == "NY" %}
+
+                    <option
+                        value="NY"
+                        selected
+                    >
+                        NY – Nycertifiering
+                    </option>
+
+                {% else %}
+
+                    <option value="NY">
+                        NY – Nycertifiering
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.ny_eller_omcertifiering == "OM" %}
+
+                    <option
+                        value="OM"
+                        selected
+                    >
+                        OM – Omcertifiering
+                    </option>
+
+                {% else %}
+
+                    <option value="OM">
+                        OM – Omcertifiering
+                    </option>
+
+                {% endif %}
+
+            </select>
+
+        </dd>
+
+    </div>
+
+
+    <div>
+
+        <dt>
+            Norm
+        </dt>
+
+        <dd>
+
+            <select
+                form="application-edit-form"
+                name="norm"
+                class="detail-edit-select"
+                required
+            >
+
+                {% if application.norm == "SSF 1016:1" %}
+
+                    <option
+                        value="SSF 1016:1"
+                        selected
+                    >
+                        SSF 1016:1 – Behörig ingenjör inbrottslarm
+                    </option>
+
+                {% else %}
+
+                    <option value="SSF 1016:1">
+                        SSF 1016:1 – Behörig ingenjör inbrottslarm
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SSF 1062:3" %}
+
+                    <option
+                        value="SSF 1062:3"
+                        selected
+                    >
+                        SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
+                    </option>
+
+                {% else %}
+
+                    <option value="SSF 1062:3">
+                        SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SBF 1007:5" %}
+
+                    <option
+                        value="SBF 1007:5"
+                        selected
+                    >
+                        SBF 1007:5 – Behörig ingenjör brandlarm
+                    </option>
+
+                {% else %}
+
+                    <option value="SBF 1007:5">
+                        SBF 1007:5 – Behörig ingenjör brandlarm
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SBF 2017:1" %}
+
+                    <option
+                        value="SBF 2017:1"
+                        selected
+                    >
+                        SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
+                    </option>
+
+                {% else %}
+
+                    <option value="SBF 2017:1">
+                        SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SSF 1049:1" %}
+
+                    <option
+                        value="SSF 1049:1"
+                        selected
+                    >
+                        SSF 1049:1 – Certifierad låsmästare – låsanläggningar
+                    </option>
+
+                {% else %}
+
+                    <option value="SSF 1049:1">
+                        SSF 1049:1 – Certifierad låsmästare – låsanläggningar
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm not in [
+                    "SSF 1016:1",
+                    "SSF 1062:3",
+                    "SBF 1007:5",
+                    "SBF 2017:1",
+                    "SSF 1049:1"
+                ] %}
+
+                    <option
+                        value="{{ application.norm }}"
+                        selected
+                    >
+                        {{ application.norm }}
+                    </option>
+
+                {% endif %}
+
+            </select>
+
+        </dd>
+
+    </div>
+
+
+            <div>
+
+                <dt>
+                    Ankom
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="date"
+                        name="ankom"
+                        class="detail-edit-input"
+                        value="{{ application.ankom }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Examinationsdatum
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="date"
+                        name="examinationsdatum"
+                        class="detail-edit-input"
+                        value="{% if application.examinationsdatum %}{{ application.examinationsdatum }}{% endif %}"
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Examinationsort
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="plats"
+                        class="detail-edit-input"
+                        value="{{ application.plats }}"
+                        placeholder="Ej angivet"
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Utbildning hos Säkerhetsbranschen
+                </dt>
+
+                <dd>
+
+                    <select
+                        form="application-edit-form"
+                        name="utb_hos_sakerhetsbransch"
+                        class="detail-edit-select"
+                    >
+
+                        {% if not application.utb_hos_sakerhetsbranschen %}
+
+                            <option
+                                value=""
+                                selected
+                            >
+                                Ej angivet
+                            </option>
+
+                        {% else %}
+
+                            <option value="">
+                                Ej angivet
+                            </option>
+
+                        {% endif %}
+
+
+                        {% if application.utb_hos_sakerhetsbranschen == "Ja" %}
+
+                            <option
+                                value="Ja"
+                                selected
+                            >
+                                Ja
+                            </option>
+
+                        {% else %}
+
+                            <option value="Ja">
+                                Ja
+                            </option>
+
+                        {% endif %}
+
+
+                        {% if application.utb_hos_sakerhetsbranschen == "Nej" %}
+
+                            <option
+                                value="Nej"
+                                selected
+                            >
+                                Nej
+                            </option>
+
+                        {% else %}
+
+                            <option value="Nej">
+                                Nej
+                            </option>
+
+                        {% endif %}
+
+                    </select>
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Resultat
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="resultat"
+                        class="detail-edit-input"
+                        value="{{ application.resultat }}"
+                        placeholder="Ej angivet"
+                    >
+
+                </dd>
+
+            </div>
+
+        </dl>
+
+    </section>
+
+</div>
+
+
+<!-- ==================================================
+     APPLICATION STATUS
+================================================== -->
+
+<section class="panel case-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Ansökan
+            </h2>
+
+            <p>
+                Handläggningsstatus för själva ansökan.
+            </p>
+
+        </div>
+
+
+        <div class="case-status-group">
+
+            <span
+                id="case-state"
+                class="case-status {% if application_completed %}case-status-complete{% else %}case-status-active{% endif %}"
+            >
+                {% if application_completed %}
+                    Komplett
+                {% else %}
+                    Pågående
+                {% endif %}
+            </span>
+
+
+            {% set handling_status_class =
+                status_css_classes.get(
+                    application.status,
+                    "handling-status-empty"
+                )
+            %}
+
+
+            {% if application_completed %}
+
+                <span
+                    class="handling-status-badge handling-status-completed"
+                >
+                    Avslutad
+                </span>
+
+            {% else %}
+
+                <form
+                    method="post"
+                    action="/certification/application/{{ application.application_id }}/status"
+                    class="handling-status-form"
+                >
+
+                    <select
+                        name="status"
+                        class="handling-status-select {{ handling_status_class }}"
+                        aria-label="Handläggningsstatus"
+                        onchange="this.form.submit()"
+                    >
+
+                        <option
+                            value=""
+                            {% if not application.status %}
+                                selected
+                            {% endif %}
+                        >
+                            Ej satt
+                        </option>
+
+
+                        {% if
+                            application.status
+                            and
+                            application.status not in handling_status_options
+                        %}
+
+                            <option
+                                value="{{ application.status }}"
+                                selected
+                            >
+                                {{ application.status }}
+                            </option>
+
+                        {% endif %}
+
+
+                        {% for status_option in handling_status_options %}
+
+                            <option
+                                value="{{ status_option }}"
+                                {% if application.status == status_option %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ status_option }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="case-body">
+
+        <div>
+
+            <strong id="case-title">
+                {% if application_completed %}
+                    Ansökan är komplett
+                {% else %}
+                    Ansökan är under handläggning
+                {% endif %}
+            </strong>
+
+            <p id="case-description">
+                {% if application_completed %}
+                    Ansökan har markerats som färdighandlagd.
+                {% else %}
+                    Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.
+                {% endif %}
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     REQUIRED DOCUMENT LIST
+================================================== -->
+
+
+{% if application.norm == "SSF 1016:1" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm == "SSF 1062:3" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm in ["SSF 1049:1", "SSF 1049, utgåva 1"] %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Kopia av mästarprov",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm in ["SSF 1041:1", "SSF 1041, utgåva 1"] %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Giltigt gesällbrev",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm == "SBF 1007:5" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Intyg grundkompetens",
+        "Intyg grundläggande brandskydd",
+        "Intyg entreprenadjuridik",
+        "Intyg praktisk erfarenhet",
+        "Intyg dokumentation",
+        "Ansvarsförsäkring"
+    ] %}
+
+
+{% elif application.norm == "SBF 2017:1" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Intyg grundkompetens",
+        "Intyg grundläggande brandskydd",
+        "Intyg entreprenadjuridik",
+        "Intyg ljud och taluppfattbarhet",
+        "Intyg praktisk erfarenhet",
+        "Intyg dokumentation",
+        "Ansvarsförsäkring"
+    ] %}
+
+
+{% else %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Övrigt certifieringsunderlag"
+    ] %}
+
+{% endif %}
+
+
+<!-- ==================================================
+     EVIDENCE OVERVIEW
+================================================== -->
+
+<section
+    class="panel evidence-panel"
+    id="evidence-panel"
+>
+
+    <div class="panel-header evidence-header">
+
+        <div>
+
+            <div class="evidence-title-row">
+
+                <h2>
+                    Underlagsöversikt
+                </h2>
+
+                <span class="norm-badge {{ norm_class }}">
+                    {{ application.norm }}
+                </span>
+
+            </div>
+
+
+            <p>
+                Snabb översikt över förväntade underlag från kunden.
+            </p>
+
+        </div>
+
+
+        <div class="evidence-summary">
+
+            <strong id="evidence-count">
+                0 / {{ required_documents | length }} finns
+            </strong>
+
+
+            <span
+                id="evidence-summary-state"
+                class="evidence-summary-state incomplete"
+            >
+                Underlag saknas
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="evidence-disclaimer">
+
+        Detta är endast en handläggningsöversikt och ersätter inte det formella bedömningsunderlaget.
+
+    </div>
+
+
+    <div class="evidence-list">
+
+        {% for document in required_documents %}
+
+        {% set evidence_item =
+            evidence.get(
+                document,
+                {}
+            )
+        %}
+
+        <div class="evidence-row">
+
+            <label class="evidence-main">
+
+                {% if evidence_item.get("present", false) %}
+
+                        <input
+                            form="application-edit-form"
+                            type="checkbox"
+                            class="evidence-checkbox"
+                            checked
+                        >
+
+                    {% else %}
+
+                        <input
+                            form="application-edit-form"
+                            type="checkbox"
+                            class="evidence-checkbox"
+                        >
+
+                    {% endif %}
+
+
+                <span class="evidence-checkbox-ui">
+                    ✓
+                </span>
+
+
+                <input
+                    form="application-edit-form"
+                    type="hidden"
+                    name="evidence_document"
+                    value="{{ document }}"
+                >
+
+
+                <input
+                    form="application-edit-form"
+                    type="hidden"
+                    name="evidence_present"
+                    class="evidence-present-input"
+                    value="{% if evidence_item.get('present', false) %}1{% else %}0{% endif %}"
+                >
+
+
+                <span class="evidence-document">
+                    {{ document }}
+                </span>
+
+            </label>
+
+
+            <span class="evidence-state">
+                Saknas
+            </span>
+
+
+            <div class="evidence-details">
+
+                <label>
+
+                    <span>
+                        Kommentar / vad saknas?
+                    </span>
+
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="evidence_note"
+                        class="evidence-note"
+                        value="{{ evidence_item.get('note', '') }}"
+                        placeholder="Exempel: Inväntar komplettering från kund..."
+                    >
+
+                </label>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div class="evidence-footer">
+
+        <button
+            type="button"
+            id="toggle-evidence-details"
+            class="button button-secondary"
+        >
+            Visa detaljer
+        </button>
+
+
+        <div
+            id="evidence-complete-message"
+            class="evidence-complete-message"
+            hidden
+        >
+
+            <span>
+                ✓
+            </span>
+
+            Alla förväntade underlag finns.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     EXAMINATION + DOCUMENTS
+================================================== -->
+
+<div class="work-grid">
+
+
+    <!-- EXAMINATION -->
+
+    <section class="panel examination-panel">
+
+        <div class="compact-panel-header">
+
+            <div>
+
+                <div class="exam-title-line">
+
+                    <h2>
+                        Examination
+                    </h2>
+
+                    <span id="exam-mode-label">
+                        {% if application_completed %}
+                            Senaste godkända
+                        {% else %}
+                            Pågående prov
+                        {% endif %}
+                    </span>
+
+                </div>
+
+
+                <p id="exam-description">
+                    {% if application_completed %}
+                        Senaste fem godkända prov.
+                    {% else %}
+                        Senaste provaktivitet medan ansökan pågår.
+                    {% endif %}
+                </p>
+
+            </div>
+
+
+            <a
+                href="https://kunskapstest.svenskcertifiering.com/sadmin/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="exam-link"
+            >
+                Kunskapstest ↗
+            </a>
+
+        </div>
+
+
+        <div class="exam-meta-line">
+
+            <strong>
+
+                {% if application.examinationsdatum %}
+
+                    {{ application.examinationsdatum }}
+
+                {% else %}
+
+                    Ej bokad
+
+                {% endif %}
+
+            </strong>
+
+
+            {% if application.plats %}
+
+                <span>
+                    · {{ application.plats }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ONGOING APPLICATION -->
+
+        <div
+            id="ongoing-exams"
+            class="exam-view"
+            {% if application_completed %}hidden{% endif %}
+        >
+
+            <div class="exam-table-header">
+
+                <span>
+                    Datum
+                </span>
+
+                <span>
+                    Test
+                </span>
+
+                <span>
+                    Resultat
+                </span>
+
+            </div>
+
+
+            <!-- MOCK DATA -->
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 2
+                </strong>
+
+                <span class="exam-result exam-failed">
+                    Inte godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 1
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-08-28
+                </span>
+
+                <strong>
+                    Brandlarm delprov 2
+                </strong>
+
+                <span class="exam-result exam-failed">
+                    Inte godkänd
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLETED APPLICATION -->
+
+        <div
+            id="completed-exams"
+            class="exam-view"
+            {% if not application_completed %}hidden{% endif %}
+        >
+
+            <div class="exam-table-header">
+
+                <span>
+                    Datum
+                </span>
+
+                <span>
+                    Test
+                </span>
+
+                <span>
+                    Resultat
+                </span>
+
+            </div>
+
+
+            <!-- MOCK DATA -->
+
+            <div class="exam-row">
+
+                <span>
+                    2026-10-09
+                </span>
+
+                <strong>
+                    Brandlarm delprov 2
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 1
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 3
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="exam-footer">
+
+            <span id="exam-footer-text">
+                {% if application_completed %}
+                    Visar de senaste godkända provresultaten.
+                {% else %}
+                    Exempel på hur synkroniserade provresultat kommer att visas.
+                {% endif %}
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- DOCUMENTS -->
+
+    <section class="panel documents-panel">
+
+        <div class="compact-panel-header">
+
+            <div>
+
+                <h2>
+                    Dokument
+                </h2>
+
+                <p>
+                    Filer i personens kundmapp.
+                </p>
+
+            </div>
+
+
+            <span class="document-count">
+
+                {{ documents | length }}
+
+                {% if documents | length == 1 %}
+
+                    fil
+
+                {% else %}
+
+                    filer
+
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <!-- DOCUMENT UPLOAD -->
+
+        <form
+            action="/certification/application/{{ application.application_id }}/documents/upload"
+            method="post"
+            enctype="multipart/form-data"
+            class="document-upload-form"
+        >
+
+            <label class="document-upload-area">
+
+                <span class="document-upload-icon">
+                    ↑
+                </span>
+
+
+                <span class="document-upload-text">
+
+                    <strong>
+                        Välj filer
+                    </strong>
+
+                    <small>
+                        Du kan välja flera filer samtidigt
+                    </small>
+
+                </span>
+
+
+                <input
+                    type="file"
+                    name="files"
+                    multiple
+                    required
+                    accept=".png,.jpg,.jpeg,.gif,.webp,.bmp,.tif,.tiff,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.odp"
+                >
+
+            </label>
+
+
+            <button
+                type="submit"
+                class="button button-primary document-upload-button"
+            >
+                Ladda upp
+            </button>
+
+        </form>
+
+
+        <!-- DOCUMENT LIST -->
+
+        {% if documents %}
+
+            <div class="document-list">
+
+                {% for document in documents %}
+
+                    <div class="document-row">
+
+                        <div class="document-file">
+
+                            <span class="document-file-icon">
+
+                                {% if document.name.lower().endswith(".pdf") %}
+
+                                    PDF
+
+                                {% elif
+                                    document.name.lower().endswith(".png")
+                                    or document.name.lower().endswith(".jpg")
+                                    or document.name.lower().endswith(".jpeg")
+                                    or document.name.lower().endswith(".gif")
+                                    or document.name.lower().endswith(".webp")
+                                    or document.name.lower().endswith(".bmp")
+                                    or document.name.lower().endswith(".tif")
+                                    or document.name.lower().endswith(".tiff")
+                                %}
+
+                                    IMG
+
+                                {% elif
+                                    document.name.lower().endswith(".doc")
+                                    or document.name.lower().endswith(".docx")
+                                    or document.name.lower().endswith(".odt")
+                                    or document.name.lower().endswith(".rtf")
+                                    or document.name.lower().endswith(".txt")
+                                %}
+
+                                    DOC
+
+                                {% elif
+                                    document.name.lower().endswith(".xls")
+                                    or document.name.lower().endswith(".xlsx")
+                                    or document.name.lower().endswith(".csv")
+                                    or document.name.lower().endswith(".ods")
+                                %}
+
+                                    XLS
+
+                                {% elif
+                                    document.name.lower().endswith(".ppt")
+                                    or document.name.lower().endswith(".pptx")
+                                    or document.name.lower().endswith(".odp")
+                                %}
+
+                                    PPT
+
+                                {% else %}
+
+                                    FIL
+
+                                {% endif %}
+
+                            </span>
+
+
+                            <div class="document-file-info">
+
+                                <strong>
+                                    {{ document.name }}
+                                </strong>
+
+                                <span>
+                                    {{ document.size_text }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <form
+                            action="/certification/application/{{ application.application_id }}/documents/delete"
+                            method="post"
+                            class="document-delete-form"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="filename"
+                                value="{{ document.name }}"
+                            >
+
+
+                            <button
+                                type="submit"
+                                class="document-delete-button"
+                                onclick="return confirm('Ta bort filen?')"
+                            >
+                                Ta bort
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="documents-empty">
+
+                <div class="documents-empty-icon">
+                    ↥
+                </div>
+
+
+                <strong>
+                    Inga dokument uppladdade
+                </strong>
+
+
+                <span>
+                    Välj en eller flera filer ovan för att lägga till dem i kundmappen.
+                </span>
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="documents-footer">
+
+            <span>
+                Kundmapp
+            </span>
+
+            <code>
+                {{ application.foretag }}/Personer/{{ folder.name }}
+            </code>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ==================================================
+     NOTES
+================================================== -->
+
+<section class="panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Anteckningar
+            </h2>
+
+            <p>
+                Intern information om ärendet.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="note-edit-wrap">
+
+        <textarea
+            form="application-edit-form"
+            name="ovrigt"
+            class="note-edit-textarea"
+            placeholder="Ingen anteckning registrerad."
+        >{{ application.ovrigt }}</textarea>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     DANGER ZONE
+================================================== -->
+
+<section class="danger-zone">
+
+    <h2 class="danger-zone-title">
+        Danger Zone
+    </h2>
+
+
+    {% if application_completed %}
+
+        {% set lifecycle_action = "restore" %}
+        {% set lifecycle_title = "Återställ till pågående" %}
+        {% set lifecycle_description = "Flytta tillbaka ansökan till listan över pågående ansökningar." %}
+        {% set lifecycle_button_text = "Återställ till pågående" %}
+        {% set lifecycle_button_class = "danger-zone-button-restore" %}
+
+    {% else %}
+
+        {% set lifecycle_action = "complete" %}
+        {% set lifecycle_title = "Markera ansökan klar" %}
+        {% set lifecycle_description = "Flytta ansökan från pågående ansökningar till slutförda ansökningar." %}
+        {% set lifecycle_button_text = "Markera ansökan klar" %}
+        {% set lifecycle_button_class = "danger-zone-button-complete" %}
+
+    {% endif %}
+
+
+    <div class="danger-zone-box">
+
+        <div class="danger-zone-row">
+
+            <div class="danger-zone-content">
+
+                <strong id="complete-action-title">
+                    {{ lifecycle_title }}
+                </strong>
+
+
+                <span id="complete-action-description">
+                    {{ lifecycle_description }}
+                </span>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="/certification/application/{{ application.application_id }}/{{ lifecycle_action }}"
+                class="danger-zone-form"
+            >
+
+                <button
+                    type="submit"
+                    id="complete-application-button"
+                    class="danger-zone-button {{ lifecycle_button_class }}"
+                    {% if not application_completed %}
+                        disabled
+                    {% endif %}
+                >
+                    {{ lifecycle_button_text }}
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <div class="danger-zone-row">
+
+            <div class="danger-zone-content">
+
+                <strong>
+                    Ta bort ansökan
+                </strong>
+
+
+                <span>
+                    När ansökan tas bort finns det ingen enkel väg tillbaka. Kontrollera att rätt ansökan är vald.
+                </span>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="/certification/application/{{ application.application_id }}/delete"
+                class="danger-zone-form"
+            >
+
+                <button
+                    type="submit"
+                    class="danger-zone-button danger-zone-button-delete"
+                    onclick="return confirm(
+                        'Är du säker på att du vill ta bort ansökan för {{ application.namn }}? Detta kan inte ångras.'
+                    )"
+                >
+                    Ta bort ansökan
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     GLOBAL SAVE BAR
+================================================== -->
+
+<div
+    id="case-save-bar"
+    class="case-save-bar"
+>
+
+    <div class="case-save-status">
+
+        <span
+            id="case-save-indicator"
+            class="case-save-indicator saved"
+        >
+            ✓
+        </span>
+
+
+        <div>
+
+            <strong id="case-save-title">
+                Inga ändringar gjorda
+            </strong>
+
+            <span id="case-save-description">
+                Ärendet är oförändrat.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="submit"
+        form="application-edit-form"
+        id="save-case-button"
+        class="button button-disabled"
+        disabled
+    >
+        Spara ändringar
+    </button>
+
+</div>
+
+
+<!-- ==================================================
+     FRONTEND PROTOTYPE LOGIC
+================================================== -->
+
+<script>
+
+    /* ==================================================
+       ELEMENTS
+    ================================================== */
+
+    const editForm =
+        document.getElementById(
+            "application-edit-form"
+        );
+
+
+    const editableFields =
+        document.querySelectorAll(
+            '[form="application-edit-form"]:not(button)'
+        );
+
+
+    const saveBar =
+        document.getElementById(
+            "case-save-bar"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "save-case-button"
+        );
+
+
+    const saveIndicator =
+        document.getElementById(
+            "case-save-indicator"
+        );
+
+
+    const saveTitle =
+        document.getElementById(
+            "case-save-title"
+        );
+
+
+    const saveDescription =
+        document.getElementById(
+            "case-save-description"
+        );
+
+
+    const evidencePanel =
+        document.getElementById(
+            "evidence-panel"
+        );
+
+
+    const evidenceCheckboxes =
+        document.querySelectorAll(
+            ".evidence-checkbox"
+        );
+
+
+    const evidenceCount =
+        document.getElementById(
+            "evidence-count"
+        );
+
+
+    const evidenceSummaryState =
+        document.getElementById(
+            "evidence-summary-state"
+        );
+
+
+    const evidenceCompleteMessage =
+        document.getElementById(
+            "evidence-complete-message"
+        );
+
+
+    const detailsButton =
+        document.getElementById(
+            "toggle-evidence-details"
+        );
+
+
+    const completeApplicationButton =
+        document.getElementById(
+            "complete-application-button"
+        );
+
+
+    const applicationCompleted =
+        editForm.dataset.applicationCompleted
+        === "true";
+
+
+    let isSubmitting =
+        false;
+
+
+    /* ==================================================
+       SAVE STATE
+    ================================================== */
+
+    function getEditState() {
+
+        const state =
+            [];
+
+
+        editableFields.forEach(
+            field => {
+
+                state.push({
+                    name:
+                        field.name,
+
+                    value:
+                        field.type
+                        === "checkbox"
+                            ? field.checked
+                            : field.value,
+                });
+
+            }
+        );
+
+
+        return JSON.stringify(
+            state
+        );
+
+    }
+
+
+    let originalEditState =
+        getEditState();
+
+
+    function hasUnsavedChanges() {
+
+        return (
+            getEditState()
+            !== originalEditState
+        );
+
+    }
+
+
+    function setSavedIndicator() {
+
+        saveIndicator.textContent =
+            "✓";
+
+
+        saveIndicator.classList.remove(
+            "unsaved"
+        );
+
+
+        saveIndicator.classList.add(
+            "saved"
+        );
+
+
+        saveBar.classList.remove(
+            "has-unsaved-changes"
+        );
+
+    }
+
+
+    function setUnsavedIndicator() {
+
+        saveIndicator.textContent =
+            "●";
+
+
+        saveIndicator.classList.remove(
+            "saved"
+        );
+
+
+        saveIndicator.classList.add(
+            "unsaved"
+        );
+
+
+        saveBar.classList.add(
+            "has-unsaved-changes"
+        );
+
+    }
+
+
+    function disableSaveButton() {
+
+        saveButton.disabled =
+            true;
+
+
+        saveButton.classList.remove(
+            "button-primary"
+        );
+
+
+        saveButton.classList.add(
+            "button-disabled"
+        );
+
+    }
+
+
+    function enableSaveButton() {
+
+        saveButton.disabled =
+            false;
+
+
+        saveButton.classList.remove(
+            "button-disabled"
+        );
+
+
+        saveButton.classList.add(
+            "button-primary"
+        );
+
+    }
+
+
+    function showInitialState() {
+
+        saveTitle.textContent =
+            "Inga ändringar gjorda";
+
+
+        saveDescription.textContent =
+            "Ärendet är oförändrat.";
+
+
+        setSavedIndicator();
+
+        disableSaveButton();
+
+    }
+
+
+    function showUnsavedState() {
+
+        saveTitle.textContent =
+            "Osparade ändringar";
+
+
+        saveDescription.textContent =
+            "Du har ändringar som ännu inte har sparats.";
+
+
+        setUnsavedIndicator();
+
+        enableSaveButton();
+
+    }
+
+
+    function showSavedState() {
+
+        saveTitle.textContent =
+            "Alla ändringar sparade";
+
+
+        saveDescription.textContent =
+            "Ärendet är uppdaterat i Excel.";
+
+
+        setSavedIndicator();
+
+        disableSaveButton();
+
+    }
+
+
+    function updateSaveState() {
+
+        if (
+            hasUnsavedChanges()
+        ) {
+
+            showUnsavedState();
+
+        }
+
+        else {
+
+            showInitialState();
+
+        }
+
+
+        updateCompletionButton();
+
+    }
+
+
+    editableFields.forEach(
+        field => {
+
+            field.addEventListener(
+                "input",
+                updateSaveState
+            );
+
+
+            field.addEventListener(
+                "change",
+                updateSaveState
+            );
+
+        }
+    );
+
+
+    editForm.addEventListener(
+        "submit",
+        () => {
+
+            isSubmitting =
+                true;
+
+
+            saveButton.disabled =
+                true;
+
+
+            saveButton.textContent =
+                "Sparar...";
+
+        }
+    );
+
+
+    window.addEventListener(
+        "beforeunload",
+        event => {
+
+            if (
+                isSubmitting
+                ||
+                !hasUnsavedChanges()
+            ) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+            event.returnValue =
+                "";
+
+        }
+    );
+
+
+    /* ==================================================
+       EVIDENCE OVERVIEW
+    ================================================== */
+
+    function allEvidenceComplete() {
+
+        return (
+            evidenceCheckboxes.length > 0
+            &&
+            Array.from(
+                evidenceCheckboxes
+            ).every(
+                checkbox =>
+                    checkbox.checked
+            )
+        );
+
+    }
+
+
+    function updateCompletionButton() {
+
+        if (
+            applicationCompleted
+        ) {
+
+            completeApplicationButton.disabled =
+                false;
+
+            return;
+
+        }
+
+
+        completeApplicationButton.disabled =
+            !allEvidenceComplete()
+            ||
+            hasUnsavedChanges();
+
+    }
+
+
+    function updateEvidenceOverview() {
+
+        const total =
+            evidenceCheckboxes.length;
+
+
+        let complete =
+            0;
+
+
+        evidenceCheckboxes.forEach(
+            checkbox => {
+
+                const row =
+                    checkbox.closest(
+                        ".evidence-row"
+                    );
+
+
+                const state =
+                    row.querySelector(
+                        ".evidence-state"
+                    );
+
+
+                const presentInput =
+                    row.querySelector(
+                        ".evidence-present-input"
+                    );
+
+
+                presentInput.value =
+                    checkbox.checked
+                        ? "1"
+                        : "0";
+
+
+                if (
+                    checkbox.checked
+                ) {
+
+                    complete += 1;
+
+
+                    row.classList.add(
+                        "has-document"
+                    );
+
+
+                    state.textContent =
+                        "Finns";
+
+                }
+
+                else {
+
+                    row.classList.remove(
+                        "has-document"
+                    );
+
+
+                    state.textContent =
+                        "Saknas";
+
+                }
+
+            }
+        );
+
+
+        evidenceCount.textContent =
+            `${complete} / ${total} finns`;
+
+
+        const everythingPresent =
+            total > 0
+            &&
+            complete === total;
+
+
+        if (
+            everythingPresent
+        ) {
+
+            evidenceSummaryState.textContent =
+                "Alla finns";
+
+
+            evidenceSummaryState.classList.remove(
+                "incomplete"
+            );
+
+
+            evidenceSummaryState.classList.add(
+                "complete"
+            );
+
+
+            evidenceCompleteMessage.hidden =
+                false;
+
+        }
+
+        else {
+
+            evidenceSummaryState.textContent =
+                `${total - complete} saknas`;
+
+
+            evidenceSummaryState.classList.remove(
+                "complete"
+            );
+
+
+            evidenceSummaryState.classList.add(
+                "incomplete"
+            );
+
+
+            evidenceCompleteMessage.hidden =
+                true;
+
+        }
+
+
+        updateCompletionButton();
+
+    }
+
+
+    evidenceCheckboxes.forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                () => {
+
+                    updateEvidenceOverview();
+
+                    updateSaveState();
+
+                }
+            );
+
+        }
+    );
+
+
+    detailsButton.addEventListener(
+        "click",
+        () => {
+
+            const expanded =
+                evidencePanel.classList.toggle(
+                    "show-details"
+                );
+
+
+            detailsButton.textContent =
+                expanded
+                    ? "Dölj detaljer"
+                    : "Visa detaljer";
+
+        }
+    );
+
+
+    /* ==================================================
+       INITIAL PAGE STATE
+    ================================================== */
+
+    updateEvidenceOverview();
+
+
+    if (
+        editForm.dataset.saved
+        === "true"
+    ) {
+
+        showSavedState();
+
+    }
+
+    else {
+
+        showInitialState();
+
+    }
+
+</script>
+
+
+{% endblock %}

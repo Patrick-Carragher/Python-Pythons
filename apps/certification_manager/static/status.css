@@ -1,0 +1,206 @@
+/* ==================================================
+   HANDLING STATUS
+================================================== */
+
+.handling-status-empty {
+    --handling-status-background: #f2f4f7;
+    --handling-status-text: #667085;
+    --handling-status-border: #e4e7ec;
+}
+
+
+.handling-status-confirmation {
+    --handling-status-background: #f2f4f7;
+    --handling-status-text: #475467;
+    --handling-status-border: #d0d5dd;
+}
+
+
+.handling-status-queue {
+    --handling-status-background: #f4ebff;
+    --handling-status-text: #6941c6;
+    --handling-status-border: #d6bbfb;
+}
+
+
+.handling-status-location {
+    --handling-status-background: #ecfdff;
+    --handling-status-text: #026aa2;
+    --handling-status-border: #67e3f9;
+}
+
+
+.handling-status-invitation-sent {
+    --handling-status-background: #eff6ff;
+    --handling-status-text: #1d4ed8;
+    --handling-status-border: #bfdbfe;
+}
+
+
+.handling-status-completed {
+    --handling-status-background: #ecfdf3;
+    --handling-status-text: #067647;
+    --handling-status-border: #abefc6;
+}
+
+
+/* --------------------------------------------------
+   PERSON PAGE
+-------------------------------------------------- */
+
+.case-status-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.handling-status-form {
+    margin: 0;
+}
+
+
+.handling-status-select {
+    min-height: 31px;
+
+    padding: 5px 30px 5px 10px;
+
+    background-color:
+        var(--handling-status-background);
+
+    color:
+        var(--handling-status-text);
+
+    border: 1px solid
+        var(--handling-status-border);
+
+    border-radius: 999px;
+
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    outline: 0;
+}
+
+
+.handling-status-select:hover {
+    filter: brightness(0.98);
+}
+
+
+.handling-status-select:focus {
+    box-shadow:
+        0 0 0 3px
+        rgba(36, 87, 214, 0.10);
+}
+
+
+/* --------------------------------------------------
+   INDEX
+-------------------------------------------------- */
+
+.handling-status-badge {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 28px;
+
+    padding: 4px 10px;
+
+    background:
+        var(--handling-status-background);
+
+    color:
+        var(--handling-status-text);
+
+    border: 1px solid
+        var(--handling-status-border);
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* --------------------------------------------------
+   DARK MODE
+-------------------------------------------------- */
+
+html[data-theme="dark"]
+.handling-status-empty {
+    --handling-status-background: #1b222c;
+    --handling-status-text: #a8b1bf;
+    --handling-status-border: #3b4655;
+}
+
+
+html[data-theme="dark"]
+.handling-status-confirmation {
+    --handling-status-background: #1b222c;
+    --handling-status-text: #c5ceda;
+    --handling-status-border: #3b4655;
+}
+
+
+html[data-theme="dark"]
+.handling-status-queue {
+    --handling-status-background: #2f2146;
+    --handling-status-text: #d6bbfb;
+    --handling-status-border: #6941c6;
+}
+
+
+html[data-theme="dark"]
+.handling-status-location {
+    --handling-status-background: #102f3a;
+    --handling-status-text: #67e3f9;
+    --handling-status-border: #0e7090;
+}
+
+
+html[data-theme="dark"]
+.handling-status-invitation-sent {
+    --handling-status-background: #172554;
+    --handling-status-text: #93c5fd;
+    --handling-status-border: #1e3a8a;
+}
+
+
+html[data-theme="dark"]
+.handling-status-completed {
+    --handling-status-background: #123524;
+    --handling-status-text: #75e0a7;
+    --handling-status-border: #227a4d;
+}
+
+
+/* --------------------------------------------------
+   MOBILE
+-------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .case-status-group {
+        justify-content: flex-start;
+    }
+
+
+    .handling-status-form {
+        max-width: 100%;
+    }
+
+
+    .handling-status-select {
+        max-width: 100%;
+    }
+
+}

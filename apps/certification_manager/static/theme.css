@@ -1,0 +1,370 @@
+/* --------------------------------------------------
+   THEME BUTTON
+-------------------------------------------------- */
+
+.theme-toggle {
+    min-height: 36px;
+
+    padding: 7px 10px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 6px;
+
+    background: transparent;
+
+    color: var(--text-muted);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.theme-toggle:hover {
+    background: var(--surface-soft);
+
+    color: var(--text);
+}
+
+
+/* --------------------------------------------------
+   DARK THEME VARIABLES
+-------------------------------------------------- */
+
+html[data-theme="dark"] {
+
+    color-scheme: dark;
+
+    --background: #0d1117;
+
+    --surface: #151b23;
+
+    --surface-soft: #1b222c;
+
+    --text: #edf2f7;
+
+    --text-muted: #a8b1bf;
+
+    --text-light: #7f8a99;
+
+    --border: #293341;
+
+    --border-strong: #3b4655;
+
+    --primary: #78a3ff;
+
+    --primary-hover: #94b7ff;
+
+    --success: #45c486;
+
+    --success-background: #112b20;
+
+    --danger: #ff817a;
+
+    --danger-background: #321817;
+
+    --ssf: #6fa1f6;
+
+    --ssf-background: #142441;
+
+    --ssf-bg: #142441;
+
+    --ssf-border: #284b83;
+
+    --sbf: #ff817a;
+
+    --sbf-background: #341817;
+
+    --sbf-bg: #341817;
+
+    --sbf-border: #6b302d;
+
+    --shadow:
+        0 1px 2px rgba(0, 0, 0, 0.22),
+        0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+
+/* --------------------------------------------------
+   PAGE
+-------------------------------------------------- */
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+    background: var(--background);
+
+    color: var(--text);
+}
+
+
+html[data-theme="dark"] body {
+    min-height: 100vh;
+}
+
+
+/* --------------------------------------------------
+   TOP BAR
+-------------------------------------------------- */
+
+html[data-theme="dark"] .topbar {
+    background: rgba(21, 27, 35, 0.96);
+
+    border-bottom-color: var(--border);
+}
+
+
+html[data-theme="dark"] .brand-mark {
+    background: #e7edf6;
+
+    color: #10151c;
+}
+
+
+html[data-theme="dark"] .brand,
+html[data-theme="dark"] .topbar-nav a {
+    color: var(--text);
+}
+
+
+/* --------------------------------------------------
+   CARDS / PANELS
+-------------------------------------------------- */
+
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .detail-card,
+html[data-theme="dark"] .stat-card {
+    background: var(--surface);
+
+    border-color: var(--border);
+
+    box-shadow: var(--shadow);
+}
+
+
+html[data-theme="dark"] .panel-header,
+html[data-theme="dark"] .detail-card-header {
+    background: var(--surface);
+
+    border-bottom-color: var(--border);
+}
+
+
+/* --------------------------------------------------
+   TEXT
+-------------------------------------------------- */
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] strong,
+html[data-theme="dark"] dt,
+html[data-theme="dark"] dd {
+    color: var(--text);
+}
+
+
+html[data-theme="dark"] p,
+html[data-theme="dark"] .empty-value,
+html[data-theme="dark"] .eyebrow,
+html[data-theme="dark"] .person-company {
+    color: var(--text-muted);
+}
+
+
+/* --------------------------------------------------
+   TABLES
+-------------------------------------------------- */
+
+html[data-theme="dark"] .application-table {
+    color: var(--text);
+}
+
+
+html[data-theme="dark"] .application-table th {
+    background: var(--surface-soft);
+
+    color: var(--text-muted);
+
+    border-color: var(--border);
+}
+
+
+html[data-theme="dark"] .application-table td {
+    border-color: var(--border);
+}
+
+
+html[data-theme="dark"] .application-table tbody tr:hover {
+    background: #19212b;
+}
+
+
+/* --------------------------------------------------
+   FORMS
+-------------------------------------------------- */
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background: var(--surface);
+
+    color: var(--text);
+
+    border-color: var(--border);
+}
+
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: var(--text-light);
+}
+
+
+/* --------------------------------------------------
+   BUTTONS
+-------------------------------------------------- */
+
+html[data-theme="dark"] .button-secondary {
+    background: var(--surface);
+
+    color: var(--text);
+
+    border-color: var(--border);
+}
+
+
+html[data-theme="dark"] .button-secondary:hover {
+    background: var(--surface-soft);
+}
+
+
+html[data-theme="dark"] .button-disabled,
+html[data-theme="dark"] .compact-disabled-button {
+    background: var(--surface-soft);
+
+    color: var(--text-light);
+
+    border-color: var(--border);
+}
+
+
+/* --------------------------------------------------
+   EVIDENCE
+-------------------------------------------------- */
+
+html[data-theme="dark"] .evidence-disclaimer,
+html[data-theme="dark"] .evidence-footer {
+    background: var(--surface-soft);
+}
+
+
+html[data-theme="dark"] .evidence-row {
+    background: var(--surface);
+}
+
+
+html[data-theme="dark"] .evidence-row:hover {
+    background: #19212b;
+}
+
+
+html[data-theme="dark"] .evidence-row.has-document {
+    background: #11241c;
+}
+
+
+html[data-theme="dark"] .evidence-checkbox-ui {
+    background: #10161e;
+}
+
+
+html[data-theme="dark"] .evidence-note {
+    background: #10161e;
+
+    color: var(--text);
+}
+
+
+/* --------------------------------------------------
+   DOCUMENT PANEL
+-------------------------------------------------- */
+
+html[data-theme="dark"] .compact-panel-header {
+    background: var(--surface);
+}
+
+
+html[data-theme="dark"] .documents-empty {
+    background: var(--surface);
+}
+
+
+html[data-theme="dark"] .documents-empty-icon {
+    background: var(--surface-soft);
+}
+
+
+html[data-theme="dark"] .documents-footer {
+    background: var(--surface-soft);
+}
+
+
+/* --------------------------------------------------
+   EXAM META
+-------------------------------------------------- */
+
+html[data-theme="dark"] .exam-meta-line {
+    background: var(--surface-soft);
+}
+
+
+/* --------------------------------------------------
+   MISC
+-------------------------------------------------- */
+
+html[data-theme="dark"] .folder-path {
+    background: #10161e;
+}
+
+
+html[data-theme="dark"] code {
+    color: #c5ceda;
+}
+
+
+html[data-theme="dark"] .status-badge,
+html[data-theme="dark"] .status-empty,
+html[data-theme="dark"] .type-badge,
+html[data-theme="dark"] .coming-soon {
+    background: var(--surface-soft);
+
+    color: var(--text-muted);
+
+    border-color: var(--border);
+}
+
+
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .theme-toggle #theme-text {
+        display: none;
+    }
+
+}
