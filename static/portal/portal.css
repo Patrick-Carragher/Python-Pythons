@@ -417,22 +417,22 @@ a.app-card:hover {
 
 .certification-thumbnail {
     background:
-        radial-gradient(
-            circle at 25% 25%,
-            rgba(255, 255, 255, 0.12),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 80% 80%,
-            rgba(37, 99, 235, 0.30),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #101828,
-            #17348f 55%,
-            #2457d6
-        );
+    radial-gradient(
+        circle at 25% 25%,
+        rgba(255, 255, 255, 0.12),
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at 80% 80%,
+        rgba(37, 99, 235, 0.30),
+        transparent 35%
+    ),
+    linear-gradient(
+        135deg,
+        #b42318,
+        #7c3567 55%,
+        #2457d6
+    );
 }
 
 
