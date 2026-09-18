@@ -18,6 +18,11 @@
     href="/static/certification_manager/status.css"
 >
 
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/editable.css?v=20260918-edit1"
+>
+
 {% endblock %}
 
 
@@ -61,7 +66,7 @@
         <div>
 
             <span class="eyebrow {{ accent_class }}">
-                 Pågående ansökan Behörig ingenjör
+                Pågående ansökan Behörig ingenjör
             </span>
 
 
@@ -86,9 +91,13 @@
 
             <span
                 id="application-status-badge"
-                class="case-status case-status-active"
+                class="case-status {% if application_completed %}case-status-complete{% else %}case-status-active{% endif %}"
             >
-                Pågående
+                {% if application_completed %}
+                    Ansökan komplett
+                {% else %}
+                    Pågående
+                {% endif %}
             </span>
 
         </div>
@@ -115,6 +124,15 @@
 {% endif %}
 
 
+<form
+    id="application-edit-form"
+    method="post"
+    action="/certification/application/{{ application.application_id }}/update"
+    data-saved="{{ 'true' if saved else 'false' }}"
+    data-application-completed="{{ 'true' if application_completed else 'false' }}"
+></form>
+
+
 <!-- ==================================================
      PERSON + CERTIFICATION
 ================================================== -->
@@ -124,7 +142,7 @@
 
     <!-- PERSON -->
 
-    <section class="detail-card certification-accent {{ accent_class }}">
+    <section class="detail-card">
 
         <div class="detail-card-header">
 
@@ -140,11 +158,64 @@
             <div>
 
                 <dt>
+                    Namn
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="namn"
+                        class="detail-edit-input"
+                        value="{{ application.namn }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Företag
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="foretag"
+                        class="detail-edit-input"
+                        value="{{ application.foretag }}"
+                        required
+                    >
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
                     Personnummer
                 </dt>
 
                 <dd>
-                    {{ application.personnummer }}
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="personnummer"
+                        class="detail-edit-input"
+                        value="{{ application.personnummer }}"
+                        required
+                    >
+
                 </dd>
 
             </div>
@@ -157,7 +228,16 @@
                 </dt>
 
                 <dd>
-                    {{ application.mail }}
+
+                    <input
+                        form="application-edit-form"
+                        type="email"
+                        name="mail"
+                        class="detail-edit-input"
+                        value="{{ application.mail }}"
+                        required
+                    >
+
                 </dd>
 
             </div>
@@ -171,17 +251,14 @@
 
                 <dd>
 
-                    {% if application.mail_privat %}
-
-                        {{ application.mail_privat }}
-
-                    {% else %}
-
-                        <span class="empty-value">
-                            Ej angivet
-                        </span>
-
-                    {% endif %}
+                    <input
+                        form="application-edit-form"
+                        type="email"
+                        name="mail_privat"
+                        class="detail-edit-input"
+                        value="{{ application.mail_privat }}"
+                        placeholder="Ej angivet"
+                    >
 
                 </dd>
 
@@ -196,17 +273,14 @@
 
                 <dd>
 
-                    {% if application.telefon %}
-
-                        {{ application.telefon }}
-
-                    {% else %}
-
-                        <span class="empty-value">
-                            Ej angivet
-                        </span>
-
-                    {% endif %}
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="telefon"
+                        class="detail-edit-input"
+                        value="{{ application.telefon }}"
+                        placeholder="Ej angivet"
+                    >
 
                 </dd>
 
@@ -220,7 +294,16 @@
                 </dt>
 
                 <dd>
-                    {{ application.adress }}
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="adress"
+                        class="detail-edit-input"
+                        value="{{ application.adress }}"
+                        required
+                    >
+
                 </dd>
 
             </div>
@@ -232,7 +315,7 @@
 
     <!-- CERTIFICATION -->
 
-    <section class="detail-card certification-accent {{ accent_class }}">
+    <section class="detail-card">
 
         <div class="detail-card-header">
 
@@ -252,7 +335,34 @@
                 </dt>
 
                 <dd>
-                    {{ application.ny_eller_omcertifiering }}
+
+                    <select
+                        form="application-edit-form"
+                        name="ny_eller_omcertifiering"
+                        class="detail-edit-select"
+                        required
+                    >
+
+                        <option
+                            value="NY"
+                            {% if application.ny_eller_omcertifiering == "NY" %}
+                                selected
+                            {% endif %}
+                        >
+                            NY – Nycertifiering
+                        </option>
+
+                        <option
+                            value="OM"
+                            {% if application.ny_eller_omcertifiering == "OM" %}
+                                selected
+                            {% endif %}
+                        >
+                            OM – Omcertifiering
+                        </option>
+
+                    </select>
+
                 </dd>
 
             </div>
@@ -266,9 +376,76 @@
 
                 <dd>
 
-                    <span class="norm-badge {{ norm_class }}">
-                        {{ application.norm }}
-                    </span>
+                    <select
+                        form="application-edit-form"
+                        name="norm"
+                        class="detail-edit-select"
+                        required
+                    >
+
+                        <option
+                            value="SSF 1016:1"
+                            {% if application.norm == "SSF 1016:1" %}
+                                selected
+                            {% endif %}
+                        >
+                            SSF 1016:1 – Behörig ingenjör inbrottslarm
+                        </option>
+
+                        <option
+                            value="SSF 1062:3"
+                            {% if application.norm == "SSF 1062:3" %}
+                                selected
+                            {% endif %}
+                        >
+                            SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
+                        </option>
+
+                        <option
+                            value="SBF 1007:5"
+                            {% if application.norm == "SBF 1007:5" %}
+                                selected
+                            {% endif %}
+                        >
+                            SBF 1007:5 – Behörig ingenjör brandlarm
+                        </option>
+
+                        <option
+                            value="SBF 2017:1"
+                            {% if application.norm == "SBF 2017:1" %}
+                                selected
+                            {% endif %}
+                        >
+                            SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
+                        </option>
+
+                        <option
+                            value="SSF 1049:1"
+                            {% if application.norm == "SSF 1049:1" %}
+                                selected
+                            {% endif %}
+                        >
+                            SSF 1049:1 – Certifierad låsmästare – låsanläggningar
+                        </option>
+
+                        {% if application.norm not in [
+                            "SSF 1016:1",
+                            "SSF 1062:3",
+                            "SBF 1007:5",
+                            "SBF 2017:1",
+                            "SSF 1049:1"
+                        ] %}
+
+                            <option
+                                value="{{ application.norm }}"
+                                selected
+                            >
+                                {{ application.norm }}
+                            </option>
+
+                        {% endif %}
+
+                    </select>
 
                 </dd>
 
@@ -282,7 +459,16 @@
                 </dt>
 
                 <dd>
-                    {{ application.ankom }}
+
+                    <input
+                        form="application-edit-form"
+                        type="date"
+                        name="ankom"
+                        class="detail-edit-input"
+                        value="{{ application.ankom }}"
+                        required
+                    >
+
                 </dd>
 
             </div>
@@ -291,22 +477,18 @@
             <div>
 
                 <dt>
-                    Utbildning hos Säkerhetsbranschen
+                    Examinationsdatum
                 </dt>
 
                 <dd>
 
-                    {% if application.utb_hos_sakerhetsbransch %}
-
-                        {{ application.utb_hos_sakerhetsbransch }}
-
-                    {% else %}
-
-                        <span class="empty-value">
-                            Ej angivet
-                        </span>
-
-                    {% endif %}
+                    <input
+                        form="application-edit-form"
+                        type="date"
+                        name="examinationsdatum"
+                        class="detail-edit-input"
+                        value="{% if application.examinationsdatum %}{{ application.examinationsdatum }}{% endif %}"
+                    >
 
                 </dd>
 
@@ -321,17 +503,84 @@
 
                 <dd>
 
-                    {% if application.plats %}
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="plats"
+                        class="detail-edit-input"
+                        value="{{ application.plats }}"
+                        placeholder="Ej angivet"
+                    >
 
-                        {{ application.plats }}
+                </dd>
 
-                    {% else %}
+            </div>
 
-                        <span class="empty-value">
+
+            <div>
+
+                <dt>
+                    Utbildning hos Säkerhetsbranschen
+                </dt>
+
+                <dd>
+
+                    <select
+                        form="application-edit-form"
+                        name="utb_hos_sakerhetsbransch"
+                        class="detail-edit-select"
+                    >
+
+                        <option
+                            value=""
+                            {% if not application.utb_hos_sakerhetsbransch %}
+                                selected
+                            {% endif %}
+                        >
                             Ej angivet
-                        </span>
+                        </option>
 
-                    {% endif %}
+                        <option
+                            value="Ja"
+                            {% if application.utb_hos_sakerhetsbransch == "Ja" %}
+                                selected
+                            {% endif %}
+                        >
+                            Ja
+                        </option>
+
+                        <option
+                            value="Nej"
+                            {% if application.utb_hos_sakerhetsbransch == "Nej" %}
+                                selected
+                            {% endif %}
+                        >
+                            Nej
+                        </option>
+
+                    </select>
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Resultat
+                </dt>
+
+                <dd>
+
+                    <input
+                        form="application-edit-form"
+                        type="text"
+                        name="resultat"
+                        class="detail-edit-input"
+                        value="{{ application.resultat }}"
+                        placeholder="Ej angivet"
+                    >
 
                 </dd>
 
@@ -369,9 +618,13 @@
 
             <span
                 id="case-state"
-                class="case-status case-status-active"
+                class="case-status {% if application_completed %}case-status-complete{% else %}case-status-active{% endif %}"
             >
-                Pågående
+                {% if application_completed %}
+                    Komplett
+                {% else %}
+                    Pågående
+                {% endif %}
             </span>
 
 
@@ -383,61 +636,73 @@
             %}
 
 
-            <form
-                method="post"
-                action="/certification/application/{{ application.application_id }}/status"
-                class="handling-status-form"
-            >
+            {% if application_completed %}
 
-                <select
-                    name="status"
-                    class="handling-status-select {{ handling_status_class }}"
-                    aria-label="Handläggningsstatus"
-                    onchange="this.form.submit()"
+                <span
+                    class="handling-status-badge handling-status-completed"
+                >
+                    Avslutad
+                </span>
+
+            {% else %}
+
+                <form
+                    method="post"
+                    action="/certification/application/{{ application.application_id }}/status"
+                    class="handling-status-form"
                 >
 
-                    <option
-                        value=""
-                        {% if not application.status %}
-                            selected
-                        {% endif %}
+                    <select
+                        name="status"
+                        class="handling-status-select {{ handling_status_class }}"
+                        aria-label="Handläggningsstatus"
+                        onchange="this.form.submit()"
                     >
-                        Ej satt
-                    </option>
-
-
-                    {% if
-                        application.status
-                        and
-                        application.status not in handling_status_options
-                    %}
 
                         <option
-                            value="{{ application.status }}"
-                            selected
-                        >
-                            {{ application.status }}
-                        </option>
-
-                    {% endif %}
-
-
-                    {% for status_option in handling_status_options %}
-
-                        <option
-                            value="{{ status_option }}"
-                            {% if application.status == status_option %}
+                            value=""
+                            {% if not application.status %}
                                 selected
                             {% endif %}
                         >
-                            {{ status_option }}
+                            Ej satt
                         </option>
 
-                    {% endfor %}
 
-                </select>
+                        {% if
+                            application.status
+                            and
+                            application.status not in handling_status_options
+                        %}
 
-            </form>
+                            <option
+                                value="{{ application.status }}"
+                                selected
+                            >
+                                {{ application.status }}
+                            </option>
+
+                        {% endif %}
+
+
+                        {% for status_option in handling_status_options %}
+
+                            <option
+                                value="{{ status_option }}"
+                                {% if application.status == status_option %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ status_option }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+            {% endif %}
 
         </div>
 
@@ -449,11 +714,19 @@
         <div>
 
             <strong id="case-title">
-                Ansökan är under handläggning
+                {% if application_completed %}
+                    Ansökan är komplett
+                {% else %}
+                    Ansökan är under handläggning
+                {% endif %}
             </strong>
 
             <p id="case-description">
-                Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.
+                {% if application_completed %}
+                    Ansökan har markerats som färdighandlagd.
+                {% else %}
+                    Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.
+                {% endif %}
             </p>
 
         </div>
@@ -715,14 +988,22 @@
                     </h2>
 
                     <span id="exam-mode-label">
-                        Pågående prov
+                        {% if application_completed %}
+                            Senaste godkända
+                        {% else %}
+                            Pågående prov
+                        {% endif %}
                     </span>
 
                 </div>
 
 
                 <p id="exam-description">
-                    Senaste provaktivitet medan ansökan pågår.
+                    {% if application_completed %}
+                        Senaste fem godkända prov.
+                    {% else %}
+                        Senaste provaktivitet medan ansökan pågår.
+                    {% endif %}
                 </p>
 
             </div>
@@ -773,6 +1054,7 @@
         <div
             id="ongoing-exams"
             class="exam-view"
+            {% if application_completed %}hidden{% endif %}
         >
 
             <div class="exam-table-header">
@@ -852,7 +1134,7 @@
         <div
             id="completed-exams"
             class="exam-view"
-            hidden
+            {% if not application_completed %}hidden{% endif %}
         >
 
             <div class="exam-table-header">
@@ -930,7 +1212,11 @@
         <div class="exam-footer">
 
             <span id="exam-footer-text">
-                Exempel på hur synkroniserade provresultat kommer att visas.
+                {% if application_completed %}
+                    Visar de senaste godkända provresultaten.
+                {% else %}
+                    Exempel på hur synkroniserade provresultat kommer att visas.
+                {% endif %}
             </span>
 
         </div>
@@ -1201,19 +1487,16 @@
     </div>
 
 
-    {% if application.ovrigt %}
+    <div class="note-edit-wrap">
 
-        <div class="note">
-            {{ application.ovrigt }}
-        </div>
+        <textarea
+            form="application-edit-form"
+            name="ovrigt"
+            class="note-edit-textarea"
+            placeholder="Ingen anteckning registrerad."
+        >{{ application.ovrigt }}</textarea>
 
-    {% else %}
-
-        <div class="empty-inline">
-            Ingen anteckning registrerad.
-        </div>
-
-    {% endif %}
+    </div>
 
 </section>
 
@@ -1228,48 +1511,88 @@
         Danger Zone
     </h2>
 
+
+    {% if application_completed %}
+
+        {% set lifecycle_action = "restore" %}
+        {% set lifecycle_title = "Återställ till pågående" %}
+        {% set lifecycle_description = "Flytta tillbaka ansökan till listan över pågående ansökningar." %}
+        {% set lifecycle_button_text = "Återställ till pågående" %}
+        {% set lifecycle_button_class = "danger-zone-button-restore" %}
+
+    {% else %}
+
+        {% set lifecycle_action = "complete" %}
+        {% set lifecycle_title = "Markera ansökan klar" %}
+        {% set lifecycle_description = "Flytta ansökan från pågående ansökningar till slutförda ansökningar." %}
+        {% set lifecycle_button_text = "Markera ansökan klar" %}
+        {% set lifecycle_button_class = "danger-zone-button-complete" %}
+
+    {% endif %}
+
+
     <div class="danger-zone-box">
 
         <div class="danger-zone-row">
 
             <div class="danger-zone-content">
+
                 <strong id="complete-action-title">
-                    Markera ansökan klar
+                    {{ lifecycle_title }}
                 </strong>
 
+
                 <span id="complete-action-description">
-                    Flytta ansökan från pågående ansökningar till slutförda ansökningar.
+                    {{ lifecycle_description }}
                 </span>
+
             </div>
 
-            <button
-                type="button"
-                id="complete-application-button"
-                class="danger-zone-button danger-zone-button-complete"
-                disabled
+
+            <form
+                method="post"
+                action="/certification/application/{{ application.application_id }}/{{ lifecycle_action }}"
+                class="danger-zone-form"
             >
-                Markera ansökan klar
-            </button>
+
+                <button
+                    type="submit"
+                    id="complete-application-button"
+                    class="danger-zone-button {{ lifecycle_button_class }}"
+                    {% if not application_completed %}
+                        disabled
+                    {% endif %}
+                >
+                    {{ lifecycle_button_text }}
+                </button>
+
+            </form>
 
         </div>
+
 
         <div class="danger-zone-row">
 
             <div class="danger-zone-content">
+
                 <strong>
                     Ta bort ansökan
                 </strong>
 
+
                 <span>
                     När ansökan tas bort finns det ingen enkel väg tillbaka. Kontrollera att rätt ansökan är vald.
                 </span>
+
             </div>
+
 
             <form
                 method="post"
                 action="/certification/application/{{ application.application_id }}/delete"
                 class="danger-zone-form"
             >
+
                 <button
                     type="submit"
                     class="danger-zone-button danger-zone-button-delete"
@@ -1279,6 +1602,7 @@
                 >
                     Ta bort ansökan
                 </button>
+
             </form>
 
         </div>
@@ -1323,7 +1647,8 @@
 
 
     <button
-        type="button"
+        type="submit"
+        form="application-edit-form"
         id="save-case-button"
         class="button button-disabled"
         disabled
@@ -1343,6 +1668,48 @@
     /* ==================================================
        ELEMENTS
     ================================================== */
+
+    const editForm =
+        document.getElementById(
+            "application-edit-form"
+        );
+
+
+    const editableFields =
+        document.querySelectorAll(
+            '[form="application-edit-form"]'
+        );
+
+
+    const saveBar =
+        document.getElementById(
+            "case-save-bar"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "save-case-button"
+        );
+
+
+    const saveIndicator =
+        document.getElementById(
+            "case-save-indicator"
+        );
+
+
+    const saveTitle =
+        document.getElementById(
+            "case-save-title"
+        );
+
+
+    const saveDescription =
+        document.getElementById(
+            "case-save-description"
+        );
+
 
     const evidencePanel =
         document.getElementById(
@@ -1386,509 +1753,35 @@
         );
 
 
-    const completeActionTitle =
-        document.getElementById(
-            "complete-action-title"
-        );
+    const applicationCompleted =
+        editForm.dataset.applicationCompleted
+        === "true";
 
 
-    const completeActionDescription =
-        document.getElementById(
-            "complete-action-description"
-        );
-
-
-    const caseState =
-        document.getElementById(
-            "case-state"
-        );
-
-
-    const headerStatus =
-        document.getElementById(
-            "application-status-badge"
-        );
-
-
-    const caseTitle =
-        document.getElementById(
-            "case-title"
-        );
-
-
-    const caseDescription =
-        document.getElementById(
-            "case-description"
-        );
-
-
-    const ongoingExams =
-        document.getElementById(
-            "ongoing-exams"
-        );
-
-
-    const completedExams =
-        document.getElementById(
-            "completed-exams"
-        );
-
-
-    const examDescription =
-        document.getElementById(
-            "exam-description"
-        );
-
-
-    const examModeLabel =
-        document.getElementById(
-            "exam-mode-label"
-        );
-
-
-    const examFooterText =
-        document.getElementById(
-            "exam-footer-text"
-        );
-
-
-    const saveButton =
-        document.getElementById(
-            "save-case-button"
-        );
-
-
-    const saveIndicator =
-        document.getElementById(
-            "case-save-indicator"
-        );
-
-
-    const saveTitle =
-        document.getElementById(
-            "case-save-title"
-        );
-
-
-    const saveDescription =
-        document.getElementById(
-            "case-save-description"
-        );
-
-
-    let applicationComplete =
-        false;
-
-
-    let caseHasBeenEdited =
+    let isSubmitting =
         false;
 
 
     /* ==================================================
-       EVIDENCE
+       SAVE STATE
     ================================================== */
 
-    function allEvidenceComplete() {
-
-        return (
-            evidenceCheckboxes.length > 0
-            &&
-            Array.from(
-                evidenceCheckboxes
-            ).every(
-                checkbox => checkbox.checked
-            )
-        );
-
-    }
-
-
-    function updateCompletionButton() {
-
-        if (applicationComplete) {
-
-            completeApplicationButton.disabled =
-                false;
-
-            return;
-
-        }
-
-
-        completeApplicationButton.disabled =
-            !allEvidenceComplete();
-
-    }
-
-
-    function updateEvidenceOverview() {
-
-        const total =
-            evidenceCheckboxes.length;
-
-
-        let complete =
-            0;
-
-
-        evidenceCheckboxes.forEach(
-            checkbox => {
-
-                const row =
-                    checkbox.closest(
-                        ".evidence-row"
-                    );
-
-
-                const state =
-                    row.querySelector(
-                        ".evidence-state"
-                    );
-
-
-                if (checkbox.checked) {
-
-                    complete += 1;
-
-
-                    row.classList.add(
-                        "has-document"
-                    );
-
-
-                    state.textContent =
-                        "Finns";
-
-                }
-
-                else {
-
-                    row.classList.remove(
-                        "has-document"
-                    );
-
-
-                    state.textContent =
-                        "Saknas";
-
-                }
-
-            }
-        );
-
-
-        evidenceCount.textContent =
-            `${complete} / ${total} finns`;
-
-
-        const everythingPresent =
-            total > 0
-            && complete === total;
-
-
-        if (everythingPresent) {
-
-            evidenceSummaryState.textContent =
-                "Alla finns";
-
-
-            evidenceSummaryState.classList.remove(
-                "incomplete"
-            );
-
-
-            evidenceSummaryState.classList.add(
-                "complete"
-            );
-
-
-            evidenceCompleteMessage.hidden =
-                false;
-
-        }
-
-        else {
-
-            evidenceSummaryState.textContent =
-                `${total - complete} saknas`;
-
-
-            evidenceSummaryState.classList.remove(
-                "complete"
-            );
-
-
-            evidenceSummaryState.classList.add(
-                "incomplete"
-            );
-
-
-            evidenceCompleteMessage.hidden =
-                true;
-
-        }
-
-
-        updateCompletionButton();
-
-    }
-
-
-    /* ==================================================
-       APPLICATION STATUS
-    ================================================== */
-
-    function showApplicationComplete() {
-
-        applicationComplete =
-            true;
-
-
-        caseState.textContent =
-            "Komplett";
-
-
-        headerStatus.textContent =
-            "Ansökan komplett";
-
-
-        caseState.classList.remove(
-            "case-status-active"
-        );
-
-
-        headerStatus.classList.remove(
-            "case-status-active"
-        );
-
-
-        caseState.classList.add(
-            "case-status-complete"
-        );
-
-
-        headerStatus.classList.add(
-            "case-status-complete"
-        );
-
-
-        caseTitle.textContent =
-            "Ansökan är komplett";
-
-
-        caseDescription.textContent =
-            "Ansökan har markerats som färdighandlagd.";
-
-
-        completeActionTitle.textContent =
-            "Återställ till pågående";
-
-
-        completeActionDescription.textContent =
-            "Flytta tillbaka ansökan till listan över pågående ansökningar.";
-
-
-        completeApplicationButton.textContent =
-            "Återställ till pågående";
-
-
-        completeApplicationButton.disabled =
-            false;
-
-
-        completeApplicationButton.classList.remove(
-            "danger-zone-button-complete"
-        );
-
-
-        completeApplicationButton.classList.add(
-            "danger-zone-button-restore"
-        );
-
-
-        ongoingExams.hidden =
-            true;
-
-
-        completedExams.hidden =
-            false;
-
-
-        examModeLabel.textContent =
-            "Senaste godkända";
-
-
-        examDescription.textContent =
-            "Senaste fem godkända prov.";
-
-
-        examFooterText.textContent =
-            "Visar de senaste godkända provresultaten.";
-
-    }
-
-
-    function showApplicationOngoing() {
-
-        applicationComplete =
-            false;
-
-
-        caseState.textContent =
-            "Pågående";
-
-
-        headerStatus.textContent =
-            "Pågående";
-
-
-        caseState.classList.remove(
-            "case-status-complete"
-        );
-
-
-        headerStatus.classList.remove(
-            "case-status-complete"
-        );
-
-
-        caseState.classList.add(
-            "case-status-active"
-        );
-
-
-        headerStatus.classList.add(
-            "case-status-active"
-        );
-
-
-        caseTitle.textContent =
-            "Ansökan är under handläggning";
-
-
-        caseDescription.textContent =
-            "Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.";
-
-
-        completeActionTitle.textContent =
-            "Markera ansökan klar";
-
-
-        completeActionDescription.textContent =
-            "Flytta ansökan från pågående ansökningar till slutförda ansökningar.";
-
-
-        completeApplicationButton.textContent =
-            "Markera ansökan klar";
-
-
-        completeApplicationButton.classList.remove(
-            "danger-zone-button-restore"
-        );
-
-
-        completeApplicationButton.classList.add(
-            "danger-zone-button-complete"
-        );
-
-
-        ongoingExams.hidden =
-            false;
-
-
-        completedExams.hidden =
-            true;
-
-
-        examModeLabel.textContent =
-            "Pågående prov";
-
-
-        examDescription.textContent =
-            "Senaste provaktivitet medan ansökan pågår.";
-
-
-        examFooterText.textContent =
-            "Exempel på hur synkroniserade provresultat kommer att visas.";
-
-
-        updateCompletionButton();
-
-    }
-
-
-    function toggleApplicationStatus() {
-
-        if (applicationComplete) {
-
-            showApplicationOngoing();
-
-        }
-
-        else {
-
-            showApplicationComplete();
-
-        }
-
-    }
-
-
-    /* ==================================================
-       GLOBAL SAVE STATE
-    ================================================== */
-
-    function getCaseState() {
-
-        const fields =
-            document.querySelectorAll(
-                "input:not([type='file']):not([type='hidden']), textarea, select:not(.handling-status-select)"
-            );
-
+    function getEditState() {
 
         const state =
             [];
 
 
-        fields.forEach(
+        editableFields.forEach(
             field => {
 
-                if (
-                    field.type === "checkbox"
-                    || field.type === "radio"
-                ) {
+                state.push({
+                    name:
+                        field.name,
 
-                    state.push({
-                        type: field.type,
-                        checked: field.checked
-                    });
-
-                }
-
-                else if (
-                    field.tagName === "SELECT"
-                    && field.multiple
-                ) {
-
-                    state.push({
-                        type: "select-multiple",
-                        value: Array.from(
-                            field.selectedOptions
-                        ).map(
-                            option => option.value
-                        )
-                    });
-
-                }
-
-                else {
-
-                    state.push({
-                        type: field.type,
-                        value: field.value
-                    });
-
-                }
+                    value:
+                        field.value,
+                });
 
             }
         );
@@ -1901,11 +1794,21 @@
     }
 
 
-    let originalCaseState =
-        getCaseState();
+    let originalEditState =
+        getEditState();
 
 
-    function setSaveIndicatorSaved() {
+    function hasUnsavedChanges() {
+
+        return (
+            getEditState()
+            !== originalEditState
+        );
+
+    }
+
+
+    function setSavedIndicator() {
 
         saveIndicator.textContent =
             "✓";
@@ -1920,10 +1823,15 @@
             "saved"
         );
 
+
+        saveBar.classList.remove(
+            "has-unsaved-changes"
+        );
+
     }
 
 
-    function setSaveIndicatorUnsaved() {
+    function setUnsavedIndicator() {
 
         saveIndicator.textContent =
             "●";
@@ -1936,6 +1844,11 @@
 
         saveIndicator.classList.add(
             "unsaved"
+        );
+
+
+        saveBar.classList.add(
+            "has-unsaved-changes"
         );
 
     }
@@ -1987,7 +1900,7 @@
             "Ärendet är oförändrat.";
 
 
-        setSaveIndicatorSaved();
+        setSavedIndicator();
 
         disableSaveButton();
 
@@ -2004,26 +1917,9 @@
             "Du har ändringar som ännu inte har sparats.";
 
 
-        setSaveIndicatorUnsaved();
+        setUnsavedIndicator();
 
         enableSaveButton();
-
-    }
-
-
-    function showNoChangesState() {
-
-        saveTitle.textContent =
-            "Inga ändringar att spara";
-
-
-        saveDescription.textContent =
-            "Ärendet matchar senast sparade version.";
-
-
-        setSaveIndicatorSaved();
-
-        disableSaveButton();
 
     }
 
@@ -2031,56 +1927,255 @@
     function showSavedState() {
 
         saveTitle.textContent =
-            "Ändringarna är sparade";
+            "Alla ändringar sparade";
 
 
         saveDescription.textContent =
-            `Sparat ${new Date().toLocaleTimeString(
-                "sv-SE",
-                {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                }
-            )}`;
+            "Ärendet är uppdaterat i Excel.";
 
 
-        setSaveIndicatorSaved();
+        setSavedIndicator();
 
         disableSaveButton();
 
     }
 
 
-    function checkForUnsavedChanges() {
-
-        caseHasBeenEdited =
-            true;
-
-
-        const currentCaseState =
-            getCaseState();
-
+    function updateSaveState() {
 
         if (
-            currentCaseState === originalCaseState
+            hasUnsavedChanges()
         ) {
 
-            showNoChangesState();
+            showUnsavedState();
 
         }
 
         else {
 
-            showUnsavedState();
+            showInitialState();
 
         }
 
     }
 
 
+    editableFields.forEach(
+        field => {
+
+            field.addEventListener(
+                "input",
+                updateSaveState
+            );
+
+
+            field.addEventListener(
+                "change",
+                updateSaveState
+            );
+
+        }
+    );
+
+
+    editForm.addEventListener(
+        "submit",
+        () => {
+
+            isSubmitting =
+                true;
+
+
+            saveButton.disabled =
+                true;
+
+
+            saveButton.textContent =
+                "Sparar...";
+
+        }
+    );
+
+
+    window.addEventListener(
+        "beforeunload",
+        event => {
+
+            if (
+                isSubmitting
+                ||
+                !hasUnsavedChanges()
+            ) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+            event.returnValue =
+                "";
+
+        }
+    );
+
+
     /* ==================================================
-       EVENT LISTENERS
+       EVIDENCE OVERVIEW
     ================================================== */
+
+    function allEvidenceComplete() {
+
+        return (
+            evidenceCheckboxes.length > 0
+            &&
+            Array.from(
+                evidenceCheckboxes
+            ).every(
+                checkbox =>
+                    checkbox.checked
+            )
+        );
+
+    }
+
+
+    function updateCompletionButton() {
+
+        if (
+            applicationCompleted
+        ) {
+
+            completeApplicationButton.disabled =
+                false;
+
+            return;
+
+        }
+
+
+        completeApplicationButton.disabled =
+            !allEvidenceComplete();
+
+    }
+
+
+    function updateEvidenceOverview() {
+
+        const total =
+            evidenceCheckboxes.length;
+
+
+        let complete =
+            0;
+
+
+        evidenceCheckboxes.forEach(
+            checkbox => {
+
+                const row =
+                    checkbox.closest(
+                        ".evidence-row"
+                    );
+
+
+                const state =
+                    row.querySelector(
+                        ".evidence-state"
+                    );
+
+
+                if (
+                    checkbox.checked
+                ) {
+
+                    complete += 1;
+
+
+                    row.classList.add(
+                        "has-document"
+                    );
+
+
+                    state.textContent =
+                        "Finns";
+
+                }
+
+                else {
+
+                    row.classList.remove(
+                        "has-document"
+                    );
+
+
+                    state.textContent =
+                        "Saknas";
+
+                }
+
+            }
+        );
+
+
+        evidenceCount.textContent =
+            `${complete} / ${total} finns`;
+
+
+        const everythingPresent =
+            total > 0
+            &&
+            complete === total;
+
+
+        if (
+            everythingPresent
+        ) {
+
+            evidenceSummaryState.textContent =
+                "Alla finns";
+
+
+            evidenceSummaryState.classList.remove(
+                "incomplete"
+            );
+
+
+            evidenceSummaryState.classList.add(
+                "complete"
+            );
+
+
+            evidenceCompleteMessage.hidden =
+                false;
+
+        }
+
+        else {
+
+            evidenceSummaryState.textContent =
+                `${total - complete} saknas`;
+
+
+            evidenceSummaryState.classList.remove(
+                "complete"
+            );
+
+
+            evidenceSummaryState.classList.add(
+                "incomplete"
+            );
+
+
+            evidenceCompleteMessage.hidden =
+                true;
+
+        }
+
+
+        updateCompletionButton();
+
+    }
+
 
     evidenceCheckboxes.forEach(
         checkbox => {
@@ -2113,85 +2208,27 @@
     );
 
 
-    completeApplicationButton.addEventListener(
-        "click",
-        toggleApplicationStatus
-    );
-
-
-    document
-        .querySelectorAll(
-            "input:not([type='file']):not([type='hidden']), textarea, select"
-        )
-        .forEach(
-            field => {
-
-                field.addEventListener(
-                    "input",
-                    checkForUnsavedChanges
-                );
-
-
-                field.addEventListener(
-                    "change",
-                    checkForUnsavedChanges
-                );
-
-            }
-        );
-
-
-    saveButton.addEventListener(
-        "click",
-        () => {
-
-            saveButton.disabled =
-                true;
-
-
-            saveButton.textContent =
-                "Sparar...";
-
-
-            /*
-                FRONTEND PROTOTYPE ONLY.
-
-                Later this will POST the whole case
-                to FastAPI.
-            */
-
-            setTimeout(
-                () => {
-
-                    originalCaseState =
-                        getCaseState();
-
-
-                    caseHasBeenEdited =
-                        false;
-
-
-                    saveButton.textContent =
-                        "Spara ändringar";
-
-
-                    showSavedState();
-
-                },
-                350
-            );
-
-        }
-    );
-
-
     /* ==================================================
        INITIAL PAGE STATE
     ================================================== */
 
     updateEvidenceOverview();
 
-    showInitialState();
+
+    if (
+        editForm.dataset.saved
+        === "true"
+    ) {
+
+        showSavedState();
+
+    }
+
+    else {
+
+        showInitialState();
+
+    }
 
 </script>
 

@@ -21,6 +21,10 @@ from apps.certification_manager.excel_repository import (
     delete_application_by_id,
     get_all_applications,
     get_application_by_id,
+    get_completed_applications,
+    is_application_completed,
+    move_application_to_completed,
+    restore_application_to_active,
     update_application_status_by_id,
 )
 from apps.certification_manager.folder_repository import (
@@ -31,6 +35,7 @@ from apps.certification_manager.models import (
 )
 from apps.certification_manager.service import (
     create_application,
+    update_application,
 )
 
 
@@ -52,6 +57,7 @@ HANDLING_STATUS_OPTIONS = (
     "Ansökan inkommit – mottagningsbekräftelse ej skickad",
     "Kallelse ej skickad (i kö)",
     "Kallelse ej skickad (lokal ej fastställd)",
+    "Kallelse skickad",
 )
 
 
@@ -64,6 +70,12 @@ STATUS_INDEX_LABELS = {
 
     "Kallelse ej skickad (lokal ej fastställd)":
         "Lokal saknas",
+
+    "Kallelse skickad":
+        "Kallelse skickad",
+
+    "Avslutad":
+        "Avslutad",
 }
 
 
@@ -76,6 +88,12 @@ STATUS_CSS_CLASSES = {
 
     "Kallelse ej skickad (lokal ej fastställd)":
         "handling-status-location",
+
+    "Kallelse skickad":
+        "handling-status-invitation-sent",
+
+    "Avslutad":
+        "handling-status-completed",
 }
 
 
@@ -93,12 +111,28 @@ def certification_overview(
         get_all_applications()
     )
 
+    completed_year = (
+        date.today().year
+    )
+
+    completed_applications = (
+        get_completed_applications(
+            completed_year
+        )
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
             "applications":
                 applications,
+
+            "completed_applications":
+                completed_applications,
+
+            "completed_year":
+                completed_year,
 
             "status_index_labels":
                 STATUS_INDEX_LABELS,
@@ -232,6 +266,19 @@ def application_page(
         )
     )
 
+    application_completed = (
+        is_application_completed(
+            application_id
+        )
+    )
+
+    saved = (
+        request.query_params.get(
+            "saved"
+        )
+        == "1"
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="person.html",
@@ -239,11 +286,17 @@ def application_page(
             "application":
                 application,
 
+            "saved":
+                saved,
+
             "folder":
                 folder,
 
             "documents":
                 documents,
+
+            "application_completed":
+                application_completed,
 
             "handling_status_options":
                 HANDLING_STATUS_OPTIONS,
@@ -251,6 +304,131 @@ def application_page(
             "status_css_classes":
                 STATUS_CSS_CLASSES,
         },
+    )
+
+
+@router.post(
+    "/application/{application_id}/update"
+)
+def update_application_details(
+    application_id: str,
+
+    ankom: date = Form(...),
+
+    namn: str = Form(...),
+
+    personnummer: str = Form(...),
+
+    ny_eller_omcertifiering:
+        str = Form(...),
+
+    norm: str = Form(...),
+
+    foretag: str = Form(...),
+
+    adress: str = Form(...),
+
+    mail: str = Form(...),
+
+    mail_privat: str = Form(""),
+
+    telefon: str = Form(""),
+
+    examinationsdatum:
+        str = Form(""),
+
+    utb_hos_sakerhetsbransch:
+        str = Form(""),
+
+    plats: str = Form(""),
+
+    ovrigt: str = Form(""),
+
+    resultat: str = Form(""),
+):
+    existing_application = (
+        get_application_by_id(
+            application_id
+        )
+    )
+
+    if existing_application is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Ärendet kunde inte "
+                "hittas."
+            ),
+        )
+
+    parsed_examinationsdatum = (
+        date.fromisoformat(
+            examinationsdatum
+        )
+        if examinationsdatum
+        else None
+    )
+
+    updated_application = (
+        Application(
+            ankom=ankom,
+            namn=namn.strip(),
+            personnummer=(
+                personnummer.strip()
+            ),
+            ny_eller_omcertifiering=(
+                ny_eller_omcertifiering
+            ),
+            norm=norm,
+            foretag=foretag.strip(),
+            adress=adress.strip(),
+            mail=mail.strip(),
+            mail_privat=(
+                mail_privat.strip()
+            ),
+            telefon=telefon.strip(),
+            examinationsdatum=(
+                parsed_examinationsdatum
+            ),
+            utb_hos_sakerhetsbransch=(
+                utb_hos_sakerhetsbransch
+            ),
+            plats=plats.strip(),
+            ovrigt=ovrigt.strip(),
+            resultat=resultat.strip(),
+            status=(
+                existing_application.status
+            ),
+            application_id=(
+                application_id
+            ),
+        )
+    )
+
+    try:
+
+        update_application(
+            application_id,
+            updated_application,
+        )
+
+    except ValueError as error:
+
+        raise HTTPException(
+            status_code=400,
+            detail=str(
+                error
+            ),
+        )
+
+    return RedirectResponse(
+        url=(
+            f"/certification/"
+            f"application/"
+            f"{application_id}"
+            f"?saved=1"
+        ),
+        status_code=303,
     )
 
 
@@ -288,6 +466,20 @@ def update_application_status(
             ),
         )
 
+    if (
+        is_application_completed(
+            application_id
+        )
+    ):
+        return RedirectResponse(
+            url=(
+                f"/certification/"
+                f"application/"
+                f"{application_id}"
+            ),
+            status_code=303,
+        )
+
     updated = (
         update_application_status_by_id(
             application_id,
@@ -301,6 +493,126 @@ def update_application_status(
             detail=(
                 "Status kunde inte "
                 "uppdateras."
+            ),
+        )
+
+    return RedirectResponse(
+        url=(
+            f"/certification/"
+            f"application/"
+            f"{application_id}"
+        ),
+        status_code=303,
+    )
+
+
+@router.post(
+    "/application/{application_id}/complete"
+)
+def complete_application(
+    application_id: str,
+):
+    application = (
+        get_application_by_id(
+            application_id
+        )
+    )
+
+    if application is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Ärendet kunde inte "
+                "hittas."
+            ),
+        )
+
+    if (
+        is_application_completed(
+            application_id
+        )
+    ):
+        return RedirectResponse(
+            url=(
+                f"/certification/"
+                f"application/"
+                f"{application_id}"
+            ),
+            status_code=303,
+        )
+
+    moved = (
+        move_application_to_completed(
+            application_id
+        )
+    )
+
+    if not moved:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Ansökan kunde inte "
+                "markeras som klar."
+            ),
+        )
+
+    return RedirectResponse(
+        url=(
+            f"/certification/"
+            f"application/"
+            f"{application_id}"
+        ),
+        status_code=303,
+    )
+
+
+@router.post(
+    "/application/{application_id}/restore"
+)
+def restore_application(
+    application_id: str,
+):
+    application = (
+        get_application_by_id(
+            application_id
+        )
+    )
+
+    if application is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Ärendet kunde inte "
+                "hittas."
+            ),
+        )
+
+    if not (
+        is_application_completed(
+            application_id
+        )
+    ):
+        return RedirectResponse(
+            url=(
+                f"/certification/"
+                f"application/"
+                f"{application_id}"
+            ),
+            status_code=303,
+        )
+
+    restored = (
+        restore_application_to_active(
+            application_id
+        )
+    )
+
+    if not restored:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "Ansökan kunde inte "
+                "återställas."
             ),
         )
 

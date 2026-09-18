@@ -743,12 +743,12 @@
 
         <div>
 
-            <h2>
+            <h2 id="applications-panel-title">
                 Pågående ansökningar
             </h2>
 
-            <p>
-                Informationen hämtas från applications.xlsx.
+            <p id="applications-panel-description">
+                Informationen hämtas från bladet Applications i applications.xlsx.
             </p>
 
         </div>
@@ -825,7 +825,10 @@
 
     <!-- TABLE -->
 
-    <div class="application-table-wrapper">
+    <div
+        class="application-table-wrapper application-sheet-view"
+        data-sheet-view="ongoing"
+    >
 
         <table class="application-table">
 
@@ -902,6 +905,7 @@
 
                     <tr
                         class="application-row"
+                        data-list="ongoing"
                         data-family="{{ family }}"
                         data-search="{{ application.namn }} {{ application.foretag }} {{ application.personnummer }} {{ application.norm }} {{ application.plats }}"
                     >
@@ -1083,6 +1087,243 @@
 
 
 
+    <!-- ==================================================
+         COMPLETED APPLICATIONS
+    ================================================== -->
+
+    <div
+        class="application-table-wrapper application-sheet-view"
+        data-sheet-view="completed"
+        hidden
+    >
+
+        <table class="application-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Avslutad
+                    </th>
+
+                    <th>
+                        Namn
+                    </th>
+
+                    <th>
+                        Företag
+                    </th>
+
+                    <th>
+                        Typ
+                    </th>
+
+                    <th>
+                        Norm
+                    </th>
+
+                    <th>
+                        Examination
+                    </th>
+
+                    <th>
+                        Plats
+                    </th>
+
+                    <th>
+                        Resultat
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for application, completed_date in completed_applications %}
+
+                    {% if application.norm.startswith("SSF") %}
+
+                        {% set family = "ssf" %}
+                        {% set norm_class = "norm-ssf" %}
+
+                    {% elif application.norm.startswith("SBF") %}
+
+                        {% set family = "sbf" %}
+                        {% set norm_class = "norm-sbf" %}
+
+                    {% else %}
+
+                        {% set family = "other" %}
+                        {% set norm_class = "norm-neutral" %}
+
+                    {% endif %}
+
+
+                    <tr
+                        class="application-row"
+                        data-list="completed"
+                        data-family="{{ family }}"
+                        data-search="{{ application.namn }} {{ application.foretag }} {{ application.personnummer }} {{ application.norm }} {{ application.plats }} {{ completed_date }}"
+                    >
+
+                        <td class="date-cell">
+                            {{ completed_date }}
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="/certification/application/{{ application.application_id }}"
+                                class="application-name"
+                            >
+                                {{ application.namn }}
+                            </a>
+
+                        </td>
+
+
+                        <td>
+                            {{ application.foretag }}
+                        </td>
+
+
+                        <td>
+
+                            <span class="type-badge">
+                                {{ application.ny_eller_omcertifiering }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="norm-badge {{ norm_class }}">
+                                {{ application.norm }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if application.examinationsdatum %}
+
+                                {{ application.examinationsdatum }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if application.plats %}
+
+                                {{ application.plats }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if application.resultat %}
+
+                                {{ application.resultat }}
+
+                            {% else %}
+
+                                <span class="empty-value">
+                                    —
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% set handling_status_class =
+                                status_css_classes.get(
+                                    application.status,
+                                    "handling-status-empty"
+                                )
+                            %}
+
+                            {% if application.status %}
+
+                                <span
+                                    class="handling-status-badge {{ handling_status_class }}"
+                                    title="{{ application.status }}"
+                                >
+                                    {{
+                                        status_index_labels.get(
+                                            application.status,
+                                            application.status
+                                        )
+                                    }}
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="handling-status-badge handling-status-empty"
+                                >
+                                    Ej satt
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="table-empty"
+                        >
+                            Inga avslutade ansökningar finns för {{ completed_year }}.
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
     <!-- NOTHING MATCHED SEARCH/FILTER -->
 
     <div
@@ -1091,6 +1332,38 @@
         hidden
     >
         Inga ärenden matchar sökningen eller valt filter.
+    </div>
+
+
+    <!-- EXCEL-STYLE SHEET TABS -->
+
+    <div
+        class="excel-sheet-tabs"
+        role="tablist"
+        aria-label="Ansökningslistor"
+    >
+
+        <button
+            type="button"
+            class="excel-sheet-tab active"
+            data-sheet-tab="ongoing"
+            role="tab"
+            aria-selected="true"
+        >
+            Pågående
+        </button>
+
+
+        <button
+            type="button"
+            class="excel-sheet-tab"
+            data-sheet-tab="completed"
+            role="tab"
+            aria-selected="false"
+        >
+            Avslutade {{ completed_year }}
+        </button>
+
     </div>
 
 
@@ -1110,10 +1383,18 @@
     ← Tillbaka till Portal
 </a>
 
+<footer class="portal-footer">
+
+    <p>
+        Nästan Copyright Brand & Säkerhet - Svensk Certifiering Norden - September 2026 - Version 0.1.2
+    </p>
+
+</footer>
+
 
 
 <!-- ==================================================
-     SEARCH + FILTER LOGIC
+     SEARCH + FILTER + SHEET TABS
 ================================================== -->
 
 <script>
@@ -1142,17 +1423,51 @@
         );
 
 
+    const sheetTabs =
+        document.querySelectorAll(
+            ".excel-sheet-tab"
+        );
+
+
+    const sheetViews =
+        document.querySelectorAll(
+            ".application-sheet-view"
+        );
+
+
+    const applicationsPanelTitle =
+        document.getElementById(
+            "applications-panel-title"
+        );
+
+
+    const applicationsPanelDescription =
+        document.getElementById(
+            "applications-panel-description"
+        );
+
+
     let activeFilter =
         "all";
 
 
-    function updateApplications() {
+    let activeSheet =
+        window.location.hash
+        === "#completed"
+            ? "completed"
+            : "ongoing";
 
+
+    function updateApplications() {
 
         const query =
             searchInput.value
                 .trim()
                 .toLowerCase();
+
+
+        let activeRowCount =
+            0;
 
 
         let visibleCount =
@@ -1161,6 +1476,16 @@
 
         applicationRows.forEach(
             row => {
+
+                if (
+                    row.dataset.list
+                    !== activeSheet
+                ) {
+                    return;
+                }
+
+
+                activeRowCount += 1;
 
 
                 const family =
@@ -1194,17 +1519,14 @@
 
 
                 if (shouldShow) {
-
                     visibleCount += 1;
-
                 }
-
 
             }
         );
 
 
-        if (applicationRows.length === 0) {
+        if (activeRowCount === 0) {
 
             noSearchResults.hidden =
                 true;
@@ -1218,6 +1540,94 @@
 
         }
 
+    }
+
+
+    function showSheet(
+        sheetName,
+    ) {
+
+        activeSheet =
+            sheetName;
+
+
+        sheetViews.forEach(
+            view => {
+
+                view.hidden =
+                    view.dataset.sheetView
+                    !== activeSheet;
+
+            }
+        );
+
+
+        sheetTabs.forEach(
+            tab => {
+
+                const selected =
+                    tab.dataset.sheetTab
+                    === activeSheet;
+
+
+                tab.classList.toggle(
+                    "active",
+                    selected
+                );
+
+
+                tab.setAttribute(
+                    "aria-selected",
+                    selected
+                        ? "true"
+                        : "false"
+                );
+
+            }
+        );
+
+
+        if (
+            activeSheet
+            === "completed"
+        ) {
+
+            applicationsPanelTitle.textContent =
+                "Avslutade ansökningar";
+
+
+            applicationsPanelDescription.textContent =
+                "Informationen hämtas från bladet Completed i applications.xlsx.";
+
+
+            history.replaceState(
+                null,
+                "",
+                "#completed"
+            );
+
+        }
+
+        else {
+
+            applicationsPanelTitle.textContent =
+                "Pågående ansökningar";
+
+
+            applicationsPanelDescription.textContent =
+                "Informationen hämtas från bladet Applications i applications.xlsx.";
+
+
+            history.replaceState(
+                null,
+                "",
+                "#ongoing"
+            );
+
+        }
+
+
+        updateApplications();
 
     }
 
@@ -1231,11 +1641,9 @@
     filterButtons.forEach(
         button => {
 
-
             button.addEventListener(
                 "click",
                 () => {
-
 
                     activeFilter =
                         button.dataset.filter;
@@ -1259,16 +1667,34 @@
 
                     updateApplications();
 
-
                 }
             );
-
 
         }
     );
 
 
-    updateApplications();
+    sheetTabs.forEach(
+        tab => {
+
+            tab.addEventListener(
+                "click",
+                () => {
+
+                    showSheet(
+                        tab.dataset.sheetTab
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    showSheet(
+        activeSheet
+    );
 
 </script>
 

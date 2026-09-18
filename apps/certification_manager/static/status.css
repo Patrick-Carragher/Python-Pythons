@@ -30,6 +30,20 @@
 }
 
 
+.handling-status-invitation-sent {
+    --handling-status-background: #eff6ff;
+    --handling-status-text: #1d4ed8;
+    --handling-status-border: #bfdbfe;
+}
+
+
+.handling-status-completed {
+    --handling-status-background: #ecfdf3;
+    --handling-status-text: #067647;
+    --handling-status-border: #abefc6;
+}
+
+
 /* --------------------------------------------------
    PERSON PAGE
 -------------------------------------------------- */
@@ -150,6 +164,22 @@ html[data-theme="dark"]
     --handling-status-background: #102f3a;
     --handling-status-text: #67e3f9;
     --handling-status-border: #0e7090;
+}
+
+
+html[data-theme="dark"]
+.handling-status-invitation-sent {
+    --handling-status-background: #172554;
+    --handling-status-text: #93c5fd;
+    --handling-status-border: #1e3a8a;
+}
+
+
+html[data-theme="dark"]
+.handling-status-completed {
+    --handling-status-background: #123524;
+    --handling-status-text: #75e0a7;
+    --handling-status-border: #227a4d;
 }
 
 

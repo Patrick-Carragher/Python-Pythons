@@ -27,9 +27,8 @@ EXCEL_FILE = (
     / "applications.xlsx"
 )
 
-APPLICATIONS_SHEET = (
-    "Applications"
-)
+APPLICATIONS_SHEET = "Applications"
+COMPLETED_SHEET = "Completed"
 
 HEADERS = [
     "Ankom",
@@ -51,6 +50,12 @@ HEADERS = [
     "Application ID",
 ]
 
+COMPLETED_HEADERS = [
+    *HEADERS,
+    "Completed Date",
+    "Previous Status",
+]
+
 
 def get_applications_sheet(
     workbook,
@@ -64,9 +69,28 @@ def get_applications_sheet(
         ]
 
     sheet = workbook.active
+    sheet.title = APPLICATIONS_SHEET
 
-    sheet.title = (
-        APPLICATIONS_SHEET
+    return sheet
+
+
+def get_completed_sheet(
+    workbook,
+):
+    if (
+        COMPLETED_SHEET
+        in workbook.sheetnames
+    ):
+        return workbook[
+            COMPLETED_SHEET
+        ]
+
+    sheet = workbook.create_sheet(
+        COMPLETED_SHEET
+    )
+
+    sheet.append(
+        COMPLETED_HEADERS
     )
 
     return sheet
@@ -101,6 +125,39 @@ def format_date_columns(
                 )
 
                 changed = True
+
+    return changed
+
+
+def format_completed_date_columns(
+    sheet,
+) -> bool:
+    changed = (
+        format_date_columns(
+            sheet
+        )
+    )
+
+    for row_number in range(
+        2,
+        sheet.max_row + 1,
+    ):
+        cell = sheet.cell(
+            row=row_number,
+            column=18,
+        )
+
+        if (
+            cell.value is not None
+            and
+            cell.number_format
+            != "yyyy-mm-dd"
+        ):
+            cell.number_format = (
+                "yyyy-mm-dd"
+            )
+
+            changed = True
 
     return changed
 
@@ -171,13 +228,9 @@ def get_year_from_value(
         normalised_date,
         date,
     ):
-        return (
-            normalised_date.year
-        )
+        return normalised_date.year
 
-    return (
-        datetime.now().year
-    )
+    return datetime.now().year
 
 
 def ensure_application_ids(
@@ -187,11 +240,24 @@ def ensure_application_ids(
         workbook
     )
 
-    application_id_column = (
-        len(HEADERS)
+    completed_sheet_existed = (
+        COMPLETED_SHEET
+        in workbook.sheetnames
     )
 
-    changed = False
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    application_id_column = len(
+        HEADERS
+    )
+
+    changed = (
+        not completed_sheet_existed
+    )
 
     if (
         sheet.cell(
@@ -203,13 +269,56 @@ def ensure_application_ids(
         sheet.cell(
             row=1,
             column=application_id_column,
-        ).value = (
-            "Application ID"
-        )
+        ).value = "Application ID"
+
+        changed = True
+
+    if (
+        completed_sheet.cell(
+            row=1,
+            column=18,
+        ).value
+        != "Completed Date"
+    ):
+        completed_sheet.cell(
+            row=1,
+            column=18,
+        ).value = "Completed Date"
+
+        changed = True
+
+    if (
+        completed_sheet.cell(
+            row=1,
+            column=19,
+        ).value
+        != "Previous Status"
+    ):
+        completed_sheet.cell(
+            row=1,
+            column=19,
+        ).value = "Previous Status"
 
         changed = True
 
     used_ids: set[str] = set()
+
+    for row in (
+        completed_sheet.iter_rows(
+            min_row=2,
+            values_only=True,
+        )
+    ):
+        if (
+            len(row) > 16
+            and
+            row[16]
+        ):
+            used_ids.add(
+                str(
+                    row[16]
+                ).strip()
+            )
 
     for row_number in range(
         2,
@@ -287,6 +396,11 @@ def ensure_application_ids(
     ):
         changed = True
 
+    if format_completed_date_columns(
+        completed_sheet
+    ):
+        changed = True
+
     if changed:
         workbook.save(
             EXCEL_FILE
@@ -296,10 +410,8 @@ def ensure_application_ids(
 def row_to_application(
     row,
 ) -> Application:
-    ankom = (
-        normalise_excel_date(
-            row[0]
-        )
+    ankom = normalise_excel_date(
+        row[0]
     )
 
     examinationsdatum = (
@@ -312,21 +424,51 @@ def row_to_application(
         ankom=ankom,
         namn=(row[1] or ""),
         personnummer=(row[2] or ""),
-        ny_eller_omcertifiering=(row[3] or ""),
+        ny_eller_omcertifiering=(
+            row[3] or ""
+        ),
         norm=(row[4] or ""),
         foretag=(row[5] or ""),
         adress=(row[6] or ""),
         mail=(row[7] or ""),
         mail_privat=(row[8] or ""),
         telefon=(row[9] or ""),
-        examinationsdatum=examinationsdatum,
-        utb_hos_sakerhetsbransch=(row[11] or ""),
+        examinationsdatum=(
+            examinationsdatum
+        ),
+        utb_hos_sakerhetsbransch=(
+            row[11] or ""
+        ),
         plats=(row[12] or ""),
         ovrigt=(row[13] or ""),
         resultat=(row[14] or ""),
         status=(row[15] or ""),
         application_id=(row[16] or ""),
     )
+
+
+def find_row_by_application_id(
+    sheet,
+    application_id: str,
+) -> int | None:
+    for row_number in range(
+        2,
+        sheet.max_row + 1,
+    ):
+        row_application_id = (
+            sheet.cell(
+                row=row_number,
+                column=17,
+            ).value
+        )
+
+        if (
+            row_application_id
+            == application_id
+        ):
+            return row_number
+
+    return None
 
 
 def application_exists(
@@ -358,28 +500,18 @@ def application_exists(
         if not any(row):
             continue
 
-        ankom = (
-            normalise_excel_date(
-                row[0]
-            )
+        ankom = normalise_excel_date(
+            row[0]
         )
-
-        personnummer = row[2]
-
-        certification_type = (
-            row[3]
-        )
-
-        norm = row[4]
 
         if (
-            personnummer
+            row[2]
             == application.personnummer
             and
-            certification_type
+            row[3]
             == application.ny_eller_omcertifiering
             and
-            norm
+            row[4]
             == application.norm
             and
             ankom
@@ -414,14 +546,21 @@ def save_application(
         workbook = Workbook()
 
         sheet = workbook.active
-
-        sheet.title = (
-            APPLICATIONS_SHEET
-        )
+        sheet.title = APPLICATIONS_SHEET
 
         sheet.append(
             HEADERS
         )
+
+        get_completed_sheet(
+            workbook
+        )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
 
     existing_ids = {
         str(
@@ -437,6 +576,25 @@ def save_application(
             row[16]
         )
     }
+
+    existing_ids.update(
+        {
+            str(
+                row[16]
+            ).strip()
+            for row in (
+                completed_sheet.iter_rows(
+                    min_row=2,
+                    values_only=True,
+                )
+            )
+            if (
+                len(row) > 16
+                and
+                row[16]
+            )
+        }
+    )
 
     if (
         not is_valid_application_id(
@@ -477,6 +635,10 @@ def save_application(
 
     format_date_columns(
         sheet
+    )
+
+    format_completed_date_columns(
+        completed_sheet
     )
 
     workbook.save(
@@ -543,31 +705,155 @@ def get_application_by_id(
         workbook
     )
 
-    sheet = get_applications_sheet(
+    applications_sheet = (
+        get_applications_sheet(
+            workbook
+        )
+    )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    for sheet in (
+        applications_sheet,
+        completed_sheet,
+    ):
+        for row in sheet.iter_rows(
+            min_row=2,
+            values_only=True,
+        ):
+            if not any(row):
+                continue
+
+            if (
+                (row[16] or "")
+                == application_id
+            ):
+                return row_to_application(
+                    row
+                )
+
+    return None
+
+
+def get_completed_applications(
+    year: int | None = None,
+) -> list[
+    tuple[
+        Application,
+        date | None,
+    ]
+]:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        return []
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
         workbook
     )
 
-    for row in sheet.iter_rows(
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    completed_applications: list[
+        tuple[
+            Application,
+            date | None,
+        ]
+    ] = []
+
+    for row in completed_sheet.iter_rows(
         min_row=2,
         values_only=True,
     ):
         if not any(row):
             continue
 
-        row_application_id = (
-            row[16]
-            or ""
+        completed_date = (
+            normalise_excel_date(
+                row[17]
+            )
         )
 
         if (
-            row_application_id
-            == application_id
-        ):
-            return row_to_application(
-                row
+            year is not None
+            and
+            (
+                not isinstance(
+                    completed_date,
+                    date,
+                )
+                or
+                completed_date.year
+                != year
             )
+        ):
+            continue
 
-    return None
+        completed_applications.append(
+            (
+                row_to_application(
+                    row
+                ),
+                completed_date,
+            )
+        )
+
+    completed_applications.sort(
+        key=lambda item: (
+            item[1]
+            or date.min
+        ),
+        reverse=True,
+    )
+
+    return completed_applications
+
+
+def is_application_completed(
+    application_id: str,
+) -> bool:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        return False
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
+        workbook
+    )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    return (
+        find_row_by_application_id(
+            completed_sheet,
+            application_id,
+        )
+        is not None
+    )
 
 
 def update_application_status_by_id(
@@ -589,37 +875,316 @@ def update_application_status_by_id(
         workbook
     )
 
-    sheet = get_applications_sheet(
+    applications_sheet = (
+        get_applications_sheet(
+            workbook
+        )
+    )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    for sheet in (
+        applications_sheet,
+        completed_sheet,
+    ):
+        row_number = (
+            find_row_by_application_id(
+                sheet,
+                application_id,
+            )
+        )
+
+        if row_number is None:
+            continue
+
+        sheet.cell(
+            row=row_number,
+            column=16,
+        ).value = status
+
+        workbook.save(
+            EXCEL_FILE
+        )
+
+        return True
+
+    return False
+
+
+def update_application_by_id(
+    application_id: str,
+    application: Application,
+) -> bool:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        return False
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
         workbook
     )
 
-    for row_number in range(
-        2,
-        sheet.max_row + 1,
+    applications_sheet = (
+        get_applications_sheet(
+            workbook
+        )
+    )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    for sheet in (
+        applications_sheet,
+        completed_sheet,
     ):
-        row_application_id = (
-            sheet.cell(
-                row=row_number,
-                column=17,
-            ).value
+        row_number = (
+            find_row_by_application_id(
+                sheet,
+                application_id,
+            )
         )
 
-        if (
-            row_application_id
-            == application_id
+        if row_number is None:
+            continue
+
+        values = [
+            application.ankom,
+            application.namn,
+            application.personnummer,
+            application.ny_eller_omcertifiering,
+            application.norm,
+            application.foretag,
+            application.adress,
+            application.mail,
+            application.mail_privat,
+            application.telefon,
+            application.examinationsdatum,
+            application.utb_hos_sakerhetsbransch,
+            application.plats,
+            application.ovrigt,
+            application.resultat,
+            application.status,
+            application_id,
+        ]
+
+        for column, value in enumerate(
+            values,
+            start=1,
         ):
             sheet.cell(
                 row=row_number,
-                column=16,
-            ).value = status
+                column=column,
+            ).value = value
 
-            workbook.save(
-                EXCEL_FILE
+        if (
+            sheet.title
+            == COMPLETED_SHEET
+        ):
+            format_completed_date_columns(
+                sheet
             )
 
-            return True
+        else:
+            format_date_columns(
+                sheet
+            )
+
+        workbook.save(
+            EXCEL_FILE
+        )
+
+        return True
 
     return False
+
+
+def move_application_to_completed(
+    application_id: str,
+) -> bool:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        return False
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
+        workbook
+    )
+
+    applications_sheet = (
+        get_applications_sheet(
+            workbook
+        )
+    )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    row_number = (
+        find_row_by_application_id(
+            applications_sheet,
+            application_id,
+        )
+    )
+
+    if row_number is None:
+        return False
+
+    row_values = [
+        applications_sheet.cell(
+            row=row_number,
+            column=column,
+        ).value
+        for column in range(
+            1,
+            18,
+        )
+    ]
+
+    previous_status = (
+        row_values[15]
+        or ""
+    )
+
+    row_values[15] = (
+        "Avslutad"
+    )
+
+    completed_sheet.append(
+        [
+            *row_values,
+            date.today(),
+            previous_status,
+        ]
+    )
+
+    applications_sheet.delete_rows(
+        row_number,
+        1,
+    )
+
+    format_completed_date_columns(
+        completed_sheet
+    )
+
+    workbook.save(
+        EXCEL_FILE
+    )
+
+    return True
+
+
+def restore_application_to_active(
+    application_id: str,
+) -> bool:
+    if (
+        not EXCEL_FILE.exists()
+        or
+        EXCEL_FILE.stat().st_size == 0
+    ):
+        return False
+
+    workbook = load_workbook(
+        EXCEL_FILE
+    )
+
+    ensure_application_ids(
+        workbook
+    )
+
+    applications_sheet = (
+        get_applications_sheet(
+            workbook
+        )
+    )
+
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    row_number = (
+        find_row_by_application_id(
+            completed_sheet,
+            application_id,
+        )
+    )
+
+    if row_number is None:
+        return False
+
+    if (
+        find_row_by_application_id(
+            applications_sheet,
+            application_id,
+        )
+        is not None
+    ):
+        return False
+
+    row_values = [
+        completed_sheet.cell(
+            row=row_number,
+            column=column,
+        ).value
+        for column in range(
+            1,
+            18,
+        )
+    ]
+
+    previous_status = (
+        completed_sheet.cell(
+            row=row_number,
+            column=19,
+        ).value
+        or ""
+    )
+
+    row_values[15] = (
+        previous_status
+    )
+
+    applications_sheet.append(
+        row_values
+    )
+
+    completed_sheet.delete_rows(
+        row_number,
+        1,
+    )
+
+    format_date_columns(
+        applications_sheet
+    )
+
+    workbook.save(
+        EXCEL_FILE
+    )
+
+    return True
 
 
 def delete_application_by_id(
@@ -640,34 +1205,41 @@ def delete_application_by_id(
         workbook
     )
 
-    sheet = get_applications_sheet(
-        workbook
+    applications_sheet = (
+        get_applications_sheet(
+            workbook
+        )
     )
 
-    for row_number in range(
-        2,
-        sheet.max_row + 1,
+    completed_sheet = (
+        get_completed_sheet(
+            workbook
+        )
+    )
+
+    for sheet in (
+        applications_sheet,
+        completed_sheet,
     ):
-        row_application_id = (
-            sheet.cell(
-                row=row_number,
-                column=17,
-            ).value
+        row_number = (
+            find_row_by_application_id(
+                sheet,
+                application_id,
+            )
         )
 
-        if (
-            row_application_id
-            == application_id
-        ):
-            sheet.delete_rows(
-                row_number,
-                1,
-            )
+        if row_number is None:
+            continue
 
-            workbook.save(
-                EXCEL_FILE
-            )
+        sheet.delete_rows(
+            row_number,
+            1,
+        )
 
-            return True
+        workbook.save(
+            EXCEL_FILE
+        )
+
+        return True
 
     return False
