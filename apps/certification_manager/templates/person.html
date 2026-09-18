@@ -328,128 +328,190 @@
 
         <dl class="detail-list">
 
-            <div>
+    <div>
 
-                <dt>
-                    Typ
-                </dt>
+        <dt>
+            Typ
+        </dt>
 
-                <dd>
+        <dd>
 
-                    <select
-                        form="application-edit-form"
-                        name="ny_eller_omcertifiering"
-                        class="detail-edit-select"
-                        required
+            <select
+                form="application-edit-form"
+                name="ny_eller_omcertifiering"
+                class="detail-edit-select"
+                required
+            >
+
+                {% if application.ny_eller_omcertifiering == "NY" %}
+
+                    <option
+                        value="NY"
+                        selected
                     >
+                        NY – Nycertifiering
+                    </option>
 
-                        <option
-                            value="NY"
-                            {% if application.ny_eller_omcertifiering == "NY" %}
-                                selected
-                            {% endif %}
-                        >
-                            NY – Nycertifiering
-                        </option>
+                {% else %}
 
-                        <option
-                            value="OM"
-                            {% if application.ny_eller_omcertifiering == "OM" %}
-                                selected
-                            {% endif %}
-                        >
-                            OM – Omcertifiering
-                        </option>
+                    <option value="NY">
+                        NY – Nycertifiering
+                    </option>
 
-                    </select>
-
-                </dd>
-
-            </div>
+                {% endif %}
 
 
-            <div>
+                {% if application.ny_eller_omcertifiering == "OM" %}
 
-                <dt>
-                    Norm
-                </dt>
-
-                <dd>
-
-                    <select
-                        form="application-edit-form"
-                        name="norm"
-                        class="detail-edit-select"
-                        required
+                    <option
+                        value="OM"
+                        selected
                     >
+                        OM – Omcertifiering
+                    </option>
 
-                        <option
-                            value="SSF 1016:1"
-                            {% if application.norm == "SSF 1016:1" %}
-                                selected
-                            {% endif %}
-                        >
-                            SSF 1016:1 – Behörig ingenjör inbrottslarm
-                        </option>
+                {% else %}
 
-                        <option
-                            value="SSF 1062:3"
-                            {% if application.norm == "SSF 1062:3" %}
-                                selected
-                            {% endif %}
-                        >
-                            SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
-                        </option>
+                    <option value="OM">
+                        OM – Omcertifiering
+                    </option>
 
-                        <option
-                            value="SBF 1007:5"
-                            {% if application.norm == "SBF 1007:5" %}
-                                selected
-                            {% endif %}
-                        >
-                            SBF 1007:5 – Behörig ingenjör brandlarm
-                        </option>
+                {% endif %}
 
-                        <option
-                            value="SBF 2017:1"
-                            {% if application.norm == "SBF 2017:1" %}
-                                selected
-                            {% endif %}
-                        >
-                            SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
-                        </option>
+            </select>
 
-                        <option
-                            value="SSF 1049:1"
-                            {% if application.norm == "SSF 1049:1" %}
-                                selected
-                            {% endif %}
-                        >
-                            SSF 1049:1 – Certifierad låsmästare – låsanläggningar
-                        </option>
+        </dd>
 
-                        {% if application.norm not in [
-                            "SSF 1016:1",
-                            "SSF 1062:3",
-                            "SBF 1007:5",
-                            "SBF 2017:1",
-                            "SSF 1049:1"
-                        ] %}
+    </div>
 
-                            <option
-                                value="{{ application.norm }}"
-                                selected
-                            >
-                                {{ application.norm }}
-                            </option>
 
-                        {% endif %}
+    <div>
 
-                    </select>
+        <dt>
+            Norm
+        </dt>
 
-                </dd>
+        <dd>
 
-            </div>
+            <select
+                form="application-edit-form"
+                name="norm"
+                class="detail-edit-select"
+                required
+            >
+
+                {% if application.norm == "SSF 1016:1" %}
+
+                    <option
+                        value="SSF 1016:1"
+                        selected
+                    >
+                        SSF 1016:1 – Behörig ingenjör inbrottslarm
+                    </option>
+
+                {% else %}
+
+                    <option value="SSF 1016:1">
+                        SSF 1016:1 – Behörig ingenjör inbrottslarm
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SSF 1062:3" %}
+
+                    <option
+                        value="SSF 1062:3"
+                        selected
+                    >
+                        SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
+                    </option>
+
+                {% else %}
+
+                    <option value="SSF 1062:3">
+                        SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SBF 1007:5" %}
+
+                    <option
+                        value="SBF 1007:5"
+                        selected
+                    >
+                        SBF 1007:5 – Behörig ingenjör brandlarm
+                    </option>
+
+                {% else %}
+
+                    <option value="SBF 1007:5">
+                        SBF 1007:5 – Behörig ingenjör brandlarm
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SBF 2017:1" %}
+
+                    <option
+                        value="SBF 2017:1"
+                        selected
+                    >
+                        SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
+                    </option>
+
+                {% else %}
+
+                    <option value="SBF 2017:1">
+                        SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm == "SSF 1049:1" %}
+
+                    <option
+                        value="SSF 1049:1"
+                        selected
+                    >
+                        SSF 1049:1 – Certifierad låsmästare – låsanläggningar
+                    </option>
+
+                {% else %}
+
+                    <option value="SSF 1049:1">
+                        SSF 1049:1 – Certifierad låsmästare – låsanläggningar
+                    </option>
+
+                {% endif %}
+
+
+                {% if application.norm not in [
+                    "SSF 1016:1",
+                    "SSF 1062:3",
+                    "SBF 1007:5",
+                    "SBF 2017:1",
+                    "SSF 1049:1"
+                ] %}
+
+                    <option
+                        value="{{ application.norm }}"
+                        selected
+                    >
+                        {{ application.norm }}
+                    </option>
+
+                {% endif %}
+
+            </select>
+
+        </dd>
+
+    </div>
 
 
             <div>
@@ -531,32 +593,58 @@
                         class="detail-edit-select"
                     >
 
-                        <option
-                            value=""
-                            {% if not application.utb_hos_sakerhetsbransch %}
-                                selected
-                            {% endif %}
-                        >
-                            Ej angivet
-                        </option>
+                        {% if not application.utb_hos_sakerhetsbranschen %}
 
-                        <option
-                            value="Ja"
-                            {% if application.utb_hos_sakerhetsbransch == "Ja" %}
+                            <option
+                                value=""
                                 selected
-                            {% endif %}
-                        >
-                            Ja
-                        </option>
+                            >
+                                Ej angivet
+                            </option>
 
-                        <option
-                            value="Nej"
-                            {% if application.utb_hos_sakerhetsbransch == "Nej" %}
+                        {% else %}
+
+                            <option value="">
+                                Ej angivet
+                            </option>
+
+                        {% endif %}
+
+
+                        {% if application.utb_hos_sakerhetsbranschen == "Ja" %}
+
+                            <option
+                                value="Ja"
                                 selected
-                            {% endif %}
-                        >
-                            Nej
-                        </option>
+                            >
+                                Ja
+                            </option>
+
+                        {% else %}
+
+                            <option value="Ja">
+                                Ja
+                            </option>
+
+                        {% endif %}
+
+
+                        {% if application.utb_hos_sakerhetsbranschen == "Nej" %}
+
+                            <option
+                                value="Nej"
+                                selected
+                            >
+                                Nej
+                            </option>
+
+                        {% else %}
+
+                            <option value="Nej">
+                                Nej
+                            </option>
+
+                        {% endif %}
 
                     </select>
 
