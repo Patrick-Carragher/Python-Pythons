@@ -20,3 +20,4 @@ class Application(BaseModel):
     ovrigt: str = ""
     resultat: str = ""
     status: str = ""
+    application_id: str = ""

@@ -13,6 +13,11 @@
     href="/static/certification_manager/dashboard.css"
 >
 
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/status.css"
+>
+
 {% endblock %}
 
 
@@ -30,7 +35,7 @@
 ) %}
 
 
-{% for row_number, application in applications %}
+{% for application in applications %}
 
     {% if application.examinationsdatum %}
 
@@ -874,7 +879,7 @@
             <tbody id="application-table-body">
 
 
-                {% for row_number, application in applications %}
+                {% for application in applications %}
 
 
                     {% if application.norm.startswith("SSF") %}
@@ -913,7 +918,7 @@
                         <td>
 
                             <a
-                                href="/certification/application/{{ row_number }}"
+                                href="/certification/application/{{ application.application_id }}"
                                 class="application-name"
                             >
                                 {{ application.namn }}
@@ -1011,20 +1016,36 @@
 
                         <td>
 
+                            {% set handling_status_class =
+                                status_css_classes.get(
+                                    application.status,
+                                    "handling-status-empty"
+                                )
+                            %}
+
+
                             {% if application.status %}
 
-                                <span class="status-badge">
+                                <span
+                                    class="handling-status-badge {{ handling_status_class }}"
+                                    title="{{ application.status }}"
+                                >
 
-                                    {{ application.status }}
+                                    {{
+                                        status_index_labels.get(
+                                            application.status,
+                                            application.status
+                                        )
+                                    }}
 
                                 </span>
 
                             {% else %}
 
-                                <span class="status-badge status-empty">
-
+                                <span
+                                    class="handling-status-badge handling-status-empty"
+                                >
                                     Ej satt
-
                                 </span>
 
                             {% endif %}

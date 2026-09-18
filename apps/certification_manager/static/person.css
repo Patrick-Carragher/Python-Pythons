@@ -18,18 +18,14 @@
 
 .case-status-active {
     background: #fffaeb;
-
     color: #b54708;
-
     border-color: #fedf89;
 }
 
 
 .case-status-complete {
     background: var(--success-background);
-
     color: var(--success);
-
     border-color: #abefc6;
 }
 
@@ -132,18 +128,14 @@
 
 .evidence-summary-state.incomplete {
     background: #fff6ed;
-
     color: #c4320a;
-
     border-color: #ffead5;
 }
 
 
 .evidence-summary-state.complete {
     background: var(--success-background);
-
     color: var(--success);
-
     border-color: #abefc6;
 }
 
@@ -152,7 +144,6 @@
     padding: 10px 22px;
 
     background: var(--surface-soft);
-
     color: var(--text-muted);
 
     border-bottom: 1px solid var(--border);
@@ -282,7 +273,6 @@ input:checked
     padding: 4px 9px;
 
     background: #fff6ed;
-
     color: #c4320a;
 
     border: 1px solid #ffead5;
@@ -298,9 +288,7 @@ input:checked
 .evidence-row.has-document
 .evidence-state {
     background: var(--success-background);
-
     color: var(--success);
-
     border-color: #abefc6;
 }
 
@@ -351,7 +339,6 @@ input:checked
     padding: 8px 10px;
 
     background: var(--surface-soft);
-
     color: var(--text);
 
     border: 1px solid var(--border);
@@ -440,8 +427,7 @@ input:checked
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1.45fr)
-        minmax(350px, 0.55fr);
+        repeat(2, minmax(0, 1fr));
 
     gap: 18px;
 
@@ -450,6 +436,8 @@ input:checked
 
 
 .work-grid > .panel {
+    min-width: 0;
+
     min-height: 390px;
 
     height: 100%;
@@ -516,7 +504,6 @@ input:checked
     padding: 4px 8px;
 
     background: var(--surface-soft);
-
     color: var(--text-muted);
 
     border-radius: 999px;
@@ -559,7 +546,6 @@ input:checked
     gap: 4px;
 
     background: var(--surface-soft);
-
     color: var(--text-muted);
 
     border-bottom: 1px solid var(--border);
@@ -576,15 +562,15 @@ input:checked
 
 
 /* --------------------------------------------------
-   DARK EMBEDDED EXAM AREA
+   EXAMINATION TABLE
 -------------------------------------------------- */
 
 .exam-view {
     flex: 1;
 
-    background: #111827;
+    background: var(--surface);
 
-    color: #f8fafc;
+    color: var(--text);
 }
 
 
@@ -611,11 +597,11 @@ input:checked
 .exam-table-header {
     padding: 10px 20px;
 
-    background: #0b1220;
+    background: var(--surface-soft);
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
-    border-bottom: 1px solid #283548;
+    border-bottom: 1px solid var(--border);
 
     font-size: 10px;
     font-weight: 800;
@@ -631,9 +617,9 @@ input:checked
 
     padding: 10px 20px;
 
-    color: #dbe4ef;
+    color: var(--text);
 
-    border-bottom: 1px solid #263244;
+    border-bottom: 1px solid var(--border);
 
     font-size: 12px;
 
@@ -643,12 +629,12 @@ input:checked
 
 
 .exam-row:hover {
-    background: #182231;
+    background: var(--surface-soft);
 }
 
 
 .exam-row > span:first-child {
-    color: #b8c4d3;
+    color: var(--text-muted);
 
     font-size: 12px;
 }
@@ -657,7 +643,7 @@ input:checked
 .exam-row strong {
     overflow: hidden;
 
-    color: #f8fafc;
+    color: var(--text);
 
     font-size: 13px;
     font-weight: 700;
@@ -686,7 +672,29 @@ input:checked
 }
 
 
+/* LIGHT MODE */
+
 .exam-passed {
+    background: #ecfdf3;
+
+    color: #067647;
+
+    border-color: #abefc6;
+}
+
+
+.exam-failed {
+    background: #fef3f2;
+
+    color: #b42318;
+
+    border-color: #fecdca;
+}
+
+
+/* DARK MODE */
+
+html[data-theme="dark"] .exam-passed {
     background: #123524;
 
     color: #75e0a7;
@@ -695,7 +703,7 @@ input:checked
 }
 
 
-.exam-failed {
+html[data-theme="dark"] .exam-failed {
     background: #3a1715;
 
     color: #ff9c95;
@@ -711,11 +719,11 @@ input:checked
 .exam-footer {
     padding: 9px 20px;
 
-    background: #0b1220;
+    background: var(--surface-soft);
 
-    color: #8190a5;
+    color: var(--text-muted);
 
-    border-top: 1px solid #283548;
+    border-top: 1px solid var(--border);
 
     font-size: 10px;
 }
@@ -733,16 +741,14 @@ input:checked
 }
 
 
-/* FILE COUNT */
-
 .document-count {
     padding: 5px 9px;
 
-    background: #111827;
+    background: var(--surface-soft);
 
-    color: #cbd5e1;
+    color: var(--text-muted);
 
-    border: 1px solid #283548;
+    border: 1px solid var(--border);
     border-radius: 999px;
 
     font-size: 10px;
@@ -753,7 +759,7 @@ input:checked
 
 
 /* --------------------------------------------------
-   DARK DOCUMENT UPLOAD AREA
+   DOCUMENT UPLOAD AREA
 -------------------------------------------------- */
 
 .document-upload-form {
@@ -764,9 +770,9 @@ input:checked
 
     gap: 10px;
 
-    background: #111827;
+    background: var(--surface);
 
-    border-bottom: 1px solid #283548;
+    border-bottom: 1px solid var(--border);
 }
 
 
@@ -782,11 +788,11 @@ input:checked
 
     gap: 11px;
 
-    background: #0b1220;
+    background: var(--surface-soft);
 
-    color: #f8fafc;
+    color: var(--text);
 
-    border: 1px dashed #475569;
+    border: 1px dashed var(--border-strong);
     border-radius: 9px;
 
     cursor: pointer;
@@ -798,9 +804,9 @@ input:checked
 
 
 .document-upload-area:hover {
-    background: #152033;
+    background: var(--surface);
 
-    border-color: #60a5fa;
+    border-color: var(--primary);
 }
 
 
@@ -813,11 +819,11 @@ input:checked
     display: grid;
     place-items: center;
 
-    background: #182231;
+    background: var(--surface);
 
-    color: #93c5fd;
+    color: var(--primary);
 
-    border: 1px solid #334155;
+    border: 1px solid var(--border);
     border-radius: 8px;
 
     font-size: 18px;
@@ -834,7 +840,7 @@ input:checked
 
 
 .document-upload-text strong {
-    color: #f8fafc;
+    color: var(--text);
 
     font-size: 12px;
 }
@@ -843,20 +849,18 @@ input:checked
 .document-upload-text small {
     margin-top: 2px;
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
     font-size: 10px;
 }
 
-
-/* ACTUAL FILE INPUT */
 
 .document-upload-area input[type="file"] {
     min-width: 0;
 
     margin-left: auto;
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
     font-size: 9px;
 }
@@ -867,11 +871,11 @@ input:checked
 
     padding: 7px 10px;
 
-    background: #1e293b;
+    background: var(--surface);
 
-    color: #e2e8f0;
+    color: var(--text);
 
-    border: 1px solid #475569;
+    border: 1px solid var(--border-strong);
     border-radius: 7px;
 
     font: inherit;
@@ -888,13 +892,11 @@ input:checked
 
 .document-upload-area
 input[type="file"]::file-selector-button:hover {
-    background: #334155;
+    background: var(--surface-soft);
 
-    border-color: #64748b;
+    border-color: var(--primary);
 }
 
-
-/* UPLOAD BUTTON */
 
 .document-upload-button {
     flex: 0 0 auto;
@@ -912,9 +914,9 @@ input[type="file"]::file-selector-button:hover {
 .document-list {
     flex: 1;
 
-    background: #111827;
+    background: var(--surface);
 
-    color: #f8fafc;
+    color: var(--text);
 
     overflow-y: auto;
 }
@@ -931,7 +933,7 @@ input[type="file"]::file-selector-button:hover {
 
     gap: 14px;
 
-    border-bottom: 1px solid #263244;
+    border-bottom: 1px solid var(--border);
 
     transition:
         background-color 0.15s ease;
@@ -944,11 +946,9 @@ input[type="file"]::file-selector-button:hover {
 
 
 .document-row:hover {
-    background: #182231;
+    background: var(--surface-soft);
 }
 
-
-/* FILE INFO */
 
 .document-file {
     min-width: 0;
@@ -969,11 +969,11 @@ input[type="file"]::file-selector-button:hover {
     display: grid;
     place-items: center;
 
-    background: #0b1220;
+    background: var(--surface-soft);
 
-    color: #93c5fd;
+    color: var(--primary);
 
-    border: 1px solid #334155;
+    border: 1px solid var(--border);
     border-radius: 7px;
 
     font-size: 8px;
@@ -996,7 +996,7 @@ input[type="file"]::file-selector-button:hover {
 
     overflow: hidden;
 
-    color: #f8fafc;
+    color: var(--text);
 
     font-size: 11px;
     font-weight: 700;
@@ -1009,14 +1009,14 @@ input[type="file"]::file-selector-button:hover {
 .document-file-info span {
     margin-top: 2px;
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
     font-size: 9px;
 }
 
 
 /* --------------------------------------------------
-   DELETE BUTTON
+   DOCUMENT DELETE BUTTON
 -------------------------------------------------- */
 
 .document-delete-form {
@@ -1069,9 +1069,9 @@ input[type="file"]::file-selector-button:hover {
     justify-content: center;
     flex-direction: column;
 
-    background: #111827;
+    background: var(--surface);
 
-    color: #f8fafc;
+    color: var(--text);
 
     text-align: center;
 }
@@ -1086,11 +1086,11 @@ input[type="file"]::file-selector-button:hover {
     display: grid;
     place-items: center;
 
-    background: #0b1220;
+    background: var(--surface-soft);
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
-    border: 1px solid #334155;
+    border: 1px solid var(--border);
     border-radius: 10px;
 
     font-size: 21px;
@@ -1098,7 +1098,7 @@ input[type="file"]::file-selector-button:hover {
 
 
 .documents-empty strong {
-    color: #f8fafc;
+    color: var(--text);
 
     font-size: 14px;
 }
@@ -1109,7 +1109,7 @@ input[type="file"]::file-selector-button:hover {
 
     margin-top: 6px;
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
     font-size: 12px;
 
@@ -1129,14 +1129,14 @@ input[type="file"]::file-selector-button:hover {
 
     gap: 4px;
 
-    background: #0b1220;
+    background: var(--surface-soft);
 
-    border-top: 1px solid #283548;
+    border-top: 1px solid var(--border);
 }
 
 
 .documents-footer > span {
-    color: #64748b;
+    color: var(--text-muted);
 
     font-size: 9px;
     font-weight: 800;
@@ -1148,7 +1148,7 @@ input[type="file"]::file-selector-button:hover {
 .documents-footer code {
     overflow: hidden;
 
-    color: #94a3b8;
+    color: var(--text-muted);
 
     font-size: 9px;
 
@@ -1158,9 +1158,10 @@ input[type="file"]::file-selector-button:hover {
 
 
 /* --------------------------------------------------
-   DOCUMENTS IN GLOBAL DARK MODE
+   EXAMINATION + DOCUMENTS IN DARK MODE
 -------------------------------------------------- */
 
+html[data-theme="dark"] .exam-view,
 html[data-theme="dark"] .document-upload-form,
 html[data-theme="dark"] .document-list,
 html[data-theme="dark"] .documents-empty {
@@ -1168,10 +1169,114 @@ html[data-theme="dark"] .documents-empty {
 }
 
 
+html[data-theme="dark"] .exam-table-header,
+html[data-theme="dark"] .exam-footer,
 html[data-theme="dark"] .document-upload-area,
 html[data-theme="dark"] .documents-footer,
-html[data-theme="dark"] .document-file-icon {
+html[data-theme="dark"] .document-file-icon,
+html[data-theme="dark"] .documents-empty-icon {
     background: #060a0f;
+}
+
+
+html[data-theme="dark"] .exam-table-header {
+    color: #94a3b8;
+
+    border-bottom-color: #283548;
+}
+
+
+html[data-theme="dark"] .exam-row {
+    color: #dbe4ef;
+
+    border-bottom-color: #202936;
+}
+
+
+html[data-theme="dark"] .exam-row:hover,
+html[data-theme="dark"] .document-row:hover {
+    background: #121a24;
+}
+
+
+html[data-theme="dark"] .exam-row > span:first-child {
+    color: #b8c4d3;
+}
+
+
+html[data-theme="dark"] .exam-row strong,
+html[data-theme="dark"] .document-file-info strong,
+html[data-theme="dark"] .documents-empty strong,
+html[data-theme="dark"] .document-upload-text strong {
+    color: #f8fafc;
+}
+
+
+html[data-theme="dark"] .exam-footer {
+    color: #8190a5;
+
+    border-top-color: #283548;
+}
+
+
+html[data-theme="dark"] .document-count {
+    background: #111827;
+
+    color: #cbd5e1;
+
+    border-color: #283548;
+}
+
+
+html[data-theme="dark"] .document-upload-area {
+    color: #f8fafc;
+
+    border-color: #475569;
+}
+
+
+html[data-theme="dark"] .document-upload-area:hover {
+    background: #152033;
+
+    border-color: #60a5fa;
+}
+
+
+html[data-theme="dark"] .document-upload-icon {
+    background: #182231;
+
+    color: #93c5fd;
+
+    border-color: #334155;
+}
+
+
+html[data-theme="dark"] .document-upload-text small,
+html[data-theme="dark"] .document-upload-area input[type="file"],
+html[data-theme="dark"] .document-file-info span,
+html[data-theme="dark"] .documents-empty span,
+html[data-theme="dark"] .documents-footer code {
+    color: #94a3b8;
+}
+
+
+html[data-theme="dark"]
+.document-upload-area
+input[type="file"]::file-selector-button {
+    background: #1e293b;
+
+    color: #e2e8f0;
+
+    border-color: #475569;
+}
+
+
+html[data-theme="dark"]
+.document-upload-area
+input[type="file"]::file-selector-button:hover {
+    background: #334155;
+
+    border-color: #64748b;
 }
 
 
@@ -1180,8 +1285,27 @@ html[data-theme="dark"] .document-row {
 }
 
 
-html[data-theme="dark"] .document-row:hover {
-    background: #121a24;
+html[data-theme="dark"] .document-file-icon {
+    color: #93c5fd;
+
+    border-color: #334155;
+}
+
+
+html[data-theme="dark"] .documents-empty-icon {
+    color: #94a3b8;
+
+    border-color: #334155;
+}
+
+
+html[data-theme="dark"] .documents-footer {
+    border-top-color: #283548;
+}
+
+
+html[data-theme="dark"] .documents-footer > span {
+    color: #64748b;
 }
 
 
@@ -1220,29 +1344,6 @@ html[data-theme="dark"] .document-row:hover {
         max-width: 170px;
     }
 
-}
-/* --------------------------------------------------
-   DARK GLOBAL THEME + DARK EXAM PANEL
--------------------------------------------------- */
-
-html[data-theme="dark"] .exam-view {
-    background: #090e15;
-}
-
-
-html[data-theme="dark"] .exam-table-header,
-html[data-theme="dark"] .exam-footer {
-    background: #060a0f;
-}
-
-
-html[data-theme="dark"] .exam-row {
-    border-bottom-color: #202936;
-}
-
-
-html[data-theme="dark"] .exam-row:hover {
-    background: #121a24;
 }
 
 
@@ -1322,6 +1423,7 @@ html[data-theme="dark"] .exam-row:hover {
     }
 
 }
+
 /* --------------------------------------------------
    GLOBAL CASE SAVE BAR
 -------------------------------------------------- */
@@ -1438,7 +1540,7 @@ html[data-theme="dark"] .exam-row:hover {
 
 
 /* --------------------------------------------------
-   DARK MODE
+   SAVE BAR DARK MODE
 -------------------------------------------------- */
 
 html[data-theme="dark"] .case-save-bar {
@@ -1474,7 +1576,7 @@ html[data-theme="dark"]
 
 
 /* --------------------------------------------------
-   MOBILE
+   SAVE BAR MOBILE
 -------------------------------------------------- */
 
 @media (max-width: 700px) {
@@ -1493,4 +1595,228 @@ html[data-theme="dark"]
         width: 100%;
     }
 
+}
+/* ==================================================
+   DANGER ZONE
+================================================== */
+
+.danger-zone {
+    margin-top: 32px;
+    margin-bottom: 32px;
+}
+
+.danger-zone-title {
+    margin: 0 0 16px;
+    color: var(--text);
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.danger-zone-box {
+    overflow: hidden;
+    background: transparent;
+    border: 1px solid #cf222e;
+    border-radius: 8px;
+}
+
+.danger-zone-row {
+    min-height: 108px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.danger-zone-row + .danger-zone-row {
+    border-top: 1px solid var(--border);
+}
+
+.danger-zone-content {
+    min-width: 0;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.danger-zone-content strong {
+    display: block;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.danger-zone-content span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.danger-zone-form {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.danger-zone-button {
+    min-width: 190px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        opacity 0.15s ease;
+}
+
+/* COMPLETE BUTTON - filled green */
+.danger-zone-button-complete {
+    background: #1f883d;
+    color: #ffffff;
+    border: 1px solid #1a7f37;
+}
+
+.danger-zone-button-complete:hover:not(:disabled) {
+    background: #1a7f37;
+    border-color: #1a7f37;
+}
+
+/* RESTORE BUTTON - filled neutral */
+.danger-zone-button-restore {
+    background: #f6f8fa;
+    color: #24292f;
+    border: 1px solid #d0d7de;
+}
+
+.danger-zone-button-restore:hover {
+    background: #eef1f4;
+}
+
+/* DELETE BUTTON - filled red */
+.danger-zone-button-delete {
+    background: #cf222e;
+    color: #ffffff;
+    border: 1px solid #b62324;
+}
+
+.danger-zone-button-delete:hover {
+    background: #b62324;
+    border-color: #b62324;
+}
+
+.danger-zone-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* DARK MODE */
+html[data-theme="dark"] .danger-zone-box {
+    border-color: #f85149;
+}
+
+html[data-theme="dark"] .danger-zone-button-complete {
+    background: #238636;
+    border-color: #2ea043;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .danger-zone-button-complete:hover:not(:disabled) {
+    background: #2ea043;
+    border-color: #2ea043;
+}
+
+html[data-theme="dark"] .danger-zone-button-restore {
+    background: #21262d;
+    color: #f0f6fc;
+    border-color: #30363d;
+}
+
+html[data-theme="dark"] .danger-zone-button-restore:hover {
+    background: #30363d;
+}
+
+html[data-theme="dark"] .danger-zone-button-delete {
+    background: #da3633;
+    color: #ffffff;
+    border-color: #f85149;
+}
+
+html[data-theme="dark"] .danger-zone-button-delete:hover {
+    background: #f85149;
+    border-color: #f85149;
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+    .danger-zone-row {
+        min-height: 0;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .danger-zone-form {
+        width: 100%;
+    }
+
+    .danger-zone-button {
+        width: 100%;
+    }
+}
+/* --------------------------------------------------
+   CERTIFICATION ACCENT
+-------------------------------------------------- */
+
+.details-grid.certification-accent {
+    position: relative;
+
+    padding-top: 0;
+
+    border-top: 5px solid;
+    border-radius: 14px 14px 0 0;
+}
+
+
+/* SSF */
+
+.details-grid.certification-accent-ssf {
+    border-top-color: var(--ssf);
+}
+
+
+/* SBF */
+
+.details-grid.certification-accent-sbf {
+    border-top-color: var(--sbf);
+}
+
+
+/* FALLBACK */
+
+.details-grid.certification-accent-neutral {
+    border-top-color: var(--border-strong);
+}
+
+/* --------------------------------------------------
+   CERTIFICATION EYEBROW COLOR
+-------------------------------------------------- */
+
+.eyebrow.certification-accent-ssf {
+    color: var(--ssf);
+}
+
+
+.eyebrow.certification-accent-sbf {
+    color: var(--sbf);
+}
+
+
+.eyebrow.certification-accent-neutral {
+    color: var(--text-muted);
 }

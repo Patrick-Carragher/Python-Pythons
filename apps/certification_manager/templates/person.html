@@ -13,6 +13,11 @@
     href="/static/certification_manager/person.css"
 >
 
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/status.css"
+>
+
 {% endblock %}
 
 
@@ -22,14 +27,17 @@
 {% if application.norm.startswith("SSF") %}
 
     {% set norm_class = "norm-ssf" %}
+    {% set accent_class = "certification-accent-ssf" %}
 
 {% elif application.norm.startswith("SBF") %}
 
     {% set norm_class = "norm-sbf" %}
+    {% set accent_class = "certification-accent-sbf" %}
 
 {% else %}
 
     {% set norm_class = "norm-neutral" %}
+    {% set accent_class = "certification-accent-neutral" %}
 
 {% endif %}
 
@@ -52,8 +60,8 @@
 
         <div>
 
-            <span class="eyebrow">
-                Pågående ansökan Behörig ingenjör
+            <span class="eyebrow {{ accent_class }}">
+                 Pågående ansökan Behörig ingenjör
             </span>
 
 
@@ -111,12 +119,12 @@
      PERSON + CERTIFICATION
 ================================================== -->
 
-<div class="details-grid">
+<div class="details-grid certification-accent {{ accent_class }}">
 
 
     <!-- PERSON -->
 
-    <section class="detail-card">
+    <section class="detail-card certification-accent {{ accent_class }}">
 
         <div class="detail-card-header">
 
@@ -224,7 +232,7 @@
 
     <!-- CERTIFICATION -->
 
-    <section class="detail-card">
+    <section class="detail-card certification-accent {{ accent_class }}">
 
         <div class="detail-card-header">
 
@@ -304,6 +312,31 @@
 
             </div>
 
+
+            <div>
+
+                <dt>
+                    Examinationsort
+                </dt>
+
+                <dd>
+
+                    {% if application.plats %}
+
+                        {{ application.plats }}
+
+                    {% else %}
+
+                        <span class="empty-value">
+                            Ej angivet
+                        </span>
+
+                    {% endif %}
+
+                </dd>
+
+            </div>
+
         </dl>
 
     </section>
@@ -332,12 +365,81 @@
         </div>
 
 
-        <span
-            id="case-state"
-            class="case-status case-status-active"
-        >
-            Pågående
-        </span>
+        <div class="case-status-group">
+
+            <span
+                id="case-state"
+                class="case-status case-status-active"
+            >
+                Pågående
+            </span>
+
+
+            {% set handling_status_class =
+                status_css_classes.get(
+                    application.status,
+                    "handling-status-empty"
+                )
+            %}
+
+
+            <form
+                method="post"
+                action="/certification/application/{{ application.application_id }}/status"
+                class="handling-status-form"
+            >
+
+                <select
+                    name="status"
+                    class="handling-status-select {{ handling_status_class }}"
+                    aria-label="Handläggningsstatus"
+                    onchange="this.form.submit()"
+                >
+
+                    <option
+                        value=""
+                        {% if not application.status %}
+                            selected
+                        {% endif %}
+                    >
+                        Ej satt
+                    </option>
+
+
+                    {% if
+                        application.status
+                        and
+                        application.status not in handling_status_options
+                    %}
+
+                        <option
+                            value="{{ application.status }}"
+                            selected
+                        >
+                            {{ application.status }}
+                        </option>
+
+                    {% endif %}
+
+
+                    {% for status_option in handling_status_options %}
+
+                        <option
+                            value="{{ status_option }}"
+                            {% if application.status == status_option %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ status_option }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </form>
+
+        </div>
 
     </div>
 
@@ -355,16 +457,6 @@
             </p>
 
         </div>
-
-
-        <button
-            type="button"
-            id="complete-application-button"
-            class="button button-disabled"
-            disabled
-        >
-            Markera ansökan som komplett
-        </button>
 
     </div>
 
@@ -608,9 +700,7 @@
 <div class="work-grid">
 
 
-    <!-- ==================================================
-         EXAMINATION
-    ================================================== -->
+    <!-- EXAMINATION -->
 
     <section class="panel examination-panel">
 
@@ -848,9 +938,7 @@
     </section>
 
 
-    <!-- ==================================================
-         DOCUMENTS
-    ================================================== -->
+    <!-- DOCUMENTS -->
 
     <section class="panel documents-panel">
 
@@ -891,7 +979,7 @@
         <!-- DOCUMENT UPLOAD -->
 
         <form
-            action="/certification/application/{{ row_number }}/documents/upload"
+            action="/certification/application/{{ application.application_id }}/documents/upload"
             method="post"
             enctype="multipart/form-data"
             class="document-upload-form"
@@ -1021,7 +1109,7 @@
 
 
                         <form
-                            action="/certification/application/{{ row_number }}/documents/delete"
+                            action="/certification/application/{{ application.application_id }}/documents/delete"
                             method="post"
                             class="document-delete-form"
                         >
@@ -1072,8 +1160,6 @@
 
         {% endif %}
 
-
-        <!-- DOCUMENT FOLDER -->
 
         <div class="documents-footer">
 
@@ -1128,6 +1214,76 @@
         </div>
 
     {% endif %}
+
+</section>
+
+
+<!-- ==================================================
+     DANGER ZONE
+================================================== -->
+
+<section class="danger-zone">
+
+    <h2 class="danger-zone-title">
+        Danger Zone
+    </h2>
+
+    <div class="danger-zone-box">
+
+        <div class="danger-zone-row">
+
+            <div class="danger-zone-content">
+                <strong id="complete-action-title">
+                    Markera ansökan klar
+                </strong>
+
+                <span id="complete-action-description">
+                    Flytta ansökan från pågående ansökningar till slutförda ansökningar.
+                </span>
+            </div>
+
+            <button
+                type="button"
+                id="complete-application-button"
+                class="danger-zone-button danger-zone-button-complete"
+                disabled
+            >
+                Markera ansökan klar
+            </button>
+
+        </div>
+
+        <div class="danger-zone-row">
+
+            <div class="danger-zone-content">
+                <strong>
+                    Ta bort ansökan
+                </strong>
+
+                <span>
+                    När ansökan tas bort finns det ingen enkel väg tillbaka. Kontrollera att rätt ansökan är vald.
+                </span>
+            </div>
+
+            <form
+                method="post"
+                action="/certification/application/{{ application.application_id }}/delete"
+                class="danger-zone-form"
+            >
+                <button
+                    type="submit"
+                    class="danger-zone-button danger-zone-button-delete"
+                    onclick="return confirm(
+                        'Är du säker på att du vill ta bort ansökan för {{ application.namn }}? Detta kan inte ångras.'
+                    )"
+                >
+                    Ta bort ansökan
+                </button>
+            </form>
+
+        </div>
+
+    </div>
 
 </section>
 
@@ -1227,6 +1383,18 @@
     const completeApplicationButton =
         document.getElementById(
             "complete-application-button"
+        );
+
+
+    const completeActionTitle =
+        document.getElementById(
+            "complete-action-title"
+        );
+
+
+    const completeActionDescription =
+        document.getElementById(
+            "complete-action-description"
         );
 
 
@@ -1335,6 +1503,24 @@
     }
 
 
+    function updateCompletionButton() {
+
+        if (applicationComplete) {
+
+            completeApplicationButton.disabled =
+                false;
+
+            return;
+
+        }
+
+
+        completeApplicationButton.disabled =
+            !allEvidenceComplete();
+
+    }
+
+
     function updateEvidenceOverview() {
 
         const total =
@@ -1419,24 +1605,6 @@
             evidenceCompleteMessage.hidden =
                 false;
 
-
-            if (!applicationComplete) {
-
-                completeApplicationButton.disabled =
-                    false;
-
-
-                completeApplicationButton.classList.remove(
-                    "button-disabled"
-                );
-
-
-                completeApplicationButton.classList.add(
-                    "button-primary"
-                );
-
-            }
-
         }
 
         else {
@@ -1458,25 +1626,10 @@
             evidenceCompleteMessage.hidden =
                 true;
 
-
-            if (!applicationComplete) {
-
-                completeApplicationButton.disabled =
-                    true;
-
-
-                completeApplicationButton.classList.remove(
-                    "button-primary"
-                );
-
-
-                completeApplicationButton.classList.add(
-                    "button-disabled"
-                );
-
-            }
-
         }
+
+
+        updateCompletionButton();
 
     }
 
@@ -1527,8 +1680,16 @@
             "Ansökan har markerats som färdighandlagd.";
 
 
+        completeActionTitle.textContent =
+            "Återställ till pågående";
+
+
+        completeActionDescription.textContent =
+            "Flytta tillbaka ansökan till listan över pågående ansökningar.";
+
+
         completeApplicationButton.textContent =
-            "Återöppna ansökan";
+            "Återställ till pågående";
 
 
         completeApplicationButton.disabled =
@@ -1536,13 +1697,12 @@
 
 
         completeApplicationButton.classList.remove(
-            "button-primary",
-            "button-disabled"
+            "danger-zone-button-complete"
         );
 
 
         completeApplicationButton.classList.add(
-            "button-secondary"
+            "danger-zone-button-restore"
         );
 
 
@@ -1610,48 +1770,26 @@
             "Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.";
 
 
+        completeActionTitle.textContent =
+            "Markera ansökan klar";
+
+
+        completeActionDescription.textContent =
+            "Flytta ansökan från pågående ansökningar till slutförda ansökningar.";
+
+
         completeApplicationButton.textContent =
-            "Markera ansökan som komplett";
+            "Markera ansökan klar";
 
 
         completeApplicationButton.classList.remove(
-            "button-secondary"
+            "danger-zone-button-restore"
         );
 
 
-        if (allEvidenceComplete()) {
-
-            completeApplicationButton.disabled =
-                false;
-
-
-            completeApplicationButton.classList.remove(
-                "button-disabled"
-            );
-
-
-            completeApplicationButton.classList.add(
-                "button-primary"
-            );
-
-        }
-
-        else {
-
-            completeApplicationButton.disabled =
-                true;
-
-
-            completeApplicationButton.classList.remove(
-                "button-primary"
-            );
-
-
-            completeApplicationButton.classList.add(
-                "button-disabled"
-            );
-
-        }
+        completeApplicationButton.classList.add(
+            "danger-zone-button-complete"
+        );
 
 
         ongoingExams.hidden =
@@ -1672,6 +1810,9 @@
 
         examFooterText.textContent =
             "Exempel på hur synkroniserade provresultat kommer att visas.";
+
+
+        updateCompletionButton();
 
     }
 
@@ -1701,7 +1842,7 @@
 
         const fields =
             document.querySelectorAll(
-                "input:not([type='file']):not([type='hidden']), textarea, select"
+                "input:not([type='file']):not([type='hidden']), textarea, select:not(.handling-status-select)"
             );
 
 
@@ -1836,11 +1977,6 @@
     }
 
 
-    /*
-        STATE 1:
-        Page has just loaded.
-    */
-
     function showInitialState() {
 
         saveTitle.textContent =
@@ -1857,11 +1993,6 @@
 
     }
 
-
-    /*
-        STATE 2:
-        Current values differ from last saved values.
-    */
 
     function showUnsavedState() {
 
@@ -1880,12 +2011,6 @@
     }
 
 
-    /*
-        STATE 3:
-        User changed something,
-        but then restored everything to the original state.
-    */
-
     function showNoChangesState() {
 
         saveTitle.textContent =
@@ -1902,11 +2027,6 @@
 
     }
 
-
-    /*
-        STATE 4:
-        User successfully pressed Save.
-    */
 
     function showSavedState() {
 
