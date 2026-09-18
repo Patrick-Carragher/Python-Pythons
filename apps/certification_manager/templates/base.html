@@ -1,10 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="sv">
+
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+
+    <!--
+        Load saved theme before the page is drawn.
+        This prevents a bright flash before dark mode loads.
+    -->
+
+    <script>
+
+        const savedTheme =
+            localStorage.getItem(
+                "certification-theme"
+            );
+
+        const prefersDark =
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches;
+
+        const initialTheme =
+            savedTheme
+            || (
+                prefersDark
+                    ? "dark"
+                    : "light"
+            );
+
+        document.documentElement.dataset.theme =
+            initialTheme;
+
+    </script>
+
+
+    <title>
+
+        {% block title %}
+            Certification Manager
+        {% endblock %}
+
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="/static/certification_manager/style.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/static/certification_manager/theme.css"
+    >
+
+
+    {% block extra_head %}
+    {% endblock %}
+
 </head>
+
+
 <body>
-$END$
+
+
+<header class="topbar">
+
+    <div class="topbar-inner">
+
+
+        <a
+            href="/certification/"
+            class="brand"
+        >
+
+            <span class="brand-mark">
+                B&S
+            </span>
+
+
+            <span class="brand-text">
+
+                <strong>
+                    Brand och Säkerhet
+                </strong>
+
+                <small>
+                    Svensk Certifiering Norden AB
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <nav class="topbar-nav">
+
+
+            <a href="/certification/">
+                Översikt
+            </a>
+
+
+            <button
+                type="button"
+                id="theme-toggle"
+                class="theme-toggle"
+                title="Byt mellan ljust och mörkt tema"
+            >
+
+                <span id="theme-icon">
+                    ☾
+                </span>
+
+                <span id="theme-text">
+                    Mörkt
+                </span>
+
+            </button>
+
+
+            <a
+                href="/certification/new"
+                class="nav-primary"
+            >
+                + Ny ansökan
+            </a>
+
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="page">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+
+<script>
+
+    const themeToggle =
+        document.getElementById(
+            "theme-toggle"
+        );
+
+    const themeText =
+        document.getElementById(
+            "theme-text"
+        );
+
+    const themeIcon =
+        document.getElementById(
+            "theme-icon"
+        );
+
+
+    function updateThemeButton() {
+
+        const darkMode =
+            document.documentElement.dataset.theme
+            === "dark";
+
+
+        themeText.textContent =
+            darkMode
+                ? "Ljust"
+                : "Mörkt";
+
+
+        themeIcon.textContent =
+            darkMode
+                ? "☀"
+                : "☾";
+
+    }
+
+
+    themeToggle.addEventListener(
+        "click",
+        () => {
+
+            const currentTheme =
+                document.documentElement.dataset.theme;
+
+
+            const nextTheme =
+                currentTheme === "dark"
+                    ? "light"
+                    : "dark";
+
+
+            document.documentElement.dataset.theme =
+                nextTheme;
+
+
+            localStorage.setItem(
+                "certification-theme",
+                nextTheme
+            );
+
+
+            updateThemeButton();
+
+        }
+    );
+
+
+    updateThemeButton();
+
+</script>
+
+
 </body>
+
 </html>

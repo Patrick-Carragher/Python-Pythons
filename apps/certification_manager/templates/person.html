@@ -1,10 +1,2079 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ application.namn }} | Certification Manager
+{% endblock %}
+
+
+{% block extra_head %}
+
+<link
+    rel="stylesheet"
+    href="/static/certification_manager/person.css"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+{% if application.norm.startswith("SSF") %}
+
+    {% set norm_class = "norm-ssf" %}
+
+{% elif application.norm.startswith("SBF") %}
+
+    {% set norm_class = "norm-sbf" %}
+
+{% else %}
+
+    {% set norm_class = "norm-neutral" %}
+
+{% endif %}
+
+
+<!-- ==================================================
+     PAGE HEADER
+================================================== -->
+
+<section class="person-heading">
+
+    <a
+        href="/certification/"
+        class="back-link"
+    >
+        ← Till översikten
+    </a>
+
+
+    <div class="person-title-row">
+
+        <div>
+
+            <span class="eyebrow">
+                Pågående ansökan Behörig ingenjör
+            </span>
+
+
+            <h1>
+                {{ application.namn }}
+            </h1>
+
+
+            <p class="person-company">
+                {{ application.foretag }}
+            </p>
+
+        </div>
+
+
+        <div class="person-heading-badges">
+
+            <span class="norm-badge {{ norm_class }}">
+                {{ application.norm }}
+            </span>
+
+
+            <span
+                id="application-status-badge"
+                class="case-status case-status-active"
+            >
+                Pågående
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% if created %}
+
+<div class="alert alert-success">
+
+    <strong>
+        Ansökan har skapats
+    </strong>
+
+    <span>
+        Personen har sparats i Excel och kundmappen har skapats.
+    </span>
+
+</div>
+
+{% endif %}
+
+
+<!-- ==================================================
+     PERSON + CERTIFICATION
+================================================== -->
+
+<div class="details-grid">
+
+
+    <!-- PERSON -->
+
+    <section class="detail-card">
+
+        <div class="detail-card-header">
+
+            <h2>
+                Personuppgifter
+            </h2>
+
+        </div>
+
+
+        <dl class="detail-list">
+
+            <div>
+
+                <dt>
+                    Personnummer
+                </dt>
+
+                <dd>
+                    {{ application.personnummer }}
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Mail
+                </dt>
+
+                <dd>
+                    {{ application.mail }}
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Mail privat
+                </dt>
+
+                <dd>
+
+                    {% if application.mail_privat %}
+
+                        {{ application.mail_privat }}
+
+                    {% else %}
+
+                        <span class="empty-value">
+                            Ej angivet
+                        </span>
+
+                    {% endif %}
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Telefon
+                </dt>
+
+                <dd>
+
+                    {% if application.telefon %}
+
+                        {{ application.telefon }}
+
+                    {% else %}
+
+                        <span class="empty-value">
+                            Ej angivet
+                        </span>
+
+                    {% endif %}
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Adress
+                </dt>
+
+                <dd>
+                    {{ application.adress }}
+                </dd>
+
+            </div>
+
+        </dl>
+
+    </section>
+
+
+    <!-- CERTIFICATION -->
+
+    <section class="detail-card">
+
+        <div class="detail-card-header">
+
+            <h2>
+                Certifiering
+            </h2>
+
+        </div>
+
+
+        <dl class="detail-list">
+
+            <div>
+
+                <dt>
+                    Typ
+                </dt>
+
+                <dd>
+                    {{ application.ny_eller_omcertifiering }}
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Norm
+                </dt>
+
+                <dd>
+
+                    <span class="norm-badge {{ norm_class }}">
+                        {{ application.norm }}
+                    </span>
+
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Ankom
+                </dt>
+
+                <dd>
+                    {{ application.ankom }}
+                </dd>
+
+            </div>
+
+
+            <div>
+
+                <dt>
+                    Utbildning hos Säkerhetsbranschen
+                </dt>
+
+                <dd>
+
+                    {% if application.utb_hos_sakerhetsbransch %}
+
+                        {{ application.utb_hos_sakerhetsbransch }}
+
+                    {% else %}
+
+                        <span class="empty-value">
+                            Ej angivet
+                        </span>
+
+                    {% endif %}
+
+                </dd>
+
+            </div>
+
+        </dl>
+
+    </section>
+
+</div>
+
+
+<!-- ==================================================
+     APPLICATION STATUS
+================================================== -->
+
+<section class="panel case-panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Ansökan
+            </h2>
+
+            <p>
+                Handläggningsstatus för själva ansökan.
+            </p>
+
+        </div>
+
+
+        <span
+            id="case-state"
+            class="case-status case-status-active"
+        >
+            Pågående
+        </span>
+
+    </div>
+
+
+    <div class="case-body">
+
+        <div>
+
+            <strong id="case-title">
+                Ansökan är under handläggning
+            </strong>
+
+            <p id="case-description">
+                Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="complete-application-button"
+            class="button button-disabled"
+            disabled
+        >
+            Markera ansökan som komplett
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     REQUIRED DOCUMENT LIST
+================================================== -->
+
+
+{% if application.norm == "SSF 1016:1" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm == "SSF 1062:3" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm in ["SSF 1049:1", "SSF 1049, utgåva 1"] %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Kopia av mästarprov",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm in ["SSF 1041:1", "SSF 1041, utgåva 1"] %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Undertecknat intyg om tillgång till regler och normer",
+        "Utdrag ur belastningsregistret",
+        "Giltigt gesällbrev",
+        "Intyg praktisk erfarenhet"
+    ] %}
+
+
+{% elif application.norm == "SBF 1007:5" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Intyg grundkompetens",
+        "Intyg grundläggande brandskydd",
+        "Intyg entreprenadjuridik",
+        "Intyg praktisk erfarenhet",
+        "Intyg dokumentation",
+        "Ansvarsförsäkring"
+    ] %}
+
+
+{% elif application.norm == "SBF 2017:1" %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Intyg grundkompetens",
+        "Intyg grundläggande brandskydd",
+        "Intyg entreprenadjuridik",
+        "Intyg ljud och taluppfattbarhet",
+        "Intyg praktisk erfarenhet",
+        "Intyg dokumentation",
+        "Ansvarsförsäkring"
+    ] %}
+
+
+{% else %}
+
+    {% set required_documents = [
+        "Personbevis",
+        "Övrigt certifieringsunderlag"
+    ] %}
+
+{% endif %}
+
+
+<!-- ==================================================
+     EVIDENCE OVERVIEW
+================================================== -->
+
+<section
+    class="panel evidence-panel"
+    id="evidence-panel"
+>
+
+    <div class="panel-header evidence-header">
+
+        <div>
+
+            <div class="evidence-title-row">
+
+                <h2>
+                    Underlagsöversikt
+                </h2>
+
+                <span class="norm-badge {{ norm_class }}">
+                    {{ application.norm }}
+                </span>
+
+            </div>
+
+
+            <p>
+                Snabb översikt över förväntade underlag från kunden.
+            </p>
+
+        </div>
+
+
+        <div class="evidence-summary">
+
+            <strong id="evidence-count">
+                0 / {{ required_documents | length }} finns
+            </strong>
+
+
+            <span
+                id="evidence-summary-state"
+                class="evidence-summary-state incomplete"
+            >
+                Underlag saknas
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="evidence-disclaimer">
+
+        Detta är endast en handläggningsöversikt och ersätter inte det formella bedömningsunderlaget.
+
+    </div>
+
+
+    <div class="evidence-list">
+
+        {% for document in required_documents %}
+
+        <div class="evidence-row">
+
+            <label class="evidence-main">
+
+                <input
+                    type="checkbox"
+                    class="evidence-checkbox"
+                >
+
+
+                <span class="evidence-checkbox-ui">
+                    ✓
+                </span>
+
+
+                <span class="evidence-document">
+                    {{ document }}
+                </span>
+
+            </label>
+
+
+            <span class="evidence-state">
+                Saknas
+            </span>
+
+
+            <div class="evidence-details">
+
+                <label>
+
+                    <span>
+                        Kommentar / vad saknas?
+                    </span>
+
+
+                    <input
+                        type="text"
+                        class="evidence-note"
+                        placeholder="Exempel: Inväntar komplettering från kund..."
+                    >
+
+                </label>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div class="evidence-footer">
+
+        <button
+            type="button"
+            id="toggle-evidence-details"
+            class="button button-secondary"
+        >
+            Visa detaljer
+        </button>
+
+
+        <div
+            id="evidence-complete-message"
+            class="evidence-complete-message"
+            hidden
+        >
+
+            <span>
+                ✓
+            </span>
+
+            Alla förväntade underlag finns.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     EXAMINATION + DOCUMENTS
+================================================== -->
+
+<div class="work-grid">
+
+
+    <!-- ==================================================
+         EXAMINATION
+    ================================================== -->
+
+    <section class="panel examination-panel">
+
+        <div class="compact-panel-header">
+
+            <div>
+
+                <div class="exam-title-line">
+
+                    <h2>
+                        Examination
+                    </h2>
+
+                    <span id="exam-mode-label">
+                        Pågående prov
+                    </span>
+
+                </div>
+
+
+                <p id="exam-description">
+                    Senaste provaktivitet medan ansökan pågår.
+                </p>
+
+            </div>
+
+
+            <a
+                href="https://kunskapstest.svenskcertifiering.com/sadmin/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="exam-link"
+            >
+                Kunskapstest ↗
+            </a>
+
+        </div>
+
+
+        <div class="exam-meta-line">
+
+            <strong>
+
+                {% if application.examinationsdatum %}
+
+                    {{ application.examinationsdatum }}
+
+                {% else %}
+
+                    Ej bokad
+
+                {% endif %}
+
+            </strong>
+
+
+            {% if application.plats %}
+
+                <span>
+                    · {{ application.plats }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ONGOING APPLICATION -->
+
+        <div
+            id="ongoing-exams"
+            class="exam-view"
+        >
+
+            <div class="exam-table-header">
+
+                <span>
+                    Datum
+                </span>
+
+                <span>
+                    Test
+                </span>
+
+                <span>
+                    Resultat
+                </span>
+
+            </div>
+
+
+            <!-- MOCK DATA -->
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 2
+                </strong>
+
+                <span class="exam-result exam-failed">
+                    Inte godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 1
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-08-28
+                </span>
+
+                <strong>
+                    Brandlarm delprov 2
+                </strong>
+
+                <span class="exam-result exam-failed">
+                    Inte godkänd
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLETED APPLICATION -->
+
+        <div
+            id="completed-exams"
+            class="exam-view"
+            hidden
+        >
+
+            <div class="exam-table-header">
+
+                <span>
+                    Datum
+                </span>
+
+                <span>
+                    Test
+                </span>
+
+                <span>
+                    Resultat
+                </span>
+
+            </div>
+
+
+            <!-- MOCK DATA -->
+
+            <div class="exam-row">
+
+                <span>
+                    2026-10-09
+                </span>
+
+                <strong>
+                    Brandlarm delprov 2
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 1
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+
+            <div class="exam-row">
+
+                <span>
+                    2026-09-17
+                </span>
+
+                <strong>
+                    Brandlarm delprov 3
+                </strong>
+
+                <span class="exam-result exam-passed">
+                    Godkänd
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="exam-footer">
+
+            <span id="exam-footer-text">
+                Exempel på hur synkroniserade provresultat kommer att visas.
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         DOCUMENTS
+    ================================================== -->
+
+    <section class="panel documents-panel">
+
+        <div class="compact-panel-header">
+
+            <div>
+
+                <h2>
+                    Dokument
+                </h2>
+
+                <p>
+                    Filer i personens kundmapp.
+                </p>
+
+            </div>
+
+
+            <span class="document-count">
+
+                {{ documents | length }}
+
+                {% if documents | length == 1 %}
+
+                    fil
+
+                {% else %}
+
+                    filer
+
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <!-- DOCUMENT UPLOAD -->
+
+        <form
+            action="/certification/application/{{ row_number }}/documents/upload"
+            method="post"
+            enctype="multipart/form-data"
+            class="document-upload-form"
+        >
+
+            <label class="document-upload-area">
+
+                <span class="document-upload-icon">
+                    ↑
+                </span>
+
+
+                <span class="document-upload-text">
+
+                    <strong>
+                        Välj filer
+                    </strong>
+
+                    <small>
+                        Du kan välja flera filer samtidigt
+                    </small>
+
+                </span>
+
+
+                <input
+                    type="file"
+                    name="files"
+                    multiple
+                    required
+                    accept=".png,.jpg,.jpeg,.gif,.webp,.bmp,.tif,.tiff,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.odp"
+                >
+
+            </label>
+
+
+            <button
+                type="submit"
+                class="button button-primary document-upload-button"
+            >
+                Ladda upp
+            </button>
+
+        </form>
+
+
+        <!-- DOCUMENT LIST -->
+
+        {% if documents %}
+
+            <div class="document-list">
+
+                {% for document in documents %}
+
+                    <div class="document-row">
+
+                        <div class="document-file">
+
+                            <span class="document-file-icon">
+
+                                {% if document.name.lower().endswith(".pdf") %}
+
+                                    PDF
+
+                                {% elif
+                                    document.name.lower().endswith(".png")
+                                    or document.name.lower().endswith(".jpg")
+                                    or document.name.lower().endswith(".jpeg")
+                                    or document.name.lower().endswith(".gif")
+                                    or document.name.lower().endswith(".webp")
+                                    or document.name.lower().endswith(".bmp")
+                                    or document.name.lower().endswith(".tif")
+                                    or document.name.lower().endswith(".tiff")
+                                %}
+
+                                    IMG
+
+                                {% elif
+                                    document.name.lower().endswith(".doc")
+                                    or document.name.lower().endswith(".docx")
+                                    or document.name.lower().endswith(".odt")
+                                    or document.name.lower().endswith(".rtf")
+                                    or document.name.lower().endswith(".txt")
+                                %}
+
+                                    DOC
+
+                                {% elif
+                                    document.name.lower().endswith(".xls")
+                                    or document.name.lower().endswith(".xlsx")
+                                    or document.name.lower().endswith(".csv")
+                                    or document.name.lower().endswith(".ods")
+                                %}
+
+                                    XLS
+
+                                {% elif
+                                    document.name.lower().endswith(".ppt")
+                                    or document.name.lower().endswith(".pptx")
+                                    or document.name.lower().endswith(".odp")
+                                %}
+
+                                    PPT
+
+                                {% else %}
+
+                                    FIL
+
+                                {% endif %}
+
+                            </span>
+
+
+                            <div class="document-file-info">
+
+                                <strong>
+                                    {{ document.name }}
+                                </strong>
+
+                                <span>
+                                    {{ document.size_text }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <form
+                            action="/certification/application/{{ row_number }}/documents/delete"
+                            method="post"
+                            class="document-delete-form"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="filename"
+                                value="{{ document.name }}"
+                            >
+
+
+                            <button
+                                type="submit"
+                                class="document-delete-button"
+                                onclick="return confirm('Ta bort filen?')"
+                            >
+                                Ta bort
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        {% else %}
+
+            <div class="documents-empty">
+
+                <div class="documents-empty-icon">
+                    ↥
+                </div>
+
+
+                <strong>
+                    Inga dokument uppladdade
+                </strong>
+
+
+                <span>
+                    Välj en eller flera filer ovan för att lägga till dem i kundmappen.
+                </span>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- DOCUMENT FOLDER -->
+
+        <div class="documents-footer">
+
+            <span>
+                Kundmapp
+            </span>
+
+            <code>
+                {{ application.foretag }}/Personer/{{ folder.name }}
+            </code>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ==================================================
+     NOTES
+================================================== -->
+
+<section class="panel">
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Anteckningar
+            </h2>
+
+            <p>
+                Intern information om ärendet.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if application.ovrigt %}
+
+        <div class="note">
+            {{ application.ovrigt }}
+        </div>
+
+    {% else %}
+
+        <div class="empty-inline">
+            Ingen anteckning registrerad.
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- ==================================================
+     GLOBAL SAVE BAR
+================================================== -->
+
+<div
+    id="case-save-bar"
+    class="case-save-bar"
+>
+
+    <div class="case-save-status">
+
+        <span
+            id="case-save-indicator"
+            class="case-save-indicator saved"
+        >
+            ✓
+        </span>
+
+
+        <div>
+
+            <strong id="case-save-title">
+                Inga ändringar gjorda
+            </strong>
+
+            <span id="case-save-description">
+                Ärendet är oförändrat.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        id="save-case-button"
+        class="button button-disabled"
+        disabled
+    >
+        Spara ändringar
+    </button>
+
+</div>
+
+
+<!-- ==================================================
+     FRONTEND PROTOTYPE LOGIC
+================================================== -->
+
+<script>
+
+    /* ==================================================
+       ELEMENTS
+    ================================================== */
+
+    const evidencePanel =
+        document.getElementById(
+            "evidence-panel"
+        );
+
+
+    const evidenceCheckboxes =
+        document.querySelectorAll(
+            ".evidence-checkbox"
+        );
+
+
+    const evidenceCount =
+        document.getElementById(
+            "evidence-count"
+        );
+
+
+    const evidenceSummaryState =
+        document.getElementById(
+            "evidence-summary-state"
+        );
+
+
+    const evidenceCompleteMessage =
+        document.getElementById(
+            "evidence-complete-message"
+        );
+
+
+    const detailsButton =
+        document.getElementById(
+            "toggle-evidence-details"
+        );
+
+
+    const completeApplicationButton =
+        document.getElementById(
+            "complete-application-button"
+        );
+
+
+    const caseState =
+        document.getElementById(
+            "case-state"
+        );
+
+
+    const headerStatus =
+        document.getElementById(
+            "application-status-badge"
+        );
+
+
+    const caseTitle =
+        document.getElementById(
+            "case-title"
+        );
+
+
+    const caseDescription =
+        document.getElementById(
+            "case-description"
+        );
+
+
+    const ongoingExams =
+        document.getElementById(
+            "ongoing-exams"
+        );
+
+
+    const completedExams =
+        document.getElementById(
+            "completed-exams"
+        );
+
+
+    const examDescription =
+        document.getElementById(
+            "exam-description"
+        );
+
+
+    const examModeLabel =
+        document.getElementById(
+            "exam-mode-label"
+        );
+
+
+    const examFooterText =
+        document.getElementById(
+            "exam-footer-text"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "save-case-button"
+        );
+
+
+    const saveIndicator =
+        document.getElementById(
+            "case-save-indicator"
+        );
+
+
+    const saveTitle =
+        document.getElementById(
+            "case-save-title"
+        );
+
+
+    const saveDescription =
+        document.getElementById(
+            "case-save-description"
+        );
+
+
+    let applicationComplete =
+        false;
+
+
+    let caseHasBeenEdited =
+        false;
+
+
+    /* ==================================================
+       EVIDENCE
+    ================================================== */
+
+    function allEvidenceComplete() {
+
+        return (
+            evidenceCheckboxes.length > 0
+            &&
+            Array.from(
+                evidenceCheckboxes
+            ).every(
+                checkbox => checkbox.checked
+            )
+        );
+
+    }
+
+
+    function updateEvidenceOverview() {
+
+        const total =
+            evidenceCheckboxes.length;
+
+
+        let complete =
+            0;
+
+
+        evidenceCheckboxes.forEach(
+            checkbox => {
+
+                const row =
+                    checkbox.closest(
+                        ".evidence-row"
+                    );
+
+
+                const state =
+                    row.querySelector(
+                        ".evidence-state"
+                    );
+
+
+                if (checkbox.checked) {
+
+                    complete += 1;
+
+
+                    row.classList.add(
+                        "has-document"
+                    );
+
+
+                    state.textContent =
+                        "Finns";
+
+                }
+
+                else {
+
+                    row.classList.remove(
+                        "has-document"
+                    );
+
+
+                    state.textContent =
+                        "Saknas";
+
+                }
+
+            }
+        );
+
+
+        evidenceCount.textContent =
+            `${complete} / ${total} finns`;
+
+
+        const everythingPresent =
+            total > 0
+            && complete === total;
+
+
+        if (everythingPresent) {
+
+            evidenceSummaryState.textContent =
+                "Alla finns";
+
+
+            evidenceSummaryState.classList.remove(
+                "incomplete"
+            );
+
+
+            evidenceSummaryState.classList.add(
+                "complete"
+            );
+
+
+            evidenceCompleteMessage.hidden =
+                false;
+
+
+            if (!applicationComplete) {
+
+                completeApplicationButton.disabled =
+                    false;
+
+
+                completeApplicationButton.classList.remove(
+                    "button-disabled"
+                );
+
+
+                completeApplicationButton.classList.add(
+                    "button-primary"
+                );
+
+            }
+
+        }
+
+        else {
+
+            evidenceSummaryState.textContent =
+                `${total - complete} saknas`;
+
+
+            evidenceSummaryState.classList.remove(
+                "complete"
+            );
+
+
+            evidenceSummaryState.classList.add(
+                "incomplete"
+            );
+
+
+            evidenceCompleteMessage.hidden =
+                true;
+
+
+            if (!applicationComplete) {
+
+                completeApplicationButton.disabled =
+                    true;
+
+
+                completeApplicationButton.classList.remove(
+                    "button-primary"
+                );
+
+
+                completeApplicationButton.classList.add(
+                    "button-disabled"
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /* ==================================================
+       APPLICATION STATUS
+    ================================================== */
+
+    function showApplicationComplete() {
+
+        applicationComplete =
+            true;
+
+
+        caseState.textContent =
+            "Komplett";
+
+
+        headerStatus.textContent =
+            "Ansökan komplett";
+
+
+        caseState.classList.remove(
+            "case-status-active"
+        );
+
+
+        headerStatus.classList.remove(
+            "case-status-active"
+        );
+
+
+        caseState.classList.add(
+            "case-status-complete"
+        );
+
+
+        headerStatus.classList.add(
+            "case-status-complete"
+        );
+
+
+        caseTitle.textContent =
+            "Ansökan är komplett";
+
+
+        caseDescription.textContent =
+            "Ansökan har markerats som färdighandlagd.";
+
+
+        completeApplicationButton.textContent =
+            "Återöppna ansökan";
+
+
+        completeApplicationButton.disabled =
+            false;
+
+
+        completeApplicationButton.classList.remove(
+            "button-primary",
+            "button-disabled"
+        );
+
+
+        completeApplicationButton.classList.add(
+            "button-secondary"
+        );
+
+
+        ongoingExams.hidden =
+            true;
+
+
+        completedExams.hidden =
+            false;
+
+
+        examModeLabel.textContent =
+            "Senaste godkända";
+
+
+        examDescription.textContent =
+            "Senaste fem godkända prov.";
+
+
+        examFooterText.textContent =
+            "Visar de senaste godkända provresultaten.";
+
+    }
+
+
+    function showApplicationOngoing() {
+
+        applicationComplete =
+            false;
+
+
+        caseState.textContent =
+            "Pågående";
+
+
+        headerStatus.textContent =
+            "Pågående";
+
+
+        caseState.classList.remove(
+            "case-status-complete"
+        );
+
+
+        headerStatus.classList.remove(
+            "case-status-complete"
+        );
+
+
+        caseState.classList.add(
+            "case-status-active"
+        );
+
+
+        headerStatus.classList.add(
+            "case-status-active"
+        );
+
+
+        caseTitle.textContent =
+            "Ansökan är under handläggning";
+
+
+        caseDescription.textContent =
+            "Kontrollera inkomna underlag och kompletteringar innan ansökan markeras som komplett.";
+
+
+        completeApplicationButton.textContent =
+            "Markera ansökan som komplett";
+
+
+        completeApplicationButton.classList.remove(
+            "button-secondary"
+        );
+
+
+        if (allEvidenceComplete()) {
+
+            completeApplicationButton.disabled =
+                false;
+
+
+            completeApplicationButton.classList.remove(
+                "button-disabled"
+            );
+
+
+            completeApplicationButton.classList.add(
+                "button-primary"
+            );
+
+        }
+
+        else {
+
+            completeApplicationButton.disabled =
+                true;
+
+
+            completeApplicationButton.classList.remove(
+                "button-primary"
+            );
+
+
+            completeApplicationButton.classList.add(
+                "button-disabled"
+            );
+
+        }
+
+
+        ongoingExams.hidden =
+            false;
+
+
+        completedExams.hidden =
+            true;
+
+
+        examModeLabel.textContent =
+            "Pågående prov";
+
+
+        examDescription.textContent =
+            "Senaste provaktivitet medan ansökan pågår.";
+
+
+        examFooterText.textContent =
+            "Exempel på hur synkroniserade provresultat kommer att visas.";
+
+    }
+
+
+    function toggleApplicationStatus() {
+
+        if (applicationComplete) {
+
+            showApplicationOngoing();
+
+        }
+
+        else {
+
+            showApplicationComplete();
+
+        }
+
+    }
+
+
+    /* ==================================================
+       GLOBAL SAVE STATE
+    ================================================== */
+
+    function getCaseState() {
+
+        const fields =
+            document.querySelectorAll(
+                "input:not([type='file']):not([type='hidden']), textarea, select"
+            );
+
+
+        const state =
+            [];
+
+
+        fields.forEach(
+            field => {
+
+                if (
+                    field.type === "checkbox"
+                    || field.type === "radio"
+                ) {
+
+                    state.push({
+                        type: field.type,
+                        checked: field.checked
+                    });
+
+                }
+
+                else if (
+                    field.tagName === "SELECT"
+                    && field.multiple
+                ) {
+
+                    state.push({
+                        type: "select-multiple",
+                        value: Array.from(
+                            field.selectedOptions
+                        ).map(
+                            option => option.value
+                        )
+                    });
+
+                }
+
+                else {
+
+                    state.push({
+                        type: field.type,
+                        value: field.value
+                    });
+
+                }
+
+            }
+        );
+
+
+        return JSON.stringify(
+            state
+        );
+
+    }
+
+
+    let originalCaseState =
+        getCaseState();
+
+
+    function setSaveIndicatorSaved() {
+
+        saveIndicator.textContent =
+            "✓";
+
+
+        saveIndicator.classList.remove(
+            "unsaved"
+        );
+
+
+        saveIndicator.classList.add(
+            "saved"
+        );
+
+    }
+
+
+    function setSaveIndicatorUnsaved() {
+
+        saveIndicator.textContent =
+            "●";
+
+
+        saveIndicator.classList.remove(
+            "saved"
+        );
+
+
+        saveIndicator.classList.add(
+            "unsaved"
+        );
+
+    }
+
+
+    function disableSaveButton() {
+
+        saveButton.disabled =
+            true;
+
+
+        saveButton.classList.remove(
+            "button-primary"
+        );
+
+
+        saveButton.classList.add(
+            "button-disabled"
+        );
+
+    }
+
+
+    function enableSaveButton() {
+
+        saveButton.disabled =
+            false;
+
+
+        saveButton.classList.remove(
+            "button-disabled"
+        );
+
+
+        saveButton.classList.add(
+            "button-primary"
+        );
+
+    }
+
+
+    /*
+        STATE 1:
+        Page has just loaded.
+    */
+
+    function showInitialState() {
+
+        saveTitle.textContent =
+            "Inga ändringar gjorda";
+
+
+        saveDescription.textContent =
+            "Ärendet är oförändrat.";
+
+
+        setSaveIndicatorSaved();
+
+        disableSaveButton();
+
+    }
+
+
+    /*
+        STATE 2:
+        Current values differ from last saved values.
+    */
+
+    function showUnsavedState() {
+
+        saveTitle.textContent =
+            "Osparade ändringar";
+
+
+        saveDescription.textContent =
+            "Du har ändringar som ännu inte har sparats.";
+
+
+        setSaveIndicatorUnsaved();
+
+        enableSaveButton();
+
+    }
+
+
+    /*
+        STATE 3:
+        User changed something,
+        but then restored everything to the original state.
+    */
+
+    function showNoChangesState() {
+
+        saveTitle.textContent =
+            "Inga ändringar att spara";
+
+
+        saveDescription.textContent =
+            "Ärendet matchar senast sparade version.";
+
+
+        setSaveIndicatorSaved();
+
+        disableSaveButton();
+
+    }
+
+
+    /*
+        STATE 4:
+        User successfully pressed Save.
+    */
+
+    function showSavedState() {
+
+        saveTitle.textContent =
+            "Ändringarna är sparade";
+
+
+        saveDescription.textContent =
+            `Sparat ${new Date().toLocaleTimeString(
+                "sv-SE",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            )}`;
+
+
+        setSaveIndicatorSaved();
+
+        disableSaveButton();
+
+    }
+
+
+    function checkForUnsavedChanges() {
+
+        caseHasBeenEdited =
+            true;
+
+
+        const currentCaseState =
+            getCaseState();
+
+
+        if (
+            currentCaseState === originalCaseState
+        ) {
+
+            showNoChangesState();
+
+        }
+
+        else {
+
+            showUnsavedState();
+
+        }
+
+    }
+
+
+    /* ==================================================
+       EVENT LISTENERS
+    ================================================== */
+
+    evidenceCheckboxes.forEach(
+        checkbox => {
+
+            checkbox.addEventListener(
+                "change",
+                updateEvidenceOverview
+            );
+
+        }
+    );
+
+
+    detailsButton.addEventListener(
+        "click",
+        () => {
+
+            const expanded =
+                evidencePanel.classList.toggle(
+                    "show-details"
+                );
+
+
+            detailsButton.textContent =
+                expanded
+                    ? "Dölj detaljer"
+                    : "Visa detaljer";
+
+        }
+    );
+
+
+    completeApplicationButton.addEventListener(
+        "click",
+        toggleApplicationStatus
+    );
+
+
+    document
+        .querySelectorAll(
+            "input:not([type='file']):not([type='hidden']), textarea, select"
+        )
+        .forEach(
+            field => {
+
+                field.addEventListener(
+                    "input",
+                    checkForUnsavedChanges
+                );
+
+
+                field.addEventListener(
+                    "change",
+                    checkForUnsavedChanges
+                );
+
+            }
+        );
+
+
+    saveButton.addEventListener(
+        "click",
+        () => {
+
+            saveButton.disabled =
+                true;
+
+
+            saveButton.textContent =
+                "Sparar...";
+
+
+            /*
+                FRONTEND PROTOTYPE ONLY.
+
+                Later this will POST the whole case
+                to FastAPI.
+            */
+
+            setTimeout(
+                () => {
+
+                    originalCaseState =
+                        getCaseState();
+
+
+                    caseHasBeenEdited =
+                        false;
+
+
+                    saveButton.textContent =
+                        "Spara ändringar";
+
+
+                    showSavedState();
+
+                },
+                350
+            );
+
+        }
+    );
+
+
+    /* ==================================================
+       INITIAL PAGE STATE
+    ================================================== */
+
+    updateEvidenceOverview();
+
+    showInitialState();
+
+</script>
+
+
+{% endblock %}

@@ -26,8 +26,7 @@
         "badge": "Pågående",
         "tags": [
             "Python",
-            "FastAPI",
-            "PDF"
+            "FastAPI"
         ],
         "thumbnail_label": "PDF",
         "theme": "pdf",
@@ -56,5 +55,23 @@
         "generated": true,
         "template": "apps/session-cookie-demo/session-cookie-demo.html",
         "stylesheet": "/static/apps/session-cookie-demo/session-cookie-demo.css"
-    }
+    },
+    {
+    "id": "certification-manager",
+    "title": "Certification Manager",
+    "description": "Hantera certifieringsansökningar, kundmappar och pågående certifieringsärenden.",
+    "url": "/certification",
+    "badge": "Pågående",
+    "tags": [
+        "Python",
+        "FastAPI",
+        "Excel"
+    ],
+    "thumbnail_label": "CERT",
+    "theme": "generic",
+    "image": null,
+    "image_alt": "",
+    "order": 4,
+    "generated": false
+}
 ]

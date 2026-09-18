@@ -1384,3 +1384,238 @@ body {
     }
 
 }
+
+/* ==================================================
+   COMPACT SYSTEM STATUS
+================================================== */
+
+.system-glance {
+    padding: 11px 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    box-shadow: var(--shadow);
+}
+
+
+.glance-source {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.glance-source > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 1px;
+}
+
+
+.glance-source strong {
+    color: var(--text);
+
+    font-size: 12px;
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+
+.glance-source small {
+    color: var(--text-muted);
+
+    font-size: 10px;
+
+    white-space: nowrap;
+}
+
+
+/* ==================================================
+   CONNECTION DOTS
+================================================== */
+
+.connection-dot {
+    position: relative;
+
+    width: 9px;
+    height: 9px;
+
+    flex: 0 0 9px;
+
+    border-radius: 50%;
+}
+
+
+/* CONNECTED */
+
+.connection-online {
+    background: #12b76a;
+
+    box-shadow:
+        0 0 0 3px rgba(18, 183, 106, 0.12);
+}
+
+
+.connection-online::after {
+    content: "";
+
+    position: absolute;
+
+    inset: -4px;
+
+    border: 2px solid rgba(18, 183, 106, 0.35);
+    border-radius: 50%;
+
+    animation:
+        connection-pulse-green 2.2s ease-out infinite;
+}
+
+
+/* RECENTLY LOST CONNECTION */
+
+.connection-reconnecting {
+    background: #2e90fa;
+
+    box-shadow:
+        0 0 0 3px rgba(46, 144, 250, 0.12);
+}
+
+
+.connection-reconnecting::after {
+    content: "";
+
+    position: absolute;
+
+    inset: -4px;
+
+    border: 2px solid rgba(46, 144, 250, 0.35);
+    border-radius: 50%;
+
+    animation:
+        connection-pulse-blue 3s ease-out infinite;
+}
+
+
+/* OFFLINE */
+
+.connection-offline {
+    background: #f04438;
+
+    box-shadow:
+        0 0 0 3px rgba(240, 68, 56, 0.13);
+}
+
+
+/* ==================================================
+   CONNECTION ANIMATIONS
+================================================== */
+
+@keyframes connection-pulse-green {
+
+    0% {
+        transform: scale(0.75);
+        opacity: 0.85;
+    }
+
+    70% {
+        transform: scale(1.45);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1.45);
+        opacity: 0;
+    }
+
+}
+
+
+@keyframes connection-pulse-blue {
+
+    0% {
+        transform: scale(0.8);
+        opacity: 0.7;
+    }
+
+    70% {
+        transform: scale(1.35);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1.35);
+        opacity: 0;
+    }
+
+}
+
+
+/* ==================================================
+   STATUS POSITION IN OVERVIEW HEADER
+================================================== */
+
+.overview-hero {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        auto;
+
+    align-items: center;
+
+    gap: 28px;
+}
+
+
+.overview-new-button {
+    white-space: nowrap;
+}
+
+
+@media (max-width: 1150px) {
+
+    .overview-hero {
+        grid-template-columns:
+            1fr auto;
+    }
+
+
+    .system-glance {
+        grid-column: 1 / -1;
+
+        justify-self: start;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .overview-hero {
+        grid-template-columns: 1fr;
+    }
+
+
+    .system-glance {
+        width: 100%;
+
+        flex-wrap: wrap;
+    }
+
+}

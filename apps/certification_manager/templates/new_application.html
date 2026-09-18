@@ -1,10 +1,578 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+
+{% block title %}
+    Ny ansökan | Certification Manager
+{% endblock %}
+
+
+{% block content %}
+
+
+<section class="page-heading">
+
+    <div>
+
+        <a
+            href="/certification/"
+            class="back-link"
+        >
+            ← Till översikten
+        </a>
+
+        <span class="eyebrow">
+            Nytt certifieringsärende
+        </span>
+
+        <h1>
+            Ny ansökan
+        </h1>
+
+        <p>
+            Registrera personen och grunduppgifterna för certifieringsärendet.
+        </p>
+
+    </div>
+
+</section>
+
+
+{% if error %}
+
+    <div class="alert alert-error">
+
+        <strong>
+            Ansökan kunde inte skapas
+        </strong>
+
+        <span>
+            {{ error }}
+        </span>
+
+    </div>
+
+{% endif %}
+
+
+<form
+    method="post"
+    action="/certification/new"
+    class="application-form"
+>
+
+
+    <!-- PERSON -->
+
+    <section class="form-card">
+
+        <div class="form-card-header">
+
+            <span class="section-number">
+                1
+            </span>
+
+            <div>
+
+                <h2>
+                    Person
+                </h2>
+
+                <p>
+                    Grundläggande personuppgifter.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+            <label class="form-field">
+
+                <span>
+                    Namn
+                </span>
+
+                <input
+                    type="text"
+                    name="namn"
+                    value="{{ application.namn if application else '' }}"
+                    placeholder="Förnamn Efternamn"
+                    required
+                >
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Personnummer
+                </span>
+
+                <input
+                    type="text"
+                    name="personnummer"
+                    value="{{ application.personnummer if application else '' }}"
+                    placeholder="YYYYMMDD-XXXX"
+                    required
+                >
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- CERTIFIERING -->
+
+    <section class="form-card">
+
+        <div class="form-card-header">
+
+            <span class="section-number">
+                2
+            </span>
+
+            <div>
+
+                <h2>
+                    Certifiering
+                </h2>
+
+                <p>
+                    Typ av certifiering och aktuell norm.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+            <label class="form-field">
+
+                <span>
+                    Ny- eller omcertifiering
+                </span>
+
+                <select
+                    name="ny_eller_omcertifiering"
+                    required
+                >
+
+                    <option
+                        value="NY"
+                        {% if application and application.ny_eller_omcertifiering == "NY" %}
+                            selected
+                        {% endif %}
+                    >
+                        NY – Nycertifiering
+                    </option>
+
+                    <option
+                        value="OM"
+                        {% if application and application.ny_eller_omcertifiering == "OM" %}
+                            selected
+                        {% endif %}
+                    >
+                        OM – Omcertifiering
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Norm
+                </span>
+
+                <select
+                    name="norm"
+                    id="norm-select"
+                    required
+                >
+
+                    <option value="SSF 1016:1">
+                        SSF 1016:1 – Behörig ingenjör inbrottslarm
+                    </option>
+
+                    <option value="SSF 1062:3">
+                        SSF 1062:3 – Behörig ingenjör kamerabevakningssystem, CCTV
+                    </option>
+
+                    <option value="SBF 1007:5">
+                        SBF 1007:5 – Behörig ingenjör brandlarm
+                    </option>
+
+                    <option value="SBF 2017:1">
+                        SBF 2017:1 – Behörig ingenjör utrymningslarm med talat meddelande
+                    </option>
+
+                    <option value="SSF 1049:1">
+                        SSF 1049:1 – Certifierad låsmästare – låsanläggningar
+                    </option>
+
+                </select>
+
+
+                <span
+                    id="norm-preview"
+                    class="norm-badge norm-ssf norm-preview"
+                >
+                    SSF
+                </span>
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Ankom
+                </span>
+
+                <input
+                    type="date"
+                    name="ankom"
+                    value="{% if application %}{{ application.ankom }}{% else %}{{ today }}{% endif %}"
+                    required
+                >
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Utbildning hos Säkerhetsbranschen?
+                </span>
+
+                <select name="utb_hos_sakerhetsbransch">
+
+                    <option value="">
+                        Ej angivet
+                    </option>
+
+                    <option value="Ja">
+                        Ja
+                    </option>
+
+                    <option value="Nej">
+                        Nej
+                    </option>
+
+                </select>
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FÖRETAG -->
+
+    <section class="form-card">
+
+        <div class="form-card-header">
+
+            <span class="section-number">
+                3
+            </span>
+
+            <div>
+
+                <h2>
+                    Företag & kontakt
+                </h2>
+
+                <p>
+                    Företagsuppgifter och kontaktvägar.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+            <label class="form-field">
+
+                <span>
+                    Företag
+                </span>
+
+                <input
+                    type="text"
+                    name="foretag"
+                    value="{{ application.foretag if application else '' }}"
+                    required
+                >
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Adress
+                </span>
+
+                <input
+                    type="text"
+                    name="adress"
+                    value="{{ application.adress if application else '' }}"
+                    required
+                >
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Mail
+                </span>
+
+                <input
+                    type="email"
+                    name="mail"
+                    value="{{ application.mail if application else '' }}"
+                    required
+                >
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Mail privat
+                </span>
+
+                <input
+                    type="email"
+                    name="mail_privat"
+                    value="{{ application.mail_privat if application else '' }}"
+                >
+
+            </label>
+
+
+            <label class="form-field form-field-full">
+
+                <span>
+                    Telefon
+                </span>
+
+                <input
+                    type="text"
+                    name="telefon"
+                    value="{{ application.telefon if application else '' }}"
+                >
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- EXAMINATION -->
+
+    <section class="form-card">
+
+        <div class="form-card-header">
+
+            <span class="section-number">
+                4
+            </span>
+
+            <div>
+
+                <h2>
+                    Examination
+                </h2>
+
+                <p>
+                    Kan lämnas tomt och kompletteras senare.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+            <label class="form-field">
+
+                <span>
+                    Examinationsdatum
+                </span>
+
+                <input
+                    type="date"
+                    name="examinationsdatum"
+                    value="{% if application and application.examinationsdatum %}{{ application.examinationsdatum }}{% endif %}"
+                >
+
+            </label>
+
+
+            <label class="form-field">
+
+                <span>
+                    Plats
+                </span>
+
+                <input
+                    type="text"
+                    name="plats"
+                    value="{{ application.plats if application else '' }}"
+                    placeholder="Exempel: Stockholm"
+                >
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ÖVRIGT -->
+
+    <section class="form-card">
+
+        <div class="form-card-header">
+
+            <span class="section-number">
+                5
+            </span>
+
+            <div>
+
+                <h2>
+                    Övrigt
+                </h2>
+
+                <p>
+                    Intern information om ärendet.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <label class="form-field">
+
+            <span>
+                Anteckning
+            </span>
+
+            <textarea
+                name="ovrigt"
+                rows="5"
+            >{{ application.ovrigt if application else '' }}</textarea>
+
+        </label>
+
+    </section>
+
+
+    <div class="form-actions">
+
+        <a
+            href="/certification/"
+            class="button button-secondary"
+        >
+            Avbryt
+        </a>
+
+        <button
+            type="submit"
+            class="button button-primary"
+        >
+            Skapa ansökan
+        </button>
+
+    </div>
+
+</form>
+
+
+<script>
+
+    const normSelect = document.getElementById("norm-select");
+    const normPreview = document.getElementById("norm-preview");
+
+
+    function updateNormPreview() {
+
+        const norm = normSelect.value;
+
+        normPreview.classList.remove(
+            "norm-ssf",
+            "norm-sbf",
+            "norm-neutral"
+        );
+
+
+        if (norm.startsWith("SSF")) {
+
+            normPreview.classList.add(
+                "norm-ssf"
+            );
+
+            normPreview.textContent = "SSF";
+
+        }
+
+        else if (norm.startsWith("SBF")) {
+
+            normPreview.classList.add(
+                "norm-sbf"
+            );
+
+            normPreview.textContent = "SBF";
+
+        }
+
+        else {
+
+            normPreview.classList.add(
+                "norm-neutral"
+            );
+
+            normPreview.textContent = "Norm";
+
+        }
+
+    }
+
+
+    normSelect.addEventListener(
+        "change",
+        updateNormPreview
+    );
+
+
+    updateNormPreview();
+
+</script>
+
+
+{% endblock %}

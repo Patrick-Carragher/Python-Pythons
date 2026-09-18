@@ -1,3 +1,4 @@
+import uuid
 import json
 import socket
 
@@ -9,28 +10,20 @@ from fastapi import (
     Form,
     HTTPException,
     Request,
-    UploadFile
+    UploadFile,
 )
 
-from fastapi.responses import (
-    RedirectResponse
-)
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-from fastapi.staticfiles import (
-    StaticFiles
-)
-
-from fastapi.templating import (
-    Jinja2Templates
-)
-
+from apps.certification_manager.routes import router as certification_router
 
 from cookies import (
     COOKIE_NAME,
     decode_cookie,
-    save_completed_game
+    save_completed_game,
 )
-
 
 from game import (
     create_game,
@@ -38,23 +31,19 @@ from game import (
     delete_game,
     record_guess,
     set_avenge_answer,
-    set_throw_answer
+    set_throw_answer,
 )
-
 
 from portal_cards import (
     create_generated_app,
     delete_image,
     find_app,
     load_apps,
+    next_order,
     parse_tags,
     save_apps,
     save_image,
     update_app,
-)
-
-from session_demo import (
-    router as session_demo_router
 )
 
 
@@ -64,23 +53,33 @@ from session_demo import (
 
 app = FastAPI()
 
+
+# --------------------------------------------------
+# APP ROUTERS
+# --------------------------------------------------
+
 app.include_router(
-    session_demo_router
+    certification_router
 )
+
 
 # --------------------------------------------------
 # STATIC FILES
 # --------------------------------------------------
 
 app.mount(
-    "/static",
+    "/static/certification_manager",
     StaticFiles(
-        directory="static"
+        directory="apps/certification_manager/static"
     ),
-    name="static"
+    name="certification_static",
 )
 
-
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static",
+)
 
 
 # --------------------------------------------------
@@ -132,17 +131,22 @@ def portal(
         name="portal/portal.html",
         context={
             "apps": apps
-        }
+        },
     )
 
 
+# --------------------------------------------------
+# STARTUP
+# --------------------------------------------------
 
 @app.on_event("startup")
 def show_urls():
 
     hostname = socket.gethostname()
 
-    local_ip = socket.gethostbyname(hostname)
+    local_ip = socket.gethostbyname(
+        hostname
+    )
 
     print()
     print("========================================")
@@ -158,6 +162,7 @@ def show_urls():
     print("========================================")
     print()
 
+
 # --------------------------------------------------
 # GENERATED APP ROUTE
 # --------------------------------------------------
@@ -167,43 +172,38 @@ def show_urls():
 )
 def generated_app(
     request: Request,
-    app_id: str
+    app_id: str,
 ):
 
     apps = load_apps()
 
-
     app_data = find_app(
         apps,
-        app_id
+        app_id,
     )
-
 
     if app_data is None:
 
         raise HTTPException(
             status_code=404,
-            detail="Appen kunde inte hittas."
+            detail="Appen kunde inte hittas.",
         )
-
 
     if not app_data.get(
         "generated",
-        False
+        False,
     ):
 
         raise HTTPException(
             status_code=404,
-            detail="Appen använder en egen route."
+            detail="Appen använder en egen route.",
         )
-
 
     template_name = (
         app_data.get(
             "template"
         )
     )
-
 
     if (
         not template_name
@@ -215,16 +215,15 @@ def generated_app(
 
         raise HTTPException(
             status_code=500,
-            detail="Appens template är ogiltig."
+            detail="Appens template är ogiltig.",
         )
-
 
     return templates.TemplateResponse(
         request=request,
         name=template_name,
         context={
             "app": app_data
-        }
+        },
     )
 
 
@@ -278,7 +277,6 @@ async def save_portal_card(
 
     order_value = None
 
-
     if order.strip():
 
         try:
@@ -293,7 +291,7 @@ async def save_portal_card(
                 status_code=400,
                 detail=(
                     "Ordning måste vara ett nummer."
-                )
+                ),
             )
 
 
@@ -312,14 +310,12 @@ async def save_portal_card(
 
     existing_app = None
 
-
     if app_id:
 
         existing_app = find_app(
             apps,
-            app_id
+            app_id,
         )
-
 
         if existing_app is None:
 
@@ -327,7 +323,7 @@ async def save_portal_card(
                 status_code=404,
                 detail=(
                     "Kortet kunde inte hittas."
-                )
+                ),
             )
 
 
@@ -380,16 +376,14 @@ async def save_portal_card(
                 status_code=400,
                 detail=str(
                     error
-                )
+                ),
             )
-
 
         if current_image:
 
             delete_image(
                 current_image
             )
-
 
         current_image = (
             new_image
@@ -413,7 +407,7 @@ async def save_portal_card(
             theme=theme,
             image=current_image,
             image_alt=image_alt,
-            order_value=order_value
+            order_value=order_value,
         )
 
 
@@ -434,7 +428,7 @@ async def save_portal_card(
             theme=theme,
             image=current_image,
             image_alt=image_alt,
-            order_value=order_value
+            order_value=order_value,
         )
 
 
@@ -446,10 +440,9 @@ async def save_portal_card(
         apps
     )
 
-
     return RedirectResponse(
         url="/",
-        status_code=303
+        status_code=303,
     )
 
 
@@ -468,11 +461,9 @@ def home(
         )
     )
 
-
     previous_game = decode_cookie(
         cookie_value
     )
-
 
     return templates.TemplateResponse(
         request=request,
@@ -480,7 +471,7 @@ def home(
         context={
             "has_previous_game":
                 previous_game is not None
-        }
+        },
     )
 
 
@@ -499,11 +490,9 @@ def previous_answer(
         )
     )
 
-
     previous_game = decode_cookie(
         cookie_value
     )
-
 
     if previous_game is None:
 
@@ -513,10 +502,9 @@ def previous_answer(
             context={
                 "previous_game": None,
                 "raw_cookie": None,
-                "decoded_cookie": None
-            }
+                "decoded_cookie": None,
+            },
         )
-
 
     previous_game[
         "started_at_formatted"
@@ -526,7 +514,6 @@ def previous_answer(
         )
     )
 
-
     previous_game[
         "completed_at_formatted"
     ] = format_time(
@@ -535,13 +522,11 @@ def previous_answer(
         )
     )
 
-
     decoded_cookie = json.dumps(
         previous_game,
         indent=4,
-        ensure_ascii=False
+        ensure_ascii=False,
     )
-
 
     return templates.TemplateResponse(
         request=request,
@@ -554,8 +539,8 @@ def previous_answer(
                 cookie_value,
 
             "decoded_cookie":
-                decoded_cookie
-        }
+                decoded_cookie,
+        },
     )
 
 
@@ -570,15 +555,14 @@ def start_game(
 
     name: str = Form(...),
 
-    quest: str = Form(...)
+    quest: str = Form(...),
 
 ):
 
     game_id = create_game(
         name,
-        quest
+        quest,
     )
-
 
     return templates.TemplateResponse(
         request=request,
@@ -594,8 +578,8 @@ def start_game(
                 name,
 
             "quest":
-                quest
-        }
+                quest,
+        },
     )
 
 
@@ -610,14 +594,13 @@ def guess_number(
 
     game_id: str = Form(...),
 
-    guess: int = Form(...)
+    guess: int = Form(...),
 
 ):
 
     game = get_game(
         game_id
     )
-
 
     if game is None:
 
@@ -627,22 +610,19 @@ def guess_number(
             context={
                 "view":
                     "not_found"
-            }
+            },
         )
-
 
     record_guess(
         game,
-        guess
+        guess,
     )
-
 
     secret_number = (
         game[
             "secret_number"
         ]
     )
-
 
     attempts = (
         game[
@@ -666,22 +646,19 @@ def guess_number(
                         "correct",
 
                     "attempts":
-                        attempts
-                }
+                        attempts,
+                },
             )
         )
 
-
         save_completed_game(
             response,
-            game
+            game,
         )
-
 
         delete_game(
             game_id
         )
-
 
         return response
 
@@ -719,8 +696,8 @@ def guess_number(
                     attempts,
 
                 "result":
-                    result
-            }
+                    result,
+            },
         )
 
 
@@ -748,8 +725,8 @@ def guess_number(
                 game["name"],
 
             "secret_number":
-                secret_number
-        }
+                secret_number,
+        },
     )
 
 
@@ -764,14 +741,13 @@ def avenge(
 
     game_id: str = Form(...),
 
-    answer: str = Form(...)
+    answer: str = Form(...),
 
 ):
 
     game = get_game(
         game_id
     )
-
 
     if game is None:
 
@@ -781,13 +757,12 @@ def avenge(
             context={
                 "view":
                     "not_found"
-            }
+            },
         )
-
 
     set_avenge_answer(
         game,
-        answer
+        answer,
     )
 
 
@@ -805,8 +780,8 @@ def avenge(
                     "avenge",
 
                 "game_id":
-                    game_id
-            }
+                    game_id,
+            },
         )
 
 
@@ -818,21 +793,18 @@ def avenge(
         templates.TemplateResponse(
             request=request,
             name="numbers/interlude.html",
-            context={}
+            context={},
         )
     )
 
-
     save_completed_game(
         response,
-        game
+        game,
     )
-
 
     delete_game(
         game_id
     )
-
 
     return response
 
@@ -849,7 +821,7 @@ def pdf_home(
     return templates.TemplateResponse(
         request=request,
         name="pdf/pdf.html",
-        context={}
+        context={},
     )
 
 
@@ -864,14 +836,13 @@ def throw_grenade(
 
     game_id: str = Form(...),
 
-    throw: str = Form(...)
+    throw: str = Form(...),
 
 ):
 
     game = get_game(
         game_id
     )
-
 
     if game is None:
 
@@ -881,15 +852,13 @@ def throw_grenade(
             context={
                 "view":
                     "not_found"
-            }
+            },
         )
-
 
     set_throw_answer(
         game,
-        throw
+        throw,
     )
-
 
     correct = (
         throw.lower().strip()
@@ -898,7 +867,6 @@ def throw_grenade(
         throw.strip()
         == "3"
     )
-
 
     if correct:
 
@@ -912,7 +880,6 @@ def throw_grenade(
             "throw_incorrect"
         )
 
-
     response = (
         templates.TemplateResponse(
             request=request,
@@ -920,20 +887,17 @@ def throw_grenade(
             context={
                 "view":
                     view
-            }
+            },
         )
     )
 
-
     save_completed_game(
         response,
-        game
+        game,
     )
-
 
     delete_game(
         game_id
     )
-
 
     return response
