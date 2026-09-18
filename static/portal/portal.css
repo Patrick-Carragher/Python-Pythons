@@ -411,6 +411,82 @@ a.app-card:hover {
     width: 90%;
 }
 
+/* ------------------------------------------------ */
+/* CERTIFICATION THUMBNAIL                          */
+/* ------------------------------------------------ */
+
+.certification-thumbnail {
+    background:
+    radial-gradient(
+        circle at 25% 25%,
+        rgba(255, 255, 255, 0.12),
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at 80% 80%,
+        rgba(37, 99, 235, 0.30),
+        transparent 35%
+    ),
+    linear-gradient(
+        135deg,
+        #b42318,
+        #7c3567 55%,
+        #2457d6
+    );
+}
+
+
+.certification-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.certification-shield {
+    width: 90px;
+    height: 90px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.85);
+
+    border-radius:
+        26px 26px 34px 34px;
+
+    color: white;
+
+    font-size: 38px;
+    font-weight: 800;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0, 0, 0, 0.18);
+
+    backdrop-filter:
+        blur(6px);
+}
+
+
+.certification-mark {
+    color:
+        rgba(255, 255, 255, 0.90);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+}
+
 
 /* ------------------------------------------------ */
 /* GENERIC THUMBNAIL                                */
@@ -1159,3 +1235,4 @@ body.modal-open {
     }
 
 }
+

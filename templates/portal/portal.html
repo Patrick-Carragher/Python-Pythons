@@ -16,6 +16,10 @@
         rel="stylesheet"
         href="{{ url_for('static', path='/portal/portal.css') }}"
     >
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', path='/portal/portal.css') }}?v=20260918-cert"
+>
 
     <script
         src="{{ url_for('static', path='/portal/portal.js') }}"
@@ -151,6 +155,20 @@
                                 </div>
 
 
+                            {% elif app.theme == "certification" %}
+
+
+                                <div class="certification-icon">
+
+                                    <div class="certification-shield">
+                                        ✓
+                                    </div>
+
+                                    <span class="certification-mark">
+                                        B&amp;S
+                                    </span>
+
+                                </div>
                             {% else %}
 
 
@@ -498,6 +516,10 @@
 
                         <option value="pdf">
                             PDF
+                        </option>
+
+                        <option value="certification">
+                            Brand & Säkerhet Certifiering
                         </option>
 
                     </select>
