@@ -20,6 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from apps.certification_manager.routes import router as certification_router
+from session_demo import router as session_demo_router
 
 from cookies import (
     COOKIE_NAME,
@@ -64,6 +65,10 @@ app = FastAPI()
 
 app.include_router(
     certification_router
+)
+
+app.include_router(
+    session_demo_router
 )
 
 
