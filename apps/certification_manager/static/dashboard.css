@@ -1151,3 +1151,59 @@ html[data-theme="dark"]
 
     font-size: 12px;
 }
+/* ==================================================
+   FILTER BUTTONS - DARK MODE
+================================================== */
+
+/* Alla */
+
+html[data-theme="dark"] .dashboard-filter.active {
+    background: #344054;
+    color: #ffffff;
+    border-color: #475467;
+}
+
+
+/* SSF selected */
+
+html[data-theme="dark"] .dashboard-filter-ssf.active {
+    background: var(--ssf);
+    color: #ffffff;
+    border-color: var(--ssf);
+}
+
+
+/* SBF selected */
+
+html[data-theme="dark"] .dashboard-filter-sbf.active {
+    background: var(--sbf);
+    color: #ffffff;
+    border-color: var(--sbf);
+}
+
+
+/* SSF not selected */
+
+html[data-theme="dark"] .dashboard-filter-ssf:not(.active) {
+    background: transparent;
+    color: #84adff;
+    border-color: #344f7a;
+}
+
+
+/* SBF not selected */
+
+html[data-theme="dark"] .dashboard-filter-sbf:not(.active) {
+    background: transparent;
+    color: #ff9c95;
+    border-color: #7a302b;
+}
+
+
+/* Alla not selected */
+
+html[data-theme="dark"] .dashboard-filter:not(.active):not(.dashboard-filter-ssf):not(.dashboard-filter-sbf) {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--border);
+}
